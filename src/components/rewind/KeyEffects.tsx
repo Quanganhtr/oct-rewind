@@ -64,30 +64,26 @@ export function DroppingStars() {
   );
 }
 
-/** Figma "Light": a blurred white bar sweeping diagonally across the key, blended as overlay. */
-const LIGHT_X = [
-  -169.771, -167.453, -160.304, -148.069, -130.573, -107.771, -79.818, -47.133, -10.461, 29.12,
-  70.238, 111.357, 150.937, 187.609, 220.294, 248.247, 271.049, 288.545, 300.78, 307.929, 310.247,
-];
-const LIGHT_Y = [
-  -117.326, -112.304, -96.815, -70.308, -32.4, 17.003, 77.566, 148.38, 227.834, 313.589, 402.676,
-  491.763, 577.518, 656.972, 727.786, 788.349, 837.752, 875.659, 902.167, 917.655, 922.678,
-];
-const LIGHT_TIMES = LIGHT_X.map((_, i) => i / (LIGHT_X.length - 1));
-// The wrapper sits at the t=0 design position, so tracks play as deltas from their first key.
-const LIGHT_SWEEP = {
-  x: LIGHT_X.map((v) => v - LIGHT_X[0]),
-  y: LIGHT_Y.map((v) => v - LIGHT_Y[0]),
-};
+/**
+ * Figma "Light": a blurred white bar, tilted -30°, blended as overlay. It enters fully above the
+ * dome and leaves fully below it, so the loop restarts out of sight. It travels straight down
+ * because the 635px bar spans the dome's full width at that x.
+ */
+const DOME_HEIGHT = 1000;
+const LIGHT_BOX_HEIGHT = 422.138;
+const LIGHT_BLUR_PAD = 48; // 2× the 24px blur, so the soft edge is hidden too
+const LIGHT_SWEEP = { y: [-(LIGHT_BOX_HEIGHT + LIGHT_BLUR_PAD), DOME_HEIGHT + LIGHT_BLUR_PAD] };
+const LIGHT_TRANSITION = { duration: 2.6, ease: "easeInOut", repeat: Infinity } as const;
 
 export function LightSweep() {
   const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
-      className="pointer-events-none absolute top-[-113.76px] left-[-167.83px] flex h-[422.138px] w-[635.165px] items-center justify-center mix-blend-overlay"
+      className="pointer-events-none absolute top-0 left-[-167.83px] flex h-[422.138px] w-[635.165px] items-center justify-center mix-blend-overlay"
+      initial={{ y: LIGHT_SWEEP.y[0] }}
       animate={reduceMotion ? undefined : LIGHT_SWEEP}
-      transition={{ x: loop(LIGHT_TIMES), y: loop(LIGHT_TIMES) }}
+      transition={LIGHT_TRANSITION}
     >
       <div className="flex-none -rotate-30">
         <div className="relative h-24 w-[678px] bg-on-accent blur-[24px]" />
