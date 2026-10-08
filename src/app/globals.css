@@ -1,15 +1,37 @@
 @import "tailwindcss";
 
 @theme inline {
+  /* Stage + device frame */
   --color-stage: #000000;
-  --color-screen: #ffffff;
   --color-screen-border: #262626;
-
   --spacing-device-w: 393px;
   --spacing-device-h: 852px;
-  --radius-device: 55px;
+  --radius-screen: 32px;
 
-  --font-sans: var(--font-inter);
+  /* Figma alias tokens */
+  --color-brand-primary: #000000; /* alias-color/bg/brand/primary */
+  --color-page-light: #ffffff; /* alias-color/bg/neutral/page/light */
+  --color-on-accent: #ffffff; /* alias-color/text/accent/on-accent-primary */
+  --color-text-primary: #1a1a1a; /* alias-color/text/neutral/primary */
+  --radius-rounded: 960px; /* alias-size/radius/rounded */
+
+  /* Key gradient (Non-tier + Inspire) */
+  --color-key-from: #ff4d12;
+  --color-key-to: #ffff6f;
+  --color-blob-7: #ff6428;
+  --color-blob-6: #ff8841;
+  --color-blob-5: #ffb25c;
+  --color-blob-4: #ffd975;
+  --color-blob-3: #ffef80;
+  --color-blob-2: #fffb7d;
+  --color-blob-1: #ffff6f;
+  --shadow-key-glow:
+    inset 0 0 16px 0 rgb(255 255 255 / 0.32), inset 0 0 24px 0 rgb(255 255 255 / 0.56),
+    inset 0 0 56px 0 rgb(255 255 255 / 0.56), inset 0 0 96px 0 rgb(255 255 255 / 0.56);
+
+  /* Type */
+  --font-sans: var(--font-jakarta);
+  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
