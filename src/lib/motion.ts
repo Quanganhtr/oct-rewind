@@ -15,3 +15,5 @@ export const centerTemplate = (_: unknown, generated: string) =>
   `translateX(-50%) translateY(-50%) ${generated}`;
 
 export const easeOutExpo = [0.16, 1, 0.3, 1] as const;
+
+export const easeInOutCubic = [0.65, 0, 0.35, 1] as const;
