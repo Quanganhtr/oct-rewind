@@ -11,30 +11,29 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { asset } from "@/lib/asset";
-import { easeInOutCubic, easeOutExpo } from "@/lib/motion";
+import { easeInOutCubic, easeInOutSine } from "@/lib/motion";
 import { USER_NAME } from "@/data/rewind";
 import { KeyGradient } from "./KeyGradient";
 import { TopNavigation } from "./TopNavigation";
 
 interface IntroScreenProps {
-  /** Figma "Loading" → "Start": same layout, the year mark grows and the key rises into view. */
+  /** Figma "Loading" → "Start": same layout, the year mark glides up and the key rises into view. */
   phase: "loading" | "start";
+  /** Fires once the loading bar has filled. */
+  onLoaded: () => void;
   onStart: () => void;
   onClose: () => void;
 }
 
+const LOADING_DURATION = 2.2;
+const SETTLE_DURATION = 1.4;
 const DOME_EXIT_DURATION = 1.2;
 
-const fade = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-};
-
-export function IntroScreen({ phase, onStart, onClose }: IntroScreenProps) {
+export function IntroScreen({ phase, onLoaded, onStart, onClose }: IntroScreenProps) {
   const reduceMotion = useReducedMotion();
   const isLoading = phase === "loading";
-  const layoutTransition = { duration: reduceMotion ? 0 : 0.9, ease: easeOutExpo };
+  // Loading → Start: one long, soft ease shared by everything that moves
+  const settle = { duration: reduceMotion ? 0 : SETTLE_DURATION, ease: easeInOutSine };
 
   // Tapping "Bắt đầu" slides the dome up and off-screen; the page whitens in step with it.
   const domeRef = useRef<HTMLDivElement>(null);
@@ -69,46 +68,46 @@ export function IntroScreen({ phase, onStart, onClose }: IntroScreenProps) {
 
       <div
         className={cn(
-          "relative flex w-full shrink-0 flex-col items-center px-4 pt-6 pb-14",
-          isLoading ? "h-[754px] justify-center gap-4" : "gap-6",
+          "relative flex w-full shrink-0 flex-col items-center gap-6 px-4 pt-6 pb-14",
+          isLoading && "h-[754px] justify-center",
         )}
       >
-        <AnimatePresence mode="popLayout" initial={false}>
-          {isLoading && (
-            <motion.p
-              key="eyebrow"
-              layout="position"
-              {...fade}
-              transition={layoutTransition}
-              className="text-2xl leading-8 font-light whitespace-nowrap text-on-accent"
+        {/* "2026" — identical artwork on both screens (Start's export only adds side padding) */}
+        <motion.img
+          layout="position"
+          transition={settle}
+          alt="2026"
+          src={asset("/rewind/year-2026.svg")}
+          className="block h-[92.74px] w-[308.782px] max-w-none shrink-0"
+        />
+
+        <AnimatePresence mode="popLayout">
+          {isLoading ? (
+            <motion.div
+              key="progress"
+              exit={{ opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.3 }}
+              className="w-[124px] shrink-0 rounded-[999px] bg-on-accent/30 p-0.5"
+              role="progressbar"
+              aria-label="Đang tải"
             >
-              Nhìn lại
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-        {/* "2026" year mark — Figma exports one render per size; the box scales between them */}
-        <motion.div
-          layout
-          transition={layoutTransition}
-          className={cn("relative shrink-0", isLoading ? "h-[50.039px] w-[171.5px]" : "h-[90.74px] w-[311px]")}
-        >
-          <div className="absolute inset-[-15.99%_-4.66%_-15.99%_-3.95%]">
-            <img
-              alt="2026"
-              src={asset(isLoading ? "/rewind/union-loading.svg" : "/rewind/union.svg")}
-              className="block size-full max-w-none"
-            />
-          </div>
-        </motion.div>
-
-        <AnimatePresence initial={false}>
-          {!isLoading && (
+              <div className="h-2 w-full overflow-clip rounded-[999px]">
+                <motion.div
+                  className="size-full rounded-[999px] bg-on-accent"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "0%" }}
+                  transition={{ duration: reduceMotion ? 0.6 : LOADING_DURATION, ease: easeInOutSine }}
+                  onAnimationComplete={onLoaded}
+                />
+              </div>
+            </motion.div>
+          ) : (
             <motion.div
               key="greeting"
               layout="position"
-              {...fade}
-              transition={{ ...layoutTransition, delay: reduceMotion ? 0 : 0.3 }}
+              initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...settle, delay: reduceMotion ? 0 : 0.5 }}
               className="flex w-full flex-col items-center gap-2 text-2xl leading-8 font-light whitespace-nowrap text-on-accent"
             >
               <p>{USER_NAME} ơi!</p>
@@ -121,7 +120,7 @@ export function IntroScreen({ phase, onStart, onClose }: IntroScreenProps) {
       <motion.div
         ref={domeRef}
         layout="position"
-        transition={layoutTransition}
+        transition={settle}
         className="relative h-[1000px] w-full shrink-0"
       >
         <motion.div style={{ y: domeY }}>

@@ -8,7 +8,6 @@ import { IntroScreen } from "./IntroScreen";
 
 type Screen = { name: "loading" } | { name: "start" } | { name: "chat"; step: number };
 
-const LOADING_MS = 2400;
 const CHAT_STEP_MS = 2800;
 
 const LAST_STEP = INTRO_STEPS.length - 1;
@@ -33,12 +32,8 @@ export function RewindFlow() {
     setRun((r) => r + 1);
   };
 
-  // Loading hands off to Start on its own; chat lines auto-advance (tap skips ahead).
+  // Chat lines auto-advance (tap skips ahead). Loading hands off when its bar fills.
   useEffect(() => {
-    if (screen.name === "loading") {
-      const t = setTimeout(() => setScreen({ name: "start" }), LOADING_MS);
-      return () => clearTimeout(t);
-    }
     if (screen.name === "chat" && screen.step < LAST_STEP) {
       const t = setTimeout(() => setScreen(nextChatStep), CHAT_STEP_MS);
       return () => clearTimeout(t);
@@ -54,6 +49,7 @@ export function RewindFlow() {
         <motion.div key={`intro-${run}`} className="absolute inset-0" {...screenFade}>
           <IntroScreen
             phase={screen.name === "loading" ? "loading" : "start"}
+            onLoaded={() => setScreen((s) => (s.name === "loading" ? { name: "start" } : s))}
             onStart={() => setScreen({ name: "chat", step: 0 })}
             onClose={restart}
           />
