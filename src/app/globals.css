@@ -1,35 +1,86 @@
 @import "tailwindcss";
 
-@theme inline {
+/* Emitted as real CSS variables so Motion can animate between them (e.g. word color) */
+@theme {
   /* Stage + device frame */
   --color-stage: #000000;
   --color-screen-border: #262626;
   --spacing-device-w: 393px;
   --spacing-device-h: 852px;
-  --radius-screen: 32px;
+  --radius-screen: 64px;
 
   /* Figma alias tokens */
   --color-brand-primary: #000000; /* alias-color/bg/brand/primary */
   --color-page-light: #ffffff; /* alias-color/bg/neutral/page/light */
+  --color-cream: #ffeedd; /* screen background (Start + chat) */
   --color-on-accent: #ffffff; /* alias-color/text/accent/on-accent-primary */
   --color-text-primary: #1a1a1a; /* alias-color/text/neutral/primary */
   --radius-rounded: 960px; /* alias-size/radius/rounded */
+  --radius-card: 24px; /* alias-size/radius/lg */
+  --color-glass: rgb(255 238 221 / 0.55); /* frosted cream card */
+  --color-stroke: #303030; /* card outline; used with opacity modifiers */
+  --color-divider: rgb(48 48 48 / 0.1); /* alias-color/separator/neutral/divider */
+  --color-radio: #fff2e7; /* radio button fill */
 
-  /* Key gradient (Non-tier + Inspire) */
-  --color-key-from: #ff4d12;
-  --color-key-to: #ffff6f;
-  --color-blob-7: #ff6428;
-  --color-blob-6: #ff8841;
-  --color-blob-5: #ffb25c;
-  --color-blob-4: #ffd975;
-  --color-blob-3: #ffef80;
-  --color-blob-2: #fffb7d;
-  --color-blob-1: #ffff6f;
+  /* Spending card foreground (bottom → top) */
+  --color-spend-1: #fea464;
+  --color-spend-2: #cf2118;
+  --color-spend-3: #5c1111;
+  --color-spend-4: #1c0101;
+
+  /* "Thời trang" card foreground (top → bottom) */
+  --color-fashion-1: #451604;
+  --color-fashion-2: #b23305;
+  --color-fashion-3: #f38105;
+  --color-fashion-4: #fbbb32;
+  --color-fashion-5: #fad7bb;
+
+  /* Year-over-year card foreground (bottom → top) */
+  --color-compare-1: #00141d;
+  --color-compare-2: #25564b;
+  --color-compare-3: #2ca387;
+  --color-compare-4: #ffcdaa;
+
+  /* "64 nơi" brands card foreground (top → bottom) */
+  --color-brands-1: #03133e;
+  --color-brands-2: #093483;
+  --color-brands-3: #1c59e5;
+  --color-brands-4: #56d4f4;
+  --color-brands-5: #f1eed7;
+
+  /* Supermarket card foreground (top → bottom) */
+  --color-market-1: #051a3a;
+  --color-market-2: #1d0b7e;
+  --color-market-3: #7915b2;
+  --color-market-4: #ab59e9;
+  --color-market-5: #fcc8c9;
+
+  --color-frost: rgb(255 255 255 / 0.35); /* alias-color/bg/alpha/bg-blur/md — pills on cards */
+
+  /* Key gradient (dome) */
+  --color-key-from: #b81f14;
+  --color-key-to: #ffb165;
   --shadow-key-glow:
     inset 0 0 16px 0 rgb(255 255 255 / 0.32), inset 0 0 24px 0 rgb(255 255 255 / 0.56),
-    inset 0 0 56px 0 rgb(255 255 255 / 0.56), inset 0 0 96px 0 rgb(255 255 255 / 0.56);
+    inset 0 0 56px 0 rgb(255 178 102 / 0.56), inset 0 0 96px 0 rgb(255 178 102 / 0.56);
 
-  /* Type */
+  /* Orb ("Gradient") layers, lightest → darkest. The dome orb runs light→dark centre→edge;
+     the chat orb runs the other way. */
+  --color-ember-1: #ffb165;
+  --color-ember-2: #f39958;
+  --color-ember-3: #e7804a;
+  --color-ember-4: #dc683d;
+  --color-ember-5: #d0502f;
+  --color-ember-6: #c43722;
+  --color-ember-7: #b81f14;
+
+  /* Typing glow on new words: peach → red, then the text color */
+  --color-glow-1: #ffb165;
+  --color-glow-2: #c43722;
+}
+
+/* Inline: these point at next/font variables set on <html> */
+@theme inline {
   --font-sans: var(--font-jakarta);
   --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);

@@ -44,11 +44,17 @@ const STAR_FIELDS = [
 
 const STAR_OPACITY = [1, 1, 0, 0, 1, 1];
 
-export function DroppingStars() {
+/** Defaults to the dome's 440px column; the Loading screen passes its own 390px frame. */
+export function DroppingStars({ className }: { className?: string }) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="pointer-events-none absolute top-0 left-1/2 h-[952.747px] w-[440px] -translate-x-1/2 overflow-clip">
+    <div
+      className={cn(
+        "pointer-events-none absolute top-0 left-1/2 h-[952.747px] w-[440px] -translate-x-1/2 overflow-clip",
+        className,
+      )}
+    >
       {STAR_FIELDS.map((field, i) => (
         <motion.img
           key={field.box}

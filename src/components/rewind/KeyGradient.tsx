@@ -25,7 +25,7 @@ export function KeyGradient({ label, onPress, className }: KeyGradientProps) {
       <div className="pointer-events-none absolute inset-0 rounded-rounded bg-linear-to-b from-key-from from-50% to-key-to" />
 
       <div className="relative flex min-w-px flex-1 items-center gap-2.5">
-        <BlobGradient className="aspect-square min-w-px flex-1" />
+        <BlobGradient variant="dome" className="aspect-square min-w-px flex-1" />
         <TrackDots />
         <button
           type="button"
