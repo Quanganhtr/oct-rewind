@@ -465,7 +465,7 @@ function TurnSheet({ next, onAnswer }: { next: ThreadTurn["next"]; onAnswer: (an
       <PromptPanel prompt={next.prompt} action={next.action} typed={next.typed} onAction={() => onAnswer(next.prompt)} />
     );
   }
-  return <TopicMenu prompt={next.prompt} topics={next.topics} tile="white" onSelect={onAnswer} />;
+  return <TopicMenu prompt={next.prompt} topics={next.topics} onSelect={onAnswer} />;
 }
 
 /** The line Tech Tech types in the chat before the sheet, if this turn has one. */

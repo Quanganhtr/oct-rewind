@@ -26,7 +26,13 @@ import {
   SCROLL_DURATION,
   TOP_INSET,
 } from "@/components/rewind/ChatScreen";
-import { DOME_EXIT_DURATION, LOADING_DURATION, LOADING_FADE, SETTLE_DURATION } from "@/components/rewind/IntroScreen";
+import {
+  DOME_EXIT_DURATION,
+  LOADING_DURATION,
+  LOADING_FADE,
+  SETTLE_DURATION,
+  START_CONTENT_EXIT,
+} from "@/components/rewind/IntroScreen";
 import { BLEND_IN, BLEND_OUT } from "@/components/rewind/BlobGradient";
 import { COUNT_DELAY, COUNT_DURATION } from "@/components/rewind/CountUp";
 import { SCREEN_FADE } from "@/components/rewind/RewindFlow";
@@ -465,6 +471,7 @@ export const SLIDES: DeckSlide[] = [
       const D = DOME_EXIT_DURATION;
       const beats: Beat[] = [
         { label: "Dome slides up and out", at: 0, dur: D, kind: "move" },
+        { label: "2026 + greeting vanish", at: 0.49, dur: START_CONTENT_EXIT, kind: "exit", note: "dome-linked" },
         { label: "Chat orb rises from below", at: 0.69, dur: D - 0.69, kind: "enter", note: "dome-linked" },
         { label: "Chat screen fades in", at: D, dur: SCREEN_FADE, kind: "enter" },
         { label: "Orb swells to 1.25", at: D, dur: ORB_GROW, kind: "move" },
@@ -483,6 +490,10 @@ export const SLIDES: DeckSlide[] = [
               <>
                 Dome: moves up until its <b>bottom edge passes the top</b> of the screen. <V>{sec(D)}</V>, ease in-out
                 cubic.
+              </>,
+              <>
+                2026 mark + greeting: vanish (<V>{sec(START_CONTENT_EXIT)}</V> fade) the moment the dome’s{" "}
+                <b>top edge reaches the top</b> of the screen.
               </>,
               <>
                 Orb: starts rising when the dome’s bottom edge reaches <b>mid-screen</b>, and lands as the dome clears.
@@ -738,7 +749,7 @@ export const SLIDES: DeckSlide[] = [
           rows={[
             [
               "Topic list",
-              <>Diamond tile + label + arrow. Tile is cream in the first menu, white in “Kể mình nghe tiếp”.</>,
+              <>Topic icon (24px on a cream #FFEEDD 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart.</>,
             ],
             [
               "Answers",

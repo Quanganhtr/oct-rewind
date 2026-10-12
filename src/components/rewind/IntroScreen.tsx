@@ -6,6 +6,7 @@ import {
   AnimatePresence,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useReducedMotion,
   useTransform,
 } from "framer-motion";
@@ -36,6 +37,8 @@ export const SETTLE_DURATION = 1.4;
 export const DOME_EXIT_DURATION = 1.2;
 /** "Nhìn lại" and the progress bar fade out as Start takes over. */
 export const LOADING_FADE = 0.3;
+/** The 2026 mark and greeting vanish this fast once the dome's top reaches the top of the screen. */
+export const START_CONTENT_EXIT = 0.15;
 
 /** Word offset where each greeting line starts, so line 2 picks up right after line 1. */
 const greetingLineStarts = START_GREETING.map((_, i) =>
@@ -51,14 +54,19 @@ export function IntroScreen({ phase, onLoaded, onStart, onClose }: IntroScreenPr
   const [openedOnStart] = useState(phase === "start");
   const greetingDelay = reduceMotion || openedOnStart ? 0 : SETTLE_DURATION;
 
-  // Tapping "Bắt đầu" slides the dome up and off-screen. Once its bottom edge reaches mid-screen,
-  // the chat orb rises from below, landing as the dome clears the top.
+  // Tapping "Bắt đầu" slides the dome up and off-screen. The 2026 mark and greeting vanish as the
+  // dome's top edge reaches the top of the screen. Once its bottom edge reaches mid-screen, the chat
+  // orb rises from below, landing as the dome clears the top.
   const screenRef = useRef<HTMLDivElement>(null);
   const domeRef = useRef<HTMLDivElement>(null);
   const domeY = useMotionValue(0);
-  const [exit, setExit] = useState({ distance: 1, orbStart: 0.5 });
+  const [exit, setExit] = useState({ distance: 1, orbStart: 0.5, topAt: 0.5 });
   const [isLeaving, setIsLeaving] = useState(false);
+  const [contentGone, setContentGone] = useState(false);
   const orbY = useTransform(domeY, [-exit.orbStart, -exit.distance], [ORB_HIDDEN_Y, 0]);
+  useMotionValueEvent(domeY, "change", (y) => {
+    if (isLeaving && !contentGone && y <= -exit.topAt) setContentGone(true);
+  });
 
   const handleStart = async () => {
     const dome = domeRef.current;
@@ -66,7 +74,7 @@ export function IntroScreen({ phase, onLoaded, onStart, onClose }: IntroScreenPr
     if (!dome || !screen || isLeaving) return;
     // Fully out once its bottom edge passes the top of the screen
     const distance = dome.offsetTop + dome.offsetHeight;
-    setExit({ distance, orbStart: distance - screen.clientHeight / 2 });
+    setExit({ distance, orbStart: distance - screen.clientHeight / 2, topAt: dome.offsetTop });
     setIsLeaving(true);
     await animate(domeY, -distance, {
       duration: reduceMotion ? 0 : DOME_EXIT_DURATION,
@@ -111,11 +119,13 @@ export function IntroScreen({ phase, onLoaded, onStart, onClose }: IntroScreenPr
         <TopNavigation tone="light" onClose={onClose} />
       </motion.div>
 
-      <div
+      <motion.div
         className={cn(
           "relative flex w-full shrink-0 flex-col items-center gap-6 px-4 pt-6 pb-14",
           isLoading && "h-[754px] justify-center",
         )}
+        animate={{ opacity: contentGone ? 0 : 1 }}
+        transition={{ duration: reduceMotion ? 0 : START_CONTENT_EXIT }}
       >
         <AnimatePresence mode="popLayout">
           {isLoading && (
@@ -190,14 +200,9 @@ export function IntroScreen({ phase, onLoaded, onStart, onClose }: IntroScreenPr
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
-      <motion.div
-        ref={domeRef}
-        layout="position"
-        transition={settle}
-        className="relative h-[1000px] w-full shrink-0"
-      >
+      <motion.div ref={domeRef} layout="position" transition={settle} className="relative h-[1000px] w-full shrink-0">
         <motion.div style={{ y: domeY }}>
           <KeyGradient
             label={isLoading ? "Đang tải" : "Bắt đầu"}
