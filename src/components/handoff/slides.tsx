@@ -246,7 +246,7 @@ export const SLIDES: DeckSlide[] = [
       <Slide
         eyebrow="Part 1 · Intro"
         title="Loading screen"
-        lead="No tap needed. The bar fills, then the screen settles into Start on its own."
+        lead="No tap needed. The bar shows real loading progress; when loading finishes, the screen settles into Start on its own."
         aside={<IntroDemo />}
       >
         <Specs
@@ -278,13 +278,14 @@ export const SLIDES: DeckSlide[] = [
             [
               "Progress fill",
               <>
-                <V>2px</V> tall · cream · slides <V>translateX −100% → 0</V>
+                <V>2px</V> tall · cream · fill width follows real loading progress, <V>0 → 100%</V>
               </>,
             ],
             [
-              "Fill timing",
+              "Duration",
               <>
-                <V>{sec(LOADING_DURATION)}</V> · ease in-out sine
+                Unknown: depends on real loading. The prototype fakes it with <V>{sec(LOADING_DURATION)}</V>, which is
+                not a spec.
               </>,
             ],
             [
@@ -301,7 +302,10 @@ export const SLIDES: DeckSlide[] = [
             ],
           ]}
         />
-        <Callout>When the fill reaches 100%, go straight to Start. The bar is the only timer on this screen.</Callout>
+        <Callout>
+          When loading reaches 100%, go straight to Start. Everything on the next slide is timed from that moment,
+          however long loading took.
+        </Callout>
       </Slide>
     ),
   },
@@ -358,10 +362,10 @@ export const SLIDES: DeckSlide[] = [
     part: 1,
     title: "Loading → Start",
     render: () => {
-      const L = LOADING_DURATION;
+      // t = 0 is the moment loading completes (its real duration varies)
+      const L = 0;
       const S = SETTLE_DURATION;
       const beats: Beat[] = [
-        { label: "Progress bar fills", at: 0, dur: L, kind: "move" },
         { label: "“Nhìn lại” + bar fade out", at: L, dur: LOADING_FADE, kind: "exit" },
         { label: "Background black → cream", at: L, dur: S, kind: "enter" },
         { label: "2026 grows + glides up", at: L, dur: S, kind: "move" },
@@ -378,8 +382,8 @@ export const SLIDES: DeckSlide[] = [
           title="Loading → Start: one settle, everything together"
           lead={
             <>
-              Everything moves on <b>one</b> transition: <V>{sec(S)}</V>, ease in-out sine, starting the moment the bar
-              fills. Nothing is staggered, and that is what keeps it calm.
+              Everything that moves shares <b>one</b> transition: <V>{sec(S)}</V>, ease in-out sine. <b>0s</b> is the
+              moment loading completes, however long that takes. Nothing is staggered, and that keeps it calm.
             </>
           }
         >
@@ -530,8 +534,9 @@ export const SLIDES: DeckSlide[] = [
             [
               "Pace",
               <>
-                Word <V>n</V> starts at <V>delay + n × interval</V>. Interval <V>{sec(WORD_INTERVAL)}</V> for 24px
-                lines, <V>{sec(THREAD_WORD_INTERVAL)}</V> for 14px chat text.
+                A new word appears every <V>{sec(WORD_INTERVAL)}</V> (24px lines) or every{" "}
+                <V>{sec(THREAD_WORD_INTERVAL)}</V> (14px chat text). At {sec(WORD_INTERVAL)}: word 1 at <V>0s</V>, word
+                2 at <V>{sec(WORD_INTERVAL)}</V>, word 3 at <V>{sec(WORD_INTERVAL * 2)}</V>…
               </>,
             ],
             [
@@ -682,10 +687,6 @@ export const SLIDES: DeckSlide[] = [
                 <b>Show</b> the sheet only after the <b>last word</b> of Tech Tech’s message has fully appeared.
               </>,
               <>
-                Warm-up: that is the moment “nào?” lands. In a topic: after the question line, or after the reply and
-                card when there is no question.
-              </>,
-              <>
                 <b>Enter:</b> slide up from <V>y 100% → 0</V>, <V>{sec(FINALE_DURATION)}</V>, ease out quint.
               </>,
               <>
@@ -749,7 +750,9 @@ export const SLIDES: DeckSlide[] = [
           rows={[
             [
               "Topic list",
-              <>Topic icon (24px on a cream #FFEEDD 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart.</>,
+              <>
+                Topic icon (24px on a cream #FFEEDD 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart.
+              </>,
             ],
             [
               "Answers",
@@ -1271,7 +1274,7 @@ export const SLIDES: DeckSlide[] = [
           <Specs
             labelWidth="w-[150px]"
             rows={[
-              ["Loading bar", sec(LOADING_DURATION)],
+              ["Loading bar", "real progress"],
               ["Loading → Start", sec(SETTLE_DURATION)],
               ["Dome exit", sec(DOME_EXIT_DURATION)],
               ["Screen crossfade", sec(SCREEN_FADE)],
