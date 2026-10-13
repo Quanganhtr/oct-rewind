@@ -9,11 +9,12 @@ interface TopicMenuProps {
   onSelect?: (topic: string) => void;
 }
 
-/** Figma Step 4 topic icons: bag, wallet, chat-heart. */
+/** Figma Step 4 topic icons: bag, wallet, chat-heart, briefcase. */
 const TOPIC_ICONS: Record<string, string> = {
   [TOPICS[0]]: "/rewind/topic-spending.svg",
   [TOPICS[1]]: "/rewind/topic-money.svg",
   [TOPICS[2]]: "/rewind/topic-love.svg",
+  [TOPICS[3]]: "/rewind/topic-livelihood.svg",
 };
 
 /** Figma Step 4 "Bottom": the topics Tech Tech can talk about. */
@@ -30,9 +31,7 @@ export function TopicMenu({ prompt = TOPICS_PROMPT, topics = TOPICS, onSelect }:
                 <span className="flex items-center justify-center overflow-clip rounded-lg bg-cream p-1">
                   <img alt="" src={asset(TOPIC_ICONS[topic])} className="block size-6" />
                 </span>
-                <span className="text-sm leading-5 font-semibold whitespace-nowrap text-text-primary">
-                  {topic}
-                </span>
+                <span className="text-sm leading-5 font-semibold whitespace-nowrap text-text-primary">{topic}</span>
               </span>
               <img alt="" src={asset("/rewind/arrow-right.svg")} className="block size-6" />
             </SheetRow>

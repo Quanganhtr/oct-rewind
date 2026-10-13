@@ -1,13 +1,13 @@
 export const USER_NAME = "Quang";
 
 /** Figma "Start": greeting under the 2026 mark. */
-export const START_GREETING = ["Chuyện trò chút nhé", `${USER_NAME} ơi`];
+export const START_GREETING = [`${USER_NAME} ơi,`, "cùng trò chuyện đôi lời"];
 
 /** Tech Tech's intro lines (Figma "Step 1–3"); step n shows the first n + 1 lines. */
 export const INTRO_LINES = [
   "Ơ, tới rùi hỏ.\nTech Tech đợi nãy giờ 👀",
-  `Cảm ơn ${USER_NAME} vì nguyên 2026 đi đâu cũng mang mình theo. Mình thay ${USER_NAME} ghi nhớ kha khá chuyện á.`,
-  `Giờ mình kể ${USER_NAME} nghe nhé. Muốn chuyện gì trước nào?`,
+  `Cảm ơn ${USER_NAME} vì 2026 đi đâu cũng mang mình theo.`,
+  `Kỷ niệm 2026 này, mình kể ${USER_NAME} nghe nhé. Thích chuyện gì trước nào?`,
 ];
 
 /** Opacity by line age: newest, previous, older. */
@@ -15,7 +15,7 @@ export const LINE_OPACITY = [1, 0.3, 0.1];
 
 /** Figma "Step 4": topics offered once the intro finishes. */
 export const TOPICS_PROMPT = "Kể mình nghe";
-export const TOPICS = ["Chuyện tiêu xài", "Chuyện tiền tài", "Chuyện thương ai"];
+export const TOPICS = ["Chuyện tiêu xài", "Chuyện tiền tài", "Chuyện thương ai", "Chuyện sinh nhai"];
 
 /** Figma "Step 5": the spending thread, opened by the first topic. */
 export const SPENDING = {
@@ -39,7 +39,7 @@ export const FASHION_CARD = {
 
 /** Figma "Step 8": year-over-year spending card. */
 export const COMPARE_CARD = {
-  label: "Năm ngoái bạn chi nhiều hơn",
+  label: "2026, bạn chi ít hơn",
   amount: "VND 12,300,000",
   note: "so với 2025",
 };
@@ -48,7 +48,7 @@ export const COMPARE_CARD = {
 export const BRANDS_CARD = {
   label: `${USER_NAME} ghé`,
   title: "64 nơi khác nhau",
-  top: ["Top 1: Siêu thị", "Top 2: Pizza 4P's", "Top 3: Cà phơ Hồ Điệp"],
+  top: ["Top 1: Winmart", "Top 2: Pizza 4P's", "Top 3: Cà phơ Hồ Điệp"],
 };
 
 /** Figma "Step 14": the closing summary. */
@@ -61,7 +61,7 @@ export const SUMMARY_CARD = {
 /** Figma "Step 10": supermarket habit. */
 export const SUPERMARKET_CARD = {
   stats: [
-    { value: "28 ngày", label: "Đi siêu thị" },
+    { value: "28 ngày", label: "Đi Winmart" },
     { value: "12.4Tr", label: "Tổng chi" },
   ],
 };
@@ -112,7 +112,7 @@ export const THREAD: ThreadTurn[] = [
   {
     trigger: "Nhiều hơn chứ",
     userMessage: "Nhiều hơn chứ",
-    reply: "Nể mỗi bạn, vẫn cứ là tất tay thôiii.",
+    reply: "Bất ngờ chưa. Mình cũng hơi bất ngờ.",
     card: "compare",
     next: { kind: "prompt", prompt: "Năm nay mình ghé bao nhiêu brand bạn biết không?", action: "Gửi" },
   },
@@ -121,30 +121,36 @@ export const THREAD: ThreadTurn[] = [
     userMessage: "Năm nay mình ghé bao nhiêu brand bạn biết không?",
     reply: `Tất nhiên rồi. Đọc ${USER_NAME} như đọc 1 cuốn sách.`,
     card: "brands",
-    next: { kind: "prompt", prompt: "Bạn biết mình tiêu bao nhiêu tiền cho siêu thị không?", action: "Gửi" },
+    next: { kind: "prompt", prompt: "Sốc! Mình chi bao nhiêu cho Winmart vậy???", action: "Gửi" },
   },
   {
-    trigger: "Bạn biết mình tiêu bao nhiêu tiền cho siêu thị không?",
-    userMessage: "Bạn biết mình tiêu bao nhiêu tiền cho siêu thị không?",
-    reply: "Một năm có 365 ngày thì bạn dành 28 ngày để đi siêu thị",
+    trigger: "Sốc! Mình chi bao nhiêu cho Winmart vậy???",
+    userMessage: "Sốc! Mình chi bao nhiêu cho Winmart vậy???",
+    reply: `Một năm có 365 ngày thì 28 ngày ${USER_NAME} dành để đi Winmart`,
     card: "supermarket",
     next: {
       kind: "topics",
       question: "Một năm có nhịp đấy chứ.\nBạn muốn nghe tiếp chuyện nào nè?",
       prompt: "Kể mình nghe tiếp",
-      topics: [TOPICS[1], TOPICS[2]],
+      topics: [TOPICS[1], TOPICS[2], TOPICS[3]],
     },
   },
-  // Figma "Step 12–14": the other two topics are placeholders for now, then the summary
+  // Figma "Step 12–14": the other topics are placeholders for now, then the summary
   {
     trigger: TOPICS[1],
     userMessage: "Kể mình nghe chuyện tiền tài đi",
     reply: SAME_FLOW,
-    next: { kind: "topics", prompt: "Kể mình nghe tiếp", topics: [TOPICS[2]] },
+    next: { kind: "topics", prompt: "Kể mình nghe tiếp", topics: [TOPICS[2], TOPICS[3]] },
   },
   {
     trigger: TOPICS[2],
     userMessage: "Kể mình nghe chuyện thương ai đi",
+    reply: SAME_FLOW,
+    next: { kind: "topics", prompt: "Kể mình nghe tiếp", topics: [TOPICS[3]] },
+  },
+  {
+    trigger: TOPICS[3],
+    userMessage: "Kể mình nghe chuyện sinh nhai đi",
     reply: SAME_FLOW,
     next: { kind: "prompt", prompt: "Tổng kết lại cho mình nha", action: "Gửi", typed: true },
   },

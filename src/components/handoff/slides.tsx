@@ -104,8 +104,11 @@ const dimSpan = (i: number) => {
 const first = turnBeats(THREAD[0], true);
 const second = turnBeats(THREAD[1], false);
 const promptTurn = turnBeats(THREAD[2], false);
-const closingTurn = turnBeats(THREAD[6], false);
-const summaryTurn = turnBeats(THREAD[7], false);
+/** The last placeholder topic (it offers the summary), then the summary itself. */
+const CLOSING = THREAD.length - 2;
+const SUMMARY = THREAD.length - 1;
+const closingTurn = turnBeats(THREAD[CLOSING], false);
+const summaryTurn = turnBeats(THREAD[SUMMARY], false);
 const PROMPT_TYPE_DELAY = 0.5;
 
 const ceilTo = (n: number, step = 0.5) => Math.ceil(n / step) * step;
@@ -424,7 +427,7 @@ export const SLIDES: DeckSlide[] = [
         title="Start greeting types in after the 2026 lands"
         lead={
           <>
-            “Chuyện trò chút nhé / Quang ơi” uses the same word-by-word typing as the chat (full rule in Part 2). It
+            “Quang ơi, / cùng trò chuyện đôi lời” uses the same word-by-word typing as the chat (full rule in Part 2). It
             waits for the settle to finish (<V>{sec(SETTLE_DURATION)}</V>).
           </>
         }
@@ -611,7 +614,7 @@ export const SLIDES: DeckSlide[] = [
                 <V>{LINE_OPACITY[2] * 100}%</V>.
               </>,
               <>
-                The last line (“Giờ mình kể Quang nghe nhé…”) <b>never dims</b>.
+                The last line (“Kỷ niệm 2026 này, mình kể Quang nghe nhé…”) <b>never dims</b>.
               </>,
               <>
                 Lines: 24/32 Medium black, 16px apart, starting <V>{TOP_INSET}px</V> from the top (98px bar + 16).
@@ -751,7 +754,7 @@ export const SLIDES: DeckSlide[] = [
             [
               "Topic list",
               <>
-                Topic icon (24px on a cream #FFEEDD 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart.
+                Topic icon (24px on a cream #FFEEDD 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart · briefcase.
               </>,
             ],
             [
@@ -1134,7 +1137,8 @@ export const SLIDES: DeckSlide[] = [
     title: "The summary prompt",
     render: () => {
       const t = closingTurn;
-      const prompt = THREAD[6].next.kind === "prompt" ? THREAD[6].next.prompt : "";
+      const closing = THREAD[CLOSING].next;
+      const prompt = closing.kind === "prompt" ? closing.prompt : "";
       const beats: Beat[] = [
         { label: "User bubble enters", at: t.bubbleAt, dur: BUBBLE_ENTER, kind: "enter" },
         { label: "Reply types", at: t.replyAt, dur: t.replyDur, kind: "type" },
@@ -1147,7 +1151,7 @@ export const SLIDES: DeckSlide[] = [
           title="After the last topic, the sheet suggests the summary"
           lead={
             <>
-              Once all three topics are done, the sheet doesn’t offer more topics. It types <b>“{prompt}”</b> into
+              Once all four topics are done, the sheet doesn’t offer more topics. It types <b>“{prompt}”</b> into
               itself, with the “Gửi” button.
             </>
           }
@@ -1165,8 +1169,8 @@ export const SLIDES: DeckSlide[] = [
             ]}
           />
           <Callout tone="warn">
-            Topics 2 and 3 (“Chuyện tiền tài”, “Chuyện thương ai”) are placeholders (“Same chat flow”). They follow
-            exactly the Part 3 rules once designed.
+            Topics 2–4 (“Chuyện tiền tài”, “Chuyện thương ai”, “Chuyện sinh nhai”) are placeholders (“Same chat flow”).
+            They follow exactly the Part 3 rules once designed.
           </Callout>
         </Slide>
       );
@@ -1198,7 +1202,7 @@ export const SLIDES: DeckSlide[] = [
           <Specs
             labelWidth="w-[110px]"
             rows={[
-              ["Reply", <>“{THREAD[7].reply}”</>],
+              ["Reply", <>“{THREAD[SUMMARY].reply}”</>],
               ["Card", <>3:4 · persona title + 3 frosted pills (white 35%) · “Chia sẻ ngay” share button</>],
               [
                 "Counts",
@@ -1324,8 +1328,8 @@ export const SLIDES: DeckSlide[] = [
               Wrong answers: the prototype only wires the designed answer (e.g. “Em út nết na”). What do the other
               answers do?
             </>,
-            <>Topics 2 and 3 have no content yet (“Same chat flow”). Data and cards needed.</>,
-            <>Topic order: can users pick topics in any order? Summary unlocks once all three are visited.</>,
+            <>Topics 2–4 have no content yet (“Same chat flow”). Data and cards needed.</>,
+            <>Topic order: can users pick topics in any order? Summary unlocks once all four are visited.</>,
             <>“Chia sẻ ngay” share: what gets shared (image of the card? link?) and through which sheet?</>,
             <>Sound button and close (×) in the top bar: behaviour in the real app.</>,
             <>Name for Part 2 (“Warm-up” is a working title).</>,
