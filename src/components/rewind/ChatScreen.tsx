@@ -65,7 +65,7 @@ export const ANSWERS_EXIT = 0.5;
 
 /**
  * Where a new message parks while Tech Tech replies: 16px under the 98px top bar. On phones the
- * fake status bar is hidden, so the bar is 48px and this drops to 64 (read from the column's padding).
+ * fake status bar is hidden, so the bar is 56px and this drops to 72 (read from the column's padding).
  */
 export const TOP_INSET = 114;
 /** The chat column's bottom padding (pb-4). */
@@ -340,8 +340,8 @@ export function ChatScreen({
         onTouchStart={takeOver}
         className="relative min-h-px w-full flex-1 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {/* Top padding clears the overlaid header (98px; 48px on phones, no status bar) + Figma's 16px */}
-        <div ref={columnRef} className="relative flex flex-col items-start gap-4 px-4 pt-16 pb-4 sm:pt-[114px]">
+        {/* Top padding clears the overlaid header (98px; 56px on phones, no status bar) + Figma's 16px */}
+        <div ref={columnRef} className="relative flex flex-col items-start gap-4 px-4 pt-[72px] pb-4 sm:pt-[114px]">
           {/* popLayout lifts the leaving intro out of the flow at once, so the thread starts at the top */}
           <AnimatePresence mode="popLayout">
             {!topicPicked && (

@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   basePath,
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
   images: { unoptimized: true },
+  // Dev only: let phones on the same Wi-Fi / hotspot open the dev server by the Mac's IP
+  allowedDevOrigins: ["172.20.10.*", "192.168.*.*", "10.*.*.*"],
 };
 
 export default nextConfig;

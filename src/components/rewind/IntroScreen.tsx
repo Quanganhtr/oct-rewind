@@ -118,7 +118,7 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
           // The top bar floats, so this starts at the very top. Loading: the full screen, content centred
           // under the bar (bar height + 24px). Start: the top half, 2026 + greeting centred; the dome
           // takes the bottom half.
-          isLoading ? "h-full pt-[72px] pb-14 sm:pt-[122px]" : "h-1/2",
+          isLoading ? "h-full pt-20 pb-14 sm:pt-[122px]" : "h-1/2",
         )}
         animate={{ opacity: contentGone ? 0 : 1 }}
         transition={{ duration: reduceMotion ? 0 : START_CONTENT_EXIT }}

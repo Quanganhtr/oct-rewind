@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { animate, AnimatePresence, motion } from "framer-motion";
 import { INTRO_LINES } from "@/data/rewind";
 import { DeviceFrame } from "@/components/DeviceFrame";
 import { cn } from "@/lib/cn";
+import { easeInOutSine } from "@/lib/motion";
 import { preloadImages } from "@/lib/preloadImages";
 import { ChatScreen, type ChatPhase, lineStepMs } from "./ChatScreen";
-import { IntroScreen } from "./IntroScreen";
+import { IntroScreen, SETTLE_DURATION } from "./IntroScreen";
 
 export type Screen =
   | { name: "loading" }
@@ -89,6 +90,22 @@ export function RewindFlow({ initial = { name: "loading" }, controls = true, ima
       return () => clearTimeout(t);
     }
   }, [screen]);
+
+  // Phones: Safari paints its status-bar and toolbar areas with the page background. Keep it matching
+  // the screen (black Loading, cream after) instead of the desktop stage's black, fading with the
+  // Loading → Start settle. Desktop keeps its black stage.
+  const isDark = screen.name === "loading";
+  useEffect(() => {
+    if (!controls || !window.matchMedia("(width < 40rem)").matches) return;
+    const root = getComputedStyle(document.documentElement);
+    const color = root.getPropertyValue(isDark ? "--color-stage" : "--color-cream").trim();
+    const fade = animate(
+      [document.documentElement, document.body],
+      { backgroundColor: color },
+      { duration: isDark ? 0 : SETTLE_DURATION, ease: easeInOutSine },
+    );
+    return () => fade.stop();
+  }, [isDark, controls]);
 
   const isIntro = screen.name !== "chat";
 

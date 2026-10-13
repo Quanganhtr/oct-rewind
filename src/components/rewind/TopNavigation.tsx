@@ -36,8 +36,8 @@ export function TopNavigation({ tone, onClose, className }: TopNavigationProps) 
         </div>
       </div>
 
-      {/* Title Bar */}
-      <div className="flex w-full items-center justify-between">
+      {/* Title Bar: 56px on phones, Figma's 48px in the desktop frame */}
+      <div className="flex h-14 w-full items-center justify-between sm:h-auto">
         <div className="flex items-start px-4 py-2.5">
           <div className="flex items-center justify-center gap-3">
             <img alt="" src={icon("logo")} className="block size-7" />
