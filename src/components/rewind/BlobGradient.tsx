@@ -53,6 +53,11 @@ export const ORB_HIDDEN_Y = 525 / 2 + 2 * 37.5 + 8;
 interface BlobGradientProps {
   variant: "dome" | "chat";
   /**
+   * Seconds to hold still after each full turn (two loops, 360°). The turn then eases in and out
+   * instead of spinning at a constant speed. Unset, it spins continuously.
+   */
+  restBetweenTurns?: number;
+  /**
    * Whether the loop runs. Stopping eases every layer into Figma's resting pose (spin offset 0,
    * scale 1) rather than freezing mid-turn; starting picks the loop up again from rest.
    */
@@ -60,7 +65,26 @@ interface BlobGradientProps {
   className?: string;
 }
 
-export function BlobGradient({ variant, playing = true, className }: BlobGradientProps) {
+/** Two 2s loops make a full 360° turn. */
+const TURN_DURATION = 2 * LOOP_DURATION;
+const easeInOutSine = (x: number) => (1 - Math.cos(Math.PI * x)) / 2;
+
+/**
+ * Loop time the layers are posed at after `t` seconds of play. With a rest, each cycle eases
+ * through one turn and then holds; the hold lands on a whole turn, the resting pose (spin 0, scale 1).
+ */
+function posedAt(t: number, rest?: number) {
+  if (rest === undefined) return t;
+  const cycle = TURN_DURATION + rest;
+  const turns = Math.floor(t / cycle);
+  const progress = Math.min(1, (t - turns * cycle) / TURN_DURATION);
+  return (turns + easeInOutSine(progress)) * TURN_DURATION;
+}
+
+/** Continuous spin (no wrap), so blending toward rest never jumps. */
+const spinAt = (t: number, rest?: number) => (-180 * posedAt(t, rest)) / LOOP_DURATION;
+
+export function BlobGradient({ variant, playing = true, restBetweenTurns, className }: BlobGradientProps) {
   const reduceMotion = useReducedMotion();
   const active = playing && !reduceMotion;
 
@@ -69,11 +93,9 @@ export function BlobGradient({ variant, playing = true, className }: BlobGradien
   const blend = useMotionValue(0);
   /** Angle the spin settles to when stopping: the next half turn ahead (pills look identical there). */
   const restAngle = useRef(0);
-  /** Continuous spin (no wrap), so blending toward rest never jumps. */
-  const spinAt = (t: number) => (-180 * t) / LOOP_DURATION;
 
   useEffect(() => {
-    if (!active) restAngle.current = Math.floor(spinAt(clock.get()) / 180) * 180;
+    if (!active) restAngle.current = Math.floor(spinAt(clock.get(), restBetweenTurns) / 180) * 180;
     const controls = animate(blend, active ? 1 : 0, {
       duration: active ? BLEND_IN : BLEND_OUT,
       ease: "easeInOut",
@@ -85,7 +107,7 @@ export function BlobGradient({ variant, playing = true, className }: BlobGradien
       },
     });
     return () => controls.stop();
-  }, [active, blend, clock]);
+  }, [active, blend, clock, restBetweenTurns]);
 
   useAnimationFrame((_, delta) => {
     if (blend.get() > 0) clock.set(clock.get() + delta / 1000);
@@ -93,11 +115,11 @@ export function BlobGradient({ variant, playing = true, className }: BlobGradien
 
   // Snippet tracks: linear -180° per loop, scale 1 → 1.2 → 1 — blended toward rest by `blend`
   const rotate = useTransform(() => {
-    const spin = spinAt(clock.get());
+    const spin = spinAt(clock.get(), restBetweenTurns);
     return restAngle.current + (spin - restAngle.current) * blend.get();
   });
   const scale = useTransform(() => {
-    const phase = (clock.get() % LOOP_DURATION) / LOOP_DURATION;
+    const phase = (posedAt(clock.get(), restBetweenTurns) % LOOP_DURATION) / LOOP_DURATION;
     const breath = phase < 0.5 ? 1 + 0.4 * phase : 1.4 - 0.4 * phase;
     return 1 + (breath - 1) * blend.get();
   });

@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { asset } from "@/lib/asset";
 import { cn } from "@/lib/cn";
-import { loop } from "@/lib/motion";
+import { LOOP_DURATION } from "@/lib/motion";
 
 /** Figma "Loading": 44 one-pixel dots tracing a pill around the key label. */
 const DOTS = [
@@ -25,18 +25,26 @@ const DOTS = [
 ];
 
 const STEPS = DOTS.length;
-const TIMES = Array.from({ length: STEPS + 1 }, (_, j) => j / STEPS);
 // A dot peaks at 4× on its own step, then decays 3 → 2 → 1 over the next three steps.
 const TRAIL = [4, 3, 2];
+/** One lap, plus the steps the trail needs to die out behind the last dot, so every dot ends at rest. */
+const LAP_STEPS = STEPS + TRAIL.length - 1;
+const TIMES = Array.from({ length: LAP_STEPS + 1 }, (_, j) => j / LAP_STEPS);
+/** Same pace as the Figma loop: one step every 2s / 44. */
+const LAP_DURATION = (LOOP_DURATION * LAP_STEPS) / STEPS;
 
-/** Scale track for dot `k`, sampled on every 1/44 step of the 2s loop (matches the Figma tracks). */
-const scaleTrack = (k: number) =>
-  TIMES.map((_, j) => TRAIL[(((j - k) % STEPS) + STEPS) % STEPS] ?? 1);
+/** Scale track for dot `k`, sampled on every step of the lap (matches the Figma tracks). */
+const scaleTrack = (k: number) => TIMES.map((_, j) => TRAIL[j - k] ?? 1);
 
-const DOT_TRANSITION = loop(TIMES);
+interface TrackDotsProps {
+  /** Seconds until the bright dot runs its single lap. Unset, the dots rest. */
+  lapDelay?: number;
+}
 
-export function TrackDots() {
+/** Runs the lap once rather than looping, so the ring reads as "ready", not "still loading". */
+export function TrackDots({ lapDelay }: TrackDotsProps) {
   const reduceMotion = useReducedMotion();
+  const runs = lapDelay !== undefined && !reduceMotion;
 
   return (
     <div className="absolute top-1/2 left-1/2 h-[92px] w-[152px] -translate-1/2 overflow-clip">
@@ -48,9 +56,9 @@ export function TrackDots() {
             alt=""
             src={asset("/rewind/track-dot.svg")}
             className={cn("absolute block size-px", position)}
-            initial={{ scale: track[0] }}
-            animate={reduceMotion ? undefined : { scale: track }}
-            transition={DOT_TRANSITION}
+            initial={{ scale: 1 }}
+            animate={runs ? { scale: track } : undefined}
+            transition={{ duration: LAP_DURATION, times: TIMES, ease: "linear", delay: lapDelay }}
           />
         );
       })}

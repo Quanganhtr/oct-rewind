@@ -329,23 +329,26 @@ export const SLIDES: DeckSlide[] = [
             [
               "Orb",
               <>
-                7 blurred pills stacked from <V>#B81F14</V> (outside) to <V>#FFB165</V> (centre). Each spins{" "}
-                <V>−180°</V> and breathes scale <V>1 → 1.2 → 1</V> every <V>2s</V>, linear.
+                7 blurred pills stacked from <V>#B81F14</V> (outside) to <V>#FFB165</V> (centre). Each turns a full{" "}
+                <V>−360°</V> over <V>4s</V> (ease in-out), breathing scale <V>1 → 1.2 → 1</V> twice on the way, then
+                holds still <V>5s</V> before the next turn. The chat orb keeps the plain loop (<V>−180°</V> per{" "}
+                <V>2s</V>, linear).
               </>,
             ],
             [
               "Track dots",
               <>
-                44 dots (1px) tracing a pill around the label. A bright dot runs the lap once per <V>2s</V>: scale{" "}
-                <V>4 → 3 → 2 → 1</V> as a trail.
+                44 dots (1px) tracing a pill around the label. Once the key has settled, a bright dot runs{" "}
+                <b>one</b> lap in <V>2s</V> (scale <V>4 → 3 → 2 → 1</V> as a trail), then the ring rests. No loop: a
+                looping ring read as “still loading”.
               </>,
             ],
             [
               "Light sweep",
               <>
                 White bar <V>678 × 96</V>, blur <V>24</V>, tilted <V>−30°</V>, overlay blend. Travels top → bottom over{" "}
-                <V>2.6s</V> ease in-out, repeat. It starts and ends <b>outside</b> the dome, so the restart is never
-                seen.
+                <V>2.6s</V> ease in-out, then rests <V>10s</V> before the next sweep. It starts and ends{" "}
+                <b>outside</b> the dome, so the restart is never seen.
               </>,
             ],
             [
@@ -1169,7 +1172,7 @@ export const SLIDES: DeckSlide[] = [
             ]}
           />
           <Callout tone="warn">
-            Topics 2–4 (“Chuyện tiền tài”, “Chuyện thương ai”, “Chuyện sinh nhai”) are placeholders (“Same chat flow”).
+            Topics 2–4 (“Chuyện tiền tài”, “Chuyện thương ai”, “Chuyện sinh nhai”) are placeholders (“To be updated”).
             They follow exactly the Part 3 rules once designed.
           </Callout>
         </Slide>
@@ -1328,7 +1331,7 @@ export const SLIDES: DeckSlide[] = [
               Wrong answers: the prototype only wires the designed answer (e.g. “Em út nết na”). What do the other
               answers do?
             </>,
-            <>Topics 2–4 have no content yet (“Same chat flow”). Data and cards needed.</>,
+            <>Topics 2–4 have no content yet (“To be updated”). Data and cards needed.</>,
             <>Topic order: can users pick topics in any order? Summary unlocks once all four are visited.</>,
             <>“Chia sẻ ngay” share: what gets shared (image of the card? link?) and through which sheet?</>,
             <>Sound button and close (×) in the top bar: behaviour in the real app.</>,

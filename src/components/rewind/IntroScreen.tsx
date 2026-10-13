@@ -207,6 +207,8 @@ export function IntroScreen({ phase, onLoaded, onStart, onClose }: IntroScreenPr
           <KeyGradient
             label={isLoading ? "Đang tải" : "Bắt đầu"}
             onPress={isLoading || isLeaving ? undefined : handleStart}
+            // Ready once the key has risen into place (the same moment the greeting starts typing)
+            readyDelay={isLoading || isLeaving ? undefined : greetingDelay}
           />
         </motion.div>
       </motion.div>

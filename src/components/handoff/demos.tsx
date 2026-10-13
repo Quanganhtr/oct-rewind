@@ -60,7 +60,7 @@ export function DomeDemo() {
   return (
     <div className="relative h-[540px] w-[393px] overflow-hidden rounded-[32px] bg-cream">
       <div className="absolute inset-x-0 top-6">
-        <KeyGradient label="Bắt đầu" />
+        <KeyGradient label="Bắt đầu" readyDelay={0} />
       </div>
     </div>
   );

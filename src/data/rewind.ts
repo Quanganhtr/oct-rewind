@@ -55,7 +55,11 @@ export const BRANDS_CARD = {
 export const SUMMARY_CARD = {
   label: "Gọi bạn là",
   title: "Anh hai tiêu xài",
-  highlights: ["Du lịch chi tổng VND 26,485,500", "Tích được 5,670,000 U-Point", "Khách sộp Winmart"],
+  highlights: [
+    { label: "Du lịch", value: "VND 26,485,500" },
+    { label: "U-Point tích được", value: "5,670,000" },
+    { label: "Khách sộp tại", value: "Winmart" },
+  ],
 };
 
 /** Figma "Step 10": supermarket habit. */
@@ -80,6 +84,8 @@ export type ThreadTurn = {
   userMessage: string;
   reply: string;
   card?: "spending" | "fashion" | "compare" | "brands" | "supermarket" | "summary";
+  /** Emoji that rains down the screen as the reply starts typing. */
+  reaction?: string;
   next:
     | { kind: "answers"; question: string; answers: string[] }
     | { kind: "prompt"; prompt: string; action: string; typed?: boolean }
@@ -87,8 +93,8 @@ export type ThreadTurn = {
     | { kind: "end" };
 };
 
-/** Placeholder reply for the topics whose conversations aren't designed yet (Figma "Same chat flow"). */
-const SAME_FLOW = "Same chat flow";
+/** Placeholder reply for the topics whose conversations aren't designed yet. */
+const PLACEHOLDER_REPLY = "To be updated";
 
 export const THREAD: ThreadTurn[] = [
   {
@@ -113,6 +119,7 @@ export const THREAD: ThreadTurn[] = [
     trigger: "Nhiều hơn chứ",
     userMessage: "Nhiều hơn chứ",
     reply: "Bất ngờ chưa. Mình cũng hơi bất ngờ.",
+    reaction: "😮",
     card: "compare",
     next: { kind: "prompt", prompt: "Năm nay mình ghé bao nhiêu brand bạn biết không?", action: "Gửi" },
   },
@@ -139,19 +146,19 @@ export const THREAD: ThreadTurn[] = [
   {
     trigger: TOPICS[1],
     userMessage: "Kể mình nghe chuyện tiền tài đi",
-    reply: SAME_FLOW,
+    reply: PLACEHOLDER_REPLY,
     next: { kind: "topics", prompt: "Kể mình nghe tiếp", topics: [TOPICS[2], TOPICS[3]] },
   },
   {
     trigger: TOPICS[2],
     userMessage: "Kể mình nghe chuyện thương ai đi",
-    reply: SAME_FLOW,
+    reply: PLACEHOLDER_REPLY,
     next: { kind: "topics", prompt: "Kể mình nghe tiếp", topics: [TOPICS[3]] },
   },
   {
     trigger: TOPICS[3],
     userMessage: "Kể mình nghe chuyện sinh nhai đi",
-    reply: SAME_FLOW,
+    reply: PLACEHOLDER_REPLY,
     next: { kind: "prompt", prompt: "Tổng kết lại cho mình nha", action: "Gửi", typed: true },
   },
   {

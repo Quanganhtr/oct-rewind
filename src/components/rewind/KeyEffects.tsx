@@ -79,7 +79,10 @@ const DOME_HEIGHT = 1000;
 const LIGHT_BOX_HEIGHT = 422.138;
 const LIGHT_BLUR_PAD = 48; // 2× the 24px blur, so the soft edge is hidden too
 const LIGHT_SWEEP = { y: [-(LIGHT_BOX_HEIGHT + LIGHT_BLUR_PAD), DOME_HEIGHT + LIGHT_BLUR_PAD] };
-const LIGHT_TRANSITION = { duration: 2.6, ease: "easeInOut", repeat: Infinity } as const;
+/** One 2.6s pass, then a still gap before the next, so sweeps don't run back to back. */
+const LIGHT_PASS = 2.6;
+const LIGHT_PAUSE = 10;
+const LIGHT_TRANSITION = { duration: LIGHT_PASS, ease: "easeInOut", repeat: Infinity, repeatDelay: LIGHT_PAUSE } as const;
 
 export function LightSweep() {
   const reduceMotion = useReducedMotion();

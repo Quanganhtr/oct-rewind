@@ -17,6 +17,8 @@ import { BlobGradient, ORB_DOCK, ORB_HIDDEN_Y } from "./BlobGradient";
 import { CategoryCard } from "./CategoryCard";
 import { BrandsCard } from "./BrandsCard";
 import { CompareCard } from "./CompareCard";
+import { Confetti } from "./Confetti";
+import { EmojiRain } from "./EmojiRain";
 import { PromptPanel } from "./PromptPanel";
 import { SummaryCard } from "./SummaryCard";
 import { SupermarketCard } from "./SupermarketCard";
@@ -182,6 +184,12 @@ export function ChatScreen({
     const timers = beats.map(([at, next]) => setTimeout(() => setStage(next), at * 1000));
     return () => timers.forEach(clearTimeout);
   }, [turnCount]);
+
+  // A reply can rain its reaction emoji over the screen as it starts typing
+  const reaction = turnCount > 0 && stage >= 2 && !reduceMotion ? THREAD[latest].reaction : undefined;
+
+  // The summary card bursts confetti over the whole screen as it appears
+  const showConfetti = turnCount > 0 && THREAD[latest].card === "summary" && stage >= 3 && !reduceMotion;
 
   const startTurn = (index: number) => {
     followRef.current = true; // a new message always brings the chat back to it
@@ -448,6 +456,9 @@ export function ChatScreen({
       <div className="absolute inset-x-0 top-0 bg-linear-to-b from-cream from-75% to-cream/0">
         <TopNavigation tone="light" onClose={onClose} />
       </div>
+
+      {reaction && <EmojiRain key={latest} emoji={reaction} />}
+      {showConfetti && <Confetti />}
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0">
         <HomeIndicator />
