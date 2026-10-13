@@ -63,7 +63,10 @@ export const CARD_GAP = 0.3; // after the reply has typed
 export const QUESTION_GAP = 0.9; // after the card starts
 export const ANSWERS_EXIT = 0.5;
 
-/** Where a new message parks while Tech Tech replies: 16px under the 98px top bar. */
+/**
+ * Where a new message parks while Tech Tech replies: 16px under the 98px top bar. On phones the
+ * fake status bar is hidden, so the bar is 48px and this drops to 64 (read from the column's padding).
+ */
 export const TOP_INSET = 114;
 /** The chat column's bottom padding (pb-4). */
 const BOTTOM_PAD = 16;
@@ -261,13 +264,14 @@ export function ChatScreen({
       const end = spacer.offsetTop; // where the messages end
       const viewHeight = viewport.clientHeight;
       const bubble = bubbleRef.current;
+      const topInset = parseFloat(getComputedStyle(column).paddingTop) || TOP_INSET;
 
       // A turn is playing: park the new bubble 16px under the top bar — one glide to a fixed spot
       if (anchoringRef.current && bubble) {
-        const room = bubble.offsetTop - TOP_INSET + viewHeight - BOTTOM_PAD - end;
+        const room = bubble.offsetTop - topInset + viewHeight - BOTTOM_PAD - end;
         setTail(Math.max(sheetHeight, room, 0));
         if (followRef.current) {
-          const anchor = Math.max(0, bubble.offsetTop - TOP_INSET);
+          const anchor = Math.max(0, bubble.offsetTop - topInset);
           if (Math.abs(anchor - viewport.scrollTop) > 1) glide(anchor);
         }
         return;
@@ -336,8 +340,8 @@ export function ChatScreen({
         onTouchStart={takeOver}
         className="relative min-h-px w-full flex-1 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {/* Top padding clears the overlaid header (98px) + Figma's 16px */}
-        <div ref={columnRef} className="relative flex flex-col items-start gap-4 px-4 pt-[114px] pb-4">
+        {/* Top padding clears the overlaid header (98px; 48px on phones, no status bar) + Figma's 16px */}
+        <div ref={columnRef} className="relative flex flex-col items-start gap-4 px-4 pt-16 pb-4 sm:pt-[114px]">
           {/* popLayout lifts the leaving intro out of the flow at once, so the thread starts at the top */}
           <AnimatePresence mode="popLayout">
             {!topicPicked && (
@@ -383,7 +387,7 @@ export function ChatScreen({
                     transition={{ duration: BUBBLE_ENTER, ease: easeOutQuint }}
                   >
                     {/* Hugs short messages; long ones wrap at the 305px the pl-14 leaves (Figma) */}
-                    <p className="rounded-card border border-brand-primary p-4 text-sm leading-5 font-medium text-text-primary backdrop-blur-[50px]">
+                    <p className="rounded-card border border-brand-primary p-4 text-base leading-6 font-medium text-text-primary backdrop-blur-[50px]">
                       {turn.userMessage}
                     </p>
                   </motion.div>

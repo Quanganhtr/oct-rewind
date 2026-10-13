@@ -481,7 +481,7 @@ export const SLIDES: DeckSlide[] = [
       const D = DOME_EXIT_DURATION;
       const beats: Beat[] = [
         { label: "Dome slides up and out", at: 0, dur: D, kind: "move" },
-        { label: "2026 + greeting vanish", at: 0.49, dur: START_CONTENT_EXIT, kind: "exit", note: "dome-linked" },
+        { label: "2026 + greeting vanish", at: 0.51, dur: START_CONTENT_EXIT, kind: "exit", note: "dome-linked" },
         { label: "Chat orb rises from below", at: 0.69, dur: D - 0.69, kind: "enter", note: "dome-linked" },
         { label: "Chat screen fades in", at: D, dur: SCREEN_FADE, kind: "enter" },
         { label: "Orb swells to 1.25", at: D, dur: ORB_GROW, kind: "move" },
@@ -541,7 +541,7 @@ export const SLIDES: DeckSlide[] = [
               "Pace",
               <>
                 A new word appears every <V>{sec(WORD_INTERVAL)}</V> (24px lines) or every{" "}
-                <V>{sec(THREAD_WORD_INTERVAL)}</V> (14px chat text). At {sec(WORD_INTERVAL)}: word 1 at <V>0s</V>, word
+                <V>{sec(THREAD_WORD_INTERVAL)}</V> (16px chat, 14px sheet text). At {sec(WORD_INTERVAL)}: word 1 at <V>0s</V>, word
                 2 at <V>{sec(WORD_INTERVAL)}</V>, word 3 at <V>{sec(WORD_INTERVAL * 2)}</V>…
               </>,
             ],
@@ -564,7 +564,7 @@ export const SLIDES: DeckSlide[] = [
                   <V>#C43722</V>
                 </span>{" "}
                 → resting colour over <V>{sec(WORD_COLOR)}</V>, ease in-out. Resting is <V>#000000</V> (24px) or{" "}
-                <V>#1A1A1A</V> (14px).
+                <V>#1A1A1A</V> (chat and sheet text).
               </>,
             ],
             [
@@ -921,7 +921,7 @@ export const SLIDES: DeckSlide[] = [
                 [
                   "Bubble style",
                   <>
-                    Right-aligned, max <V>305px</V>, 1px black border, radius <V>24</V>, padding 16, 14/20 Medium
+                    Right-aligned, max <V>305px</V>, 1px black border, radius <V>24</V>, padding 16, 16/24 Medium
                   </>,
                 ],
               ]}
@@ -1292,7 +1292,7 @@ export const SLIDES: DeckSlide[] = [
             labelWidth="w-[150px]"
             rows={[
               ["Word pace 24px", sec(WORD_INTERVAL)],
-              ["Word pace 14px", sec(THREAD_WORD_INTERVAL)],
+              ["Word pace chat/sheet", sec(THREAD_WORD_INTERVAL)],
               ["Word reveal", sec(WORD_REVEAL)],
               ["Word colour", sec(WORD_COLOR)],
               ["Dim after / fade", `${sec(DIM_DELAY)} / ${sec(DIM_DURATION)}`],

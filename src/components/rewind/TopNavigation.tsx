@@ -14,8 +14,8 @@ export function TopNavigation({ tone, onClose, className }: TopNavigationProps) 
 
   return (
     <div className={cn("relative flex w-full shrink-0 flex-col items-start", className)}>
-      {/* Status Bar - iPhone */}
-      <div className="flex h-[50px] w-full shrink-0 flex-col items-start pt-[21px]">
+      {/* Status Bar - iPhone. Only in the desktop device frame: on a real phone it would duplicate the OS bar */}
+      <div className="hidden h-[50px] w-full shrink-0 flex-col items-start pt-[21px] sm:flex">
         <div className="flex w-full items-center justify-between">
           <div className="flex min-w-px flex-1 items-center justify-center pr-1.5 pl-4">
             <p

@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { INTRO_LINES } from "@/data/rewind";
 import { DeviceFrame } from "@/components/DeviceFrame";
 import { cn } from "@/lib/cn";
+import { preloadImages } from "@/lib/preloadImages";
 import { ChatScreen, type ChatPhase, lineStepMs } from "./ChatScreen";
 import { IntroScreen } from "./IntroScreen";
 
@@ -42,13 +43,20 @@ interface RewindFlowProps {
   initial?: Screen;
   /** The demo buttons on the black stage — off when embedded. */
   controls?: boolean;
+  /** Images to preload; Loading doesn't hand off to Start until they're all in. */
+  images?: string[];
 }
 
 const STAGE_BUTTON =
   "hidden items-center gap-2 rounded-full bg-on-accent/10 px-4 py-2.5 text-sm leading-5 font-medium text-on-accent transition-colors hover:bg-on-accent/20 focus-visible:outline-2 focus-visible:outline-on-accent sm:flex";
 
-export function RewindFlow({ initial = { name: "loading" }, controls = true }: RewindFlowProps) {
+export function RewindFlow({ initial = { name: "loading" }, controls = true, images }: RewindFlowProps) {
   const [screen, setScreen] = useState<Screen>(initial);
+  // Loaded once per visit: a restart replays Loading on the cached images, timed only
+  const [loadProgress, setLoadProgress] = useState(images ? 0 : 1);
+  useEffect(() => {
+    if (images) return preloadImages(images, setLoadProgress);
+  }, [images]);
   const [chatPhase, setChatPhase] = useState<ChatPhase>(
     initial.name === "chat" ? (initial.startAt ?? "intro") : "intro",
   );
@@ -93,6 +101,7 @@ export function RewindFlow({ initial = { name: "loading" }, controls = true }: R
             <motion.div key={`intro-${run}`} className="absolute inset-0" {...introHold}>
               <IntroScreen
                 phase={screen.name === "loading" ? "loading" : "start"}
+                loadProgress={loadProgress}
                 onLoaded={() => setScreen((s) => (s.name === "loading" ? { name: "start" } : s))}
                 onStart={() => setScreen({ name: "chat", step: 0 })}
                 onClose={restart}
