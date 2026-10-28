@@ -2,7 +2,7 @@ import { asset } from "@/lib/asset";
 import { BRANDS_CARD } from "@/data/rewind";
 import { PillCard } from "./PillCard";
 
-/** Figma Step 9 "Card": how many places the reader visited, with the top three as frosted pills. */
+/** Figma "Chuyện tiêu xài" brands card: how many brands the reader visited, the favourite, visits and spend. */
 export function BrandsCard() {
   const { label, title, top } = BRANDS_CARD;
   return (
@@ -15,10 +15,11 @@ export function BrandsCard() {
         <img
           alt=""
           src={asset("/rewind/brands-planes.png")}
-          className="absolute top-[calc(50%-0.17px)] left-1/2 block h-[180.5px] w-[361px] max-w-none -translate-1/2 object-cover"
+          className="absolute inset-0 block size-full max-w-none object-cover"
         />
       }
       shareTone="dark"
+      countPills
     />
   );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { animate, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/cn";
-import { INTRO_LINES, START_GREETING, THREAD } from "@/data/rewind";
+import { INTRO_LINES, linesOf, START_GREETING, THREAD } from "@/data/rewind";
 import { RewindFlow, type Screen } from "@/components/rewind/RewindFlow";
 import { IntroScreen } from "@/components/rewind/IntroScreen";
 import { KeyGradient } from "@/components/rewind/KeyGradient";
@@ -122,7 +122,7 @@ export function TypingDemo() {
         <TypedLine text={INTRO_LINES[0]} age={0} stayVisible={false} variant="intro" />
         <div className="h-px bg-stroke/10" />
         <PaceLabel>Chat thread · 14px · 0.07s / word</PaceLabel>
-        <TypedLine text={THREAD[0].reply} age={0} stayVisible variant="thread" />
+        <TypedLine text={linesOf(THREAD[0].reply)[0]} age={0} stayVisible variant="thread" />
       </div>
       <ReplayButton onClick={() => setRun((r) => r + 1)} />
     </div>

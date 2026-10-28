@@ -1,7 +1,15 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { INTRO_LINES, LINE_OPACITY, START_GREETING, THREAD, type ThreadTurn } from "@/data/rewind";
+import {
+  INTRO_LINES,
+  LINE_OPACITY,
+  linesOf,
+  START_GREETING,
+  SUMMARY_PROMPT,
+  THREAD,
+  type ThreadTurn,
+} from "@/data/rewind";
 import { easeInCubic, easeInOutCubic, easeInOutSine, easeOutExpo, easeOutQuint } from "@/lib/motion";
 import {
   ANSWERS_EXIT,
@@ -23,6 +31,7 @@ import {
   ORB_TYPING_SCALE,
   QUESTION_GAP,
   REPLY_GAP,
+  typeLines,
   SCROLL_DURATION,
   TOP_INSET,
 } from "@/components/rewind/ChatScreen";
@@ -73,19 +82,19 @@ const LAST_STEP = INTRO_LINES.length - 1;
 /* ───────────── Timings derived from the prototype's constants ───────────── */
 
 const thread = (text: string) => typeDuration(text, THREAD_WORD_INTERVAL);
-const questionOf = (turn: ThreadTurn) =>
-  turn.next.kind === "answers" || turn.next.kind === "topics" ? turn.next.question : undefined;
+const questionOf = (turn: ThreadTurn) => (turn.next.kind === "end" ? undefined : turn.next.question);
 
-/** The beats of one thread turn, measured from the tap that starts it. */
+/** The beats of one thread turn, measured from the tap that starts it (a gift's are from its opening). */
 function turnBeats(turn: ThreadTurn, first: boolean) {
   const bubbleAt = first ? FIRST_BUBBLE_AT : NEXT_BUBBLE_AT;
   const replyAt = bubbleAt + REPLY_GAP;
-  const replyDur = thread(turn.reply);
-  const replyDone = replyAt + replyDur + CARD_GAP;
+  const reply = linesOf(turn.reply);
+  const replyDur = typeLines(reply).total;
+  const replyDone = reply.length ? replyAt + replyDur + CARD_GAP : replyAt;
   const cardAt = turn.card ? replyDone : null;
   const questionAt = cardAt !== null ? cardAt + QUESTION_GAP : replyDone;
-  const question = questionOf(turn);
-  const questionDur = question ? thread(question) : 0;
+  const question = linesOf(questionOf(turn)).join(" ");
+  const questionDur = typeLines(linesOf(questionOf(turn))).total;
   const sheetAt = questionAt + questionDur;
   return { bubbleAt, replyAt, replyDur, cardAt, questionAt, question, questionDur, sheetAt };
 }
@@ -191,7 +200,7 @@ export const SLIDES: DeckSlide[] = [
             [
               "Background",
               <>
-                Loading <V>#000000</V> · everything after <V>#FFEEDD</V> (cream)
+                Loading <V>#000000</V> · everything after <V>#FFF5EB</V> (cream)
               </>,
             ],
             [
@@ -263,7 +272,7 @@ export const SLIDES: DeckSlide[] = [
             [
               "Eyebrow",
               <>
-                “Nhìn lại” · 24/32 Light · cream <V>#FFEEDD</V>
+                “Nhìn lại” · 24/32 Light · cream <V>#FFF5EB</V>
               </>,
             ],
             [
@@ -338,17 +347,17 @@ export const SLIDES: DeckSlide[] = [
             [
               "Track dots",
               <>
-                44 dots (1px) tracing a pill around the label. Once the key has settled, a bright dot runs{" "}
-                <b>one</b> lap in <V>2s</V> (scale <V>4 → 3 → 2 → 1</V> as a trail), then the ring rests. No loop: a
-                looping ring read as “still loading”.
+                44 dots (1px) tracing a pill around the label. Once the key has settled, a bright dot runs <b>one</b>{" "}
+                lap in <V>2s</V> (scale <V>4 → 3 → 2 → 1</V> as a trail), then the ring rests. No loop: a looping ring
+                read as “still loading”.
               </>,
             ],
             [
               "Light sweep",
               <>
                 White bar <V>678 × 96</V>, blur <V>24</V>, tilted <V>−30°</V>, overlay blend. Travels top → bottom over{" "}
-                <V>2.6s</V> ease in-out, then rests <V>10s</V> before the next sweep. It starts and ends{" "}
-                <b>outside</b> the dome, so the restart is never seen.
+                <V>2.6s</V> ease in-out, then rests <V>10s</V> before the next sweep. It starts and ends <b>outside</b>{" "}
+                the dome, so the restart is never seen.
               </>,
             ],
             [
@@ -430,8 +439,8 @@ export const SLIDES: DeckSlide[] = [
         title="Start greeting types in after the 2026 lands"
         lead={
           <>
-            “Quang ơi, / cùng trò chuyện đôi lời” uses the same word-by-word typing as the chat (full rule in Part 2). It
-            waits for the settle to finish (<V>{sec(SETTLE_DURATION)}</V>).
+            “Quang ơi, / cùng trò chuyện đôi lời” uses the same word-by-word typing as the chat (full rule in Part 2).
+            It waits for the settle to finish (<V>{sec(SETTLE_DURATION)}</V>).
           </>
         }
         aside={<GreetingDemo />}
@@ -541,8 +550,8 @@ export const SLIDES: DeckSlide[] = [
               "Pace",
               <>
                 A new word appears every <V>{sec(WORD_INTERVAL)}</V> (24px lines) or every{" "}
-                <V>{sec(THREAD_WORD_INTERVAL)}</V> (16px chat, 14px sheet text). At {sec(WORD_INTERVAL)}: word 1 at <V>0s</V>, word
-                2 at <V>{sec(WORD_INTERVAL)}</V>, word 3 at <V>{sec(WORD_INTERVAL * 2)}</V>…
+                <V>{sec(THREAD_WORD_INTERVAL)}</V> (16px chat, 14px sheet text). At {sec(WORD_INTERVAL)}: word 1 at{" "}
+                <V>0s</V>, word 2 at <V>{sec(WORD_INTERVAL)}</V>, word 3 at <V>{sec(WORD_INTERVAL * 2)}</V>…
               </>,
             ],
             [
@@ -757,7 +766,8 @@ export const SLIDES: DeckSlide[] = [
             [
               "Topic list",
               <>
-                Topic icon (24px on a cream #FFEEDD 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart · briefcase.
+                Topic icon (24px on a cream #FFF5EB 8px-radius tile) + label + arrow. Icons: bag · wallet · chat-heart ·
+                briefcase.
               </>,
             ],
             [
@@ -999,8 +1009,8 @@ export const SLIDES: DeckSlide[] = [
               </>,
               <>Tapping “Gửi” sends the prompt text as the user’s bubble and starts the next turn as usual.</>,
               <>
-                After the last card of a topic, the sheet switches to a topic list (“Kể mình nghe tiếp”) with the topics
-                not yet visited.
+                After a topic’s last card, the sheet lists the topics not yet visited (“Kể mình nghe tiếp”), in any
+                order. Once all four are done, it offers the summary instead.
               </>,
             ]}
           />
@@ -1140,8 +1150,7 @@ export const SLIDES: DeckSlide[] = [
     title: "The summary prompt",
     render: () => {
       const t = closingTurn;
-      const closing = THREAD[CLOSING].next;
-      const prompt = closing.kind === "prompt" ? closing.prompt : "";
+      const prompt = SUMMARY_PROMPT;
       const beats: Beat[] = [
         { label: "User bubble enters", at: t.bubbleAt, dur: BUBBLE_ENTER, kind: "enter" },
         { label: "Reply types", at: t.replyAt, dur: t.replyDur, kind: "type" },
@@ -1166,14 +1175,14 @@ export const SLIDES: DeckSlide[] = [
               <>Trigger: the last topic’s final turn has ended. Topic order doesn’t matter; it is “all visited”.</>,
               <>
                 The prompt starts typing <V>{sec(PROMPT_TYPE_DELAY)}</V> after the sheet starts rising, at{" "}
-                <V>{sec(THREAD_WORD_INTERVAL)}</V>/word, 14/20 Regular.
+                <V>{sec(THREAD_WORD_INTERVAL)}</V>/word, 16/24 Regular.
               </>,
               <>Tapping “Gửi” plays a normal turn (bubble → reply → card).</>,
             ]}
           />
           <Callout tone="warn">
-            Topics 2–4 (“Chuyện tiền tài”, “Chuyện thương ai”, “Chuyện sinh nhai”) are placeholders (“To be updated”).
-            They follow exactly the Part 3 rules once designed.
+            “Chuyện tiền tài” and “Chuyện sinh nhai” are placeholders (“To be updated”). They follow exactly the Part 3
+            rules once designed.
           </Callout>
         </Slide>
       );
@@ -1205,7 +1214,7 @@ export const SLIDES: DeckSlide[] = [
           <Specs
             labelWidth="w-[110px]"
             rows={[
-              ["Reply", <>“{THREAD[SUMMARY].reply}”</>],
+              ["Reply", <>“{linesOf(THREAD[SUMMARY].reply).join(" ")}”</>],
               ["Card", <>3:4 · persona title + 3 frosted pills (white 35%) · “Chia sẻ ngay” share button</>],
               [
                 "Counts",
@@ -1239,12 +1248,12 @@ export const SLIDES: DeckSlide[] = [
       >
         <div className="grid grid-cols-4 gap-x-6 gap-y-4">
           <Swatch fill="bg-brand-primary" name="brand-primary" value="#000000" />
-          <Swatch fill="bg-cream" name="cream (screen bg)" value="#FFEEDD" />
+          <Swatch fill="bg-cream" name="cream (screen bg)" value="#FFF5EB" />
           <Swatch fill="bg-text-primary" name="text-primary" value="#1A1A1A" />
           <Swatch fill="bg-on-accent" name="on-accent" value="#FFFFFF" />
           <Swatch fill="bg-glow-1" name="glow-1 (typing)" value="#FFB165" />
           <Swatch fill="bg-glow-2" name="glow-2 (typing)" value="#C43722" />
-          <Swatch fill="bg-glass" name="glass (sheet)" value="#FFEEDD · 55%" />
+          <Swatch fill="bg-glass" name="glass (sheet)" value="#FFF5EB · 55%" />
           <Swatch fill="bg-stroke" name="stroke" value="#303030" />
           <Swatch fill="bg-radio" name="radio" value="#FFF2E7" />
           <Swatch fill="bg-frost" name="frost (card pills)" value="#FFFFFF · 35%" />
@@ -1331,8 +1340,8 @@ export const SLIDES: DeckSlide[] = [
               Wrong answers: the prototype only wires the designed answer (e.g. “Em út nết na”). What do the other
               answers do?
             </>,
-            <>Topics 2–4 have no content yet (“To be updated”). Data and cards needed.</>,
-            <>Topic order: can users pick topics in any order? Summary unlocks once all four are visited.</>,
+            <>“Chuyện tiền tài” and “Chuyện sinh nhai” have no content yet (“To be updated”). Data and cards needed.</>,
+            <>“Chuyện thương ai”: what comes after “Đoán xem ai đứng đầu?” (answer options aren’t designed yet)?</>,
             <>“Chia sẻ ngay” share: what gets shared (image of the card? link?) and through which sheet?</>,
             <>Sound button and close (×) in the top bar: behaviour in the real app.</>,
             <>Name for Part 2 (“Warm-up” is a working title).</>,
@@ -1395,8 +1404,8 @@ function FlowTable() {
         ? turn.next.typed
           ? "typed prompt"
           : "prompt"
-        : turn.next.kind === "topics"
-          ? "topic list"
+        : turn.next.kind === "continue"
+          ? "topics left / summary"
           : "end";
   return (
     <table className="w-full table-fixed text-left text-[13px]">
@@ -1414,7 +1423,7 @@ function FlowTable() {
           <tr key={i} className="text-on-accent/85">
             <td className="py-2 font-mono text-on-accent/50">{i + 1}</td>
             <td className="truncate py-2 pr-4">{turn.trigger}</td>
-            <td className="truncate py-2 pr-4 text-on-accent/65">{turn.reply}</td>
+            <td className="truncate py-2 pr-4 text-on-accent/65">{linesOf(turn.reply).join(" ") || "—"}</td>
             <td className="py-2 pr-4 font-mono text-cream">{turn.card ?? "—"}</td>
             <td className="py-2 font-mono">{nextLabel(turn)}</td>
           </tr>

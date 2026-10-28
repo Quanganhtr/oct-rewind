@@ -12,12 +12,12 @@
   /* Figma alias tokens */
   --color-brand-primary: #000000; /* alias-color/bg/brand/primary */
   --color-page-light: #ffffff; /* alias-color/bg/neutral/page/light */
-  --color-cream: #ffeedd; /* screen background (Start + chat) */
+  --color-cream: #fff5eb; /* rewind-2026/page/primary — screen background (Start + chat), gift ribbon */
   --color-on-accent: #ffffff; /* alias-color/text/accent/on-accent-primary */
   --color-text-primary: #1a1a1a; /* alias-color/text/neutral/primary */
   --radius-rounded: 960px; /* alias-size/radius/rounded */
   --radius-card: 24px; /* alias-size/radius/lg */
-  --color-glass: rgb(255 238 221 / 0.55); /* frosted cream card */
+  --color-glass: rgb(255 245 235 / 0.55); /* frosted cream card */
   --color-stroke: #303030; /* card outline; used with opacity modifiers */
   --color-divider: rgb(48 48 48 / 0.1); /* alias-color/separator/neutral/divider */
   --color-radio: #fff2e7; /* radio button fill */
@@ -54,6 +54,13 @@
   --color-market-3: #7915b2;
   --color-market-4: #ab59e9;
   --color-market-5: #fcc8c9;
+
+  /* Donation card foreground (top → bottom) */
+  --color-give-1: #490101;
+  --color-give-2: #963000;
+  --color-give-3: #ec8500;
+  --color-give-4: #ffbf13;
+  --color-give-5: #fff0bc;
 
   --color-frost: rgb(255 255 255 / 0.35); /* alias-color/bg/alpha/bg-blur/md — pills on cards */
   --color-row-line: #ebedf0; /* miscellaneous/keyboard-accessory-bar---selection — summary card rows */

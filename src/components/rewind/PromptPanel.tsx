@@ -19,7 +19,7 @@ export function PromptPanel({ prompt, action, typed = false, onAction }: PromptP
         // Starts once the sheet has mostly slid in
         <TypedLine text={prompt} age={0} stayVisible variant="prompt" delay={0.5} />
       ) : (
-        <p className="w-full text-sm leading-5 text-text-primary">{prompt}</p>
+        <p className="w-full text-base leading-6 text-text-primary">{prompt}</p>
       )}
       <button
         type="button"

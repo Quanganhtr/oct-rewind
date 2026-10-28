@@ -46,7 +46,7 @@ const VARIANT_CLASS = {
   intro: "w-full text-2xl leading-8 font-medium text-brand-primary",
   thread: "w-full text-base leading-6 font-medium text-text-primary",
   greeting: "text-2xl leading-8 font-medium whitespace-nowrap text-brand-primary",
-  prompt: "w-full text-sm leading-5 font-normal text-text-primary",
+  prompt: "w-full text-base leading-6 font-normal text-text-primary",
 };
 
 export function TypedLine({ text, age, stayVisible, variant, instant = false, delay = 0 }: TypedLineProps) {

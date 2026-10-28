@@ -11,23 +11,43 @@ import {
   type TargetAndTransition,
 } from "framer-motion";
 import { easeInCubic, easeInOutCubic, easeOutQuint } from "@/lib/motion";
-import { THREAD, type ThreadTurn } from "@/data/rewind";
+import {
+  ANY_ANSWER,
+  type CardKind,
+  GATED_CARDS,
+  type Lines,
+  linesOf,
+  resolveNext,
+  type SheetNext,
+  SUMMARY_TURN,
+  TOPIC_THREADS,
+  type ThreadTurn,
+} from "@/data/rewind";
 import { AnswerPanel } from "./AnswerPanel";
 import { BlobGradient, ORB_DOCK, ORB_HIDDEN_Y } from "./BlobGradient";
 import { CategoryCard } from "./CategoryCard";
+import { BirthdayCard } from "./BirthdayCard";
 import { BrandsCard } from "./BrandsCard";
 import { CompareCard } from "./CompareCard";
 import { Confetti } from "./Confetti";
+import { DonationCard } from "./DonationCard";
 import { EmojiRain } from "./EmojiRain";
+import { FamilyCard } from "./FamilyCard";
+import { GiftCard } from "./GiftCard";
 import { PromptPanel } from "./PromptPanel";
 import { SummaryCard } from "./SummaryCard";
 import { SupermarketCard } from "./SupermarketCard";
+import { GuestsCard } from "./GuestsCard";
+import { FanCard } from "./FanCard";
+import { MonthsCard } from "./MonthsCard";
+import { ConcertCard } from "./ConcertCard";
+import { TopPeopleCard } from "./TopPeopleCard";
 import { HomeIndicator } from "./HomeIndicator";
+import { SoundboxCard } from "./SoundboxCard";
 import { SpendingCard } from "./SpendingCard";
 import { TopicMenu } from "./TopicMenu";
 import { TopNavigation } from "./TopNavigation";
 import { DIM_DELAY, THREAD_WORD_INTERVAL, typeDuration, TypedLine } from "./TypedLine";
-
 
 /** The orb swells to this scale while a line is typing… */
 export const ORB_TYPING_SCALE = 1.25;
@@ -60,8 +80,20 @@ export const FIRST_BUBBLE_AT = 0.45; // first turn: as the intro lines finish le
 export const NEXT_BUBBLE_AT = 0.1; // later turns: right away, while the answers drop out
 export const REPLY_GAP = 0.75; // after the bubble
 export const CARD_GAP = 0.3; // after the reply has typed
-export const QUESTION_GAP = 0.9; // after the card starts
+export const QUESTION_GAP = 0.9; // after the card starts (or after a gift is tapped open)
+export const LINE_GAP = 0.3; // between lines typed back to back
 export const ANSWERS_EXIT = 0.5;
+
+/** When each of several lines starts typing (back to back, LINE_GAP apart), and when the last is in. */
+export const typeLines = (lines: string[]) => {
+  let at = 0;
+  const starts = lines.map((line, i) => {
+    const start = at;
+    at += typeDuration(line, THREAD_WORD_INTERVAL) + (i < lines.length - 1 ? LINE_GAP : 0);
+    return start;
+  });
+  return { starts, total: at };
+};
 
 /**
  * Where a new message parks while Tech Tech replies: 16px under the 98px top bar. On phones the
@@ -91,8 +123,20 @@ interface ChatScreenProps {
   onClose: () => void;
 }
 
-/** Progress of the newest thread turn: 0 none, then bubble → reply → card → question → answers. */
-type ThreadStage = 0 | 1 | 2 | 3 | 4 | 5;
+/** One beat of a turn after the reader's bubble: line(s) Tech Tech types, or a card. */
+type Beat = { lines: string[] } | { card: CardKind };
+
+/**
+ * A turn as played: its topic (null for the summary) and step, with its sheet worked out as it starts
+ * and its beats in order — reply, card, any extra beats, then the line(s) typed before the sheet.
+ */
+type PlayedTurn = ThreadTurn & { topic: string | null; step: number; sheet: SheetNext; beats: Beat[] };
+
+/**
+ * How far the newest turn has played: 0 nothing, 1 the bubble, 1 + n its first n beats, and
+ * sheetProgress(turn) once its sheet is up.
+ */
+const sheetProgress = (turn: PlayedTurn) => turn.beats.length + 2;
 
 /**
  * Figma "Step 1–5", one continuous chat: Tech Tech's intro lines type in and dim; the topic menu
@@ -111,9 +155,14 @@ export function ChatScreen({
   const newestLine = lines[lines.length - 1];
   const opensOnMenu = startAt === "menu";
   const [showMenu, setShowMenu] = useState(opensOnMenu);
-  /** Thread turns started so far (THREAD order); the last one is still playing until stage 5. */
-  const [turnCount, setTurnCount] = useState(0);
-  const [stage, setStage] = useState<ThreadStage>(0);
+  /** Turns started so far, across topics in the order the reader picked; the last plays until its sheet. */
+  const [played, setPlayed] = useState<PlayedTurn[]>([]);
+  const turnCount = played.length;
+  /** Turns started so far, updated the moment one starts (before React re-renders). */
+  const startedRef = useRef(0);
+  const [progress, setProgress] = useState(0);
+  /** Turns whose gated card (the gift) the reader has opened. */
+  const [opened, setOpened] = useState<number[]>([]);
   const topicPicked = turnCount > 0;
   const latest = turnCount - 1;
 
@@ -165,45 +214,58 @@ export function ChatScreen({
     return () => clearTimeout(t);
   }, [isFinalStep, newestLine, reduceMotion, opensOnMenu, onPhaseChange]);
 
-  // Each thread turn: schedule its beats when it starts
+  // Each thread turn: schedule its beats when it starts — up to a gated card, which waits for a tap
   useEffect(() => {
     if (turnCount === 0) return;
-    const turn = THREAD[turnCount - 1];
     const bubbleAt = turnCount === 1 ? FIRST_BUBBLE_AT : NEXT_BUBBLE_AT;
-    const replyAt = bubbleAt + REPLY_GAP;
-    const replyDone = replyAt + typeDuration(turn.reply, THREAD_WORD_INTERVAL) + CARD_GAP;
-    // Optional beats: a card after the reply, then a line typed before the sheet
-    const cardAt = turn.card ? replyDone : null;
-    const questionAt = cardAt !== null ? cardAt + QUESTION_GAP : replyDone;
-    const question = questionOf(turn);
-    const sheetAt = question ? questionAt + typeDuration(question, THREAD_WORD_INTERVAL) : questionAt;
-    const beats: [number, ThreadStage][] = [
-      [bubbleAt, 1],
-      [replyAt, 2],
-      ...(cardAt !== null ? [[cardAt, 3] as [number, ThreadStage]] : []),
-      ...(question ? [[questionAt, 4] as [number, ThreadStage]] : []),
-      [sheetAt, 5],
-    ];
-    const timers = beats.map(([at, next]) => setTimeout(() => setStage(next), at * 1000));
+    const steps: [number, number][] = [[bubbleAt, 1], ...beatTimes(played[turnCount - 1], 0, bubbleAt + REPLY_GAP)];
+    const timers = steps.map(([at, next]) => setTimeout(() => setProgress(next), at * 1000));
     return () => timers.forEach(clearTimeout);
+    // Only a new turn starting reschedules: `played` itself is only ever appended to
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [turnCount]);
 
+  // Opening the gift carries its turn on from the beat after it
+  const giftOpen = turnCount > 0 && opened.includes(turnCount - 1);
+  useEffect(() => {
+    if (!giftOpen) return;
+    const turn = played[turnCount - 1];
+    const gift = turn.beats.findIndex((beat) => "card" in beat && GATED_CARDS.has(beat.card));
+    const timers = beatTimes(turn, gift + 1, QUESTION_GAP).map(([at, next]) =>
+      setTimeout(() => setProgress(next), at * 1000),
+    );
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [giftOpen, turnCount]);
+
+  const current = played[latest];
+  const sheetUp = turnCount > 0 && progress >= sheetProgress(current);
+
   // A reply can rain its reaction emoji over the screen as it starts typing
-  const reaction = turnCount > 0 && stage >= 2 && !reduceMotion ? THREAD[latest].reaction : undefined;
+  const reaction = turnCount > 0 && progress >= 2 && !reduceMotion ? current.reaction : undefined;
 
   // The summary card bursts confetti over the whole screen as it appears
-  const showConfetti = turnCount > 0 && THREAD[latest].card === "summary" && stage >= 3 && !reduceMotion;
+  const summaryBeat = current?.beats.findIndex((beat) => "card" in beat && beat.card === "summary") ?? -1;
+  const showConfetti = summaryBeat >= 0 && progress >= summaryBeat + 2 && !reduceMotion;
 
-  const startTurn = (index: number) => {
+  /** Plays `turn` next. Its sheet is worked out now, from the topics visited so far (this one included). */
+  const startTurn = (turn: ThreadTurn, topic: string | null, step: number) => {
+    startedRef.current += 1;
     followRef.current = true; // a new message always brings the chat back to it
-    setStage(0);
-    setTurnCount(index + 1);
+    setProgress(0);
+    setPlayed((sofar) => {
+      const visited = [...sofar.map((t) => t.topic), topic].filter((t): t is string => t !== null);
+      const sheet = resolveNext(turn, visited);
+      return [...sofar, { ...turn, topic, step, sheet, beats: beatsOf(turn, sheet) }];
+    });
   };
 
+  /** The first menu (Step 4): any topic can start the thread. */
   const pickTopic = (topic: string) => {
-    if (topic !== THREAD[0].trigger || topicPicked) return;
+    // `topicPicked` is stale in a menu still sliding out; the ref already knows a turn started
+    if (topicPicked || startedRef.current > 0 || !TOPIC_THREADS[topic]) return;
     onPhaseChange?.("spending");
-    startTurn(0);
+    startTurn(TOPIC_THREADS[topic][0], topic, 0);
     setShowMenu(false);
     animate(orbY, ORB_EXIT_Y, {
       duration: reduceMotion ? 0 : ORB_EXIT,
@@ -211,9 +273,19 @@ export function ChatScreen({
     });
   };
 
+  /** A tap in the sheet: another topic, the summary prompt, or the designed answer that carries the topic on. */
   const pickAnswer = (answer: string) => {
-    if (stage < 5 || THREAD[turnCount]?.trigger !== answer) return;
-    startTurn(turnCount);
+    // A sheet still sliding out keeps this handler from its own render: a second tap there is stale
+    if (!sheetUp || startedRef.current !== turnCount) return;
+    if (current.sheet.kind === "topics") {
+      if (current.sheet.topics.includes(answer)) startTurn(TOPIC_THREADS[answer][0], answer, 0);
+      return;
+    }
+    if (current.next.kind === "continue") return startTurn(SUMMARY_TURN, null, 0);
+    const following = current.topic ? TOPIC_THREADS[current.topic][current.step + 1] : undefined;
+    if (!following || (following.trigger !== answer && following.trigger !== ANY_ANSWER)) return;
+    // An ANY_ANSWER turn shows the reader's pick as their bubble
+    startTurn({ ...following, userMessage: following.userMessage || answer }, current.topic, current.step + 1);
   };
 
   // Chat layout: the tail spacer at the end of the column decides how far the chat can scroll.
@@ -302,10 +374,11 @@ export function ChatScreen({
 
   // A turn anchors its bubble from the moment it appears until its answers are up
   useEffect(() => {
-    anchoringRef.current = stage >= 1 && stage < 5;
-    endedRef.current = stage >= 5 && THREAD[latest]?.next.kind === "end";
+    anchoringRef.current = progress >= 1 && !sheetUp;
+    endedRef.current = sheetUp && current.sheet.kind === "end";
     relayoutRef.current();
-  }, [stage, latest]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress, latest]);
 
   /** The reader took over: stop any auto-glide. */
   const takeOver = () => {
@@ -374,11 +447,11 @@ export function ChatScreen({
             )}
           </AnimatePresence>
 
-          {THREAD.slice(0, turnCount).map((turn, i) => {
-            const turnStage = i === latest ? stage : 4;
+          {played.map((turn, i) => {
+            const shown = i === latest ? progress : Infinity;
             return (
               <Fragment key={i}>
-                {turnStage >= 1 && (
+                {shown >= 1 && (
                   <motion.div
                     ref={i === latest ? bubbleRef : undefined}
                     className="flex w-full flex-col items-end justify-center pl-14"
@@ -392,24 +465,40 @@ export function ChatScreen({
                     </p>
                   </motion.div>
                 )}
-                {turnStage >= 2 && <TypedLine text={turn.reply} age={0} stayVisible variant="thread" />}
-                {turnStage >= 3 && turn.card && (
-                  <motion.div
-                    className="w-full"
-                    initial={enter({ y: 24, scale: 0.97 })}
-                    animate={{ opacity: 1, filter: "blur(0px)", y: 0, scale: 1 }}
-                    transition={{ duration: CARD_ENTER, ease: easeOutQuint }}
-                  >
-                    {turn.card === "spending" && <SpendingCard />}
-                    {turn.card === "fashion" && <CategoryCard />}
-                    {turn.card === "compare" && <CompareCard />}
-                    {turn.card === "brands" && <BrandsCard />}
-                    {turn.card === "supermarket" && <SupermarketCard />}
-                    {turn.card === "summary" && <SummaryCard />}
-                  </motion.div>
-                )}
-                {turnStage >= 4 && questionOf(turn) && (
-                  <TypedLine text={questionOf(turn)!} age={0} stayVisible variant="thread" />
+                {turn.beats.slice(0, Math.max(0, shown - 1)).map((beat, k) =>
+                  "lines" in beat ? (
+                    <TypedLines key={k} lines={beat.lines} />
+                  ) : (
+                    <motion.div
+                      key={k}
+                      className="w-full"
+                      initial={enter({ y: 24, scale: 0.97 })}
+                      animate={{ opacity: 1, filter: "blur(0px)", y: 0, scale: 1 }}
+                      transition={{ duration: CARD_ENTER, ease: easeOutQuint }}
+                    >
+                      {beat.card === "spending" && <SpendingCard />}
+                      {beat.card === "fashion" && <CategoryCard />}
+                      {beat.card === "compare" && <CompareCard />}
+                      {beat.card === "brands" && <BrandsCard />}
+                      {beat.card === "supermarket" && <SupermarketCard />}
+                      {beat.card === "gift" && (
+                        <GiftCard
+                          open={opened.includes(i)}
+                          onOpen={i === latest && !opened.includes(i) ? () => setOpened((o) => [...o, i]) : undefined}
+                        />
+                      )}
+                      {beat.card === "topPeople" && <TopPeopleCard />}
+                      {beat.card === "birthday" && <BirthdayCard />}
+                      {beat.card === "family" && <FamilyCard />}
+                      {beat.card === "donation" && <DonationCard />}
+                      {beat.card === "soundbox" && <SoundboxCard />}
+                      {beat.card === "guests" && <GuestsCard />}
+                      {beat.card === "fan" && <FanCard />}
+                      {beat.card === "months" && <MonthsCard />}
+                      {beat.card === "concert" && <ConcertCard />}
+                      {beat.card === "summary" && <SummaryCard />}
+                    </motion.div>
+                  ),
                 )}
               </Fragment>
             );
@@ -442,7 +531,7 @@ export function ChatScreen({
               <TopicMenu onSelect={pickTopic} />
             </motion.div>
           )}
-          {stage >= 5 && THREAD[latest].next.kind !== "end" && (
+          {sheetUp && current.sheet.kind !== "end" && (
             <motion.div
               key={`answers-${latest}`}
               className="relative w-full shrink-0"
@@ -450,7 +539,7 @@ export function ChatScreen({
               animate={{ y: 0, transition: { duration: FINALE_DURATION, ease: easeOutQuint } }}
               exit={{ y: "100%", transition: { duration: reduceMotion ? 0 : ANSWERS_EXIT, ease: easeInCubic } }}
             >
-              <TurnSheet next={THREAD[latest].next} onAnswer={pickAnswer} />
+              <TurnSheet next={current.sheet} onAnswer={pickAnswer} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -472,17 +561,62 @@ export function ChatScreen({
 }
 
 /** What a turn asks next, in the bottom sheet. Sending a prompt replies with the prompt itself. */
-function TurnSheet({ next, onAnswer }: { next: ThreadTurn["next"]; onAnswer: (answer: string) => void }) {
+function TurnSheet({ next, onAnswer }: { next: SheetNext; onAnswer: (answer: string) => void }) {
   if (next.kind === "end") return null;
   if (next.kind === "answers") return <AnswerPanel answers={next.answers} onSelect={onAnswer} />;
   if (next.kind === "prompt") {
     return (
-      <PromptPanel prompt={next.prompt} action={next.action} typed={next.typed} onAction={() => onAnswer(next.prompt)} />
+      <PromptPanel
+        prompt={next.prompt}
+        action={next.action}
+        typed={next.typed}
+        onAction={() => onAnswer(next.prompt)}
+      />
     );
   }
   return <TopicMenu prompt={next.prompt} topics={next.topics} onSelect={onAnswer} />;
 }
 
-/** The line Tech Tech types in the chat before the sheet, if this turn has one. */
-const questionOf = (turn: ThreadTurn) =>
-  turn.next.kind === "answers" || turn.next.kind === "topics" ? turn.next.question : undefined;
+/** A turn's beats in order: reply, card, any extra beats, then the line(s) typed before its sheet. */
+function beatsOf(turn: ThreadTurn, sheet: SheetNext): Beat[] {
+  const beat = (item: Lines | { card: CardKind }): Beat =>
+    typeof item === "object" && !Array.isArray(item) ? item : { lines: linesOf(item) };
+  const items = [
+    ...(turn.reply ? [beat(turn.reply)] : []),
+    ...(turn.card ? [beat({ card: turn.card })] : []),
+    ...(turn.after ?? []).map(beat),
+    ...(sheet.kind !== "end" && sheet.question ? [beat(sheet.question)] : []),
+  ];
+  return items.filter((b) => !("lines" in b) || b.lines.length > 0);
+}
+
+/**
+ * When the beats from `from` on show (as progress values), starting at `at` seconds: lines type
+ * back to back, a card is followed QUESTION_GAP later, and the sheet comes up as the last word
+ * lands. Stops at a gated card — the rest waits until it's opened.
+ */
+function beatTimes(turn: PlayedTurn, from: number, at: number): [number, number][] {
+  const steps: [number, number][] = [];
+  let t = at;
+  for (let k = from; k < turn.beats.length; k++) {
+    const beat = turn.beats[k];
+    steps.push([t, k + 2]);
+    if ("card" in beat) {
+      if (GATED_CARDS.has(beat.card)) return steps;
+      t += QUESTION_GAP;
+    } else {
+      const next = turn.beats[k + 1];
+      t += typeLines(beat.lines).total + (next ? ("card" in next ? CARD_GAP : LINE_GAP) : 0);
+    }
+  }
+  steps.push([t, sheetProgress(turn)]);
+  return steps;
+}
+
+/** Lines typed back to back, each starting once the one before has typed (plus LINE_GAP). */
+function TypedLines({ lines }: { lines: string[] }) {
+  const { starts } = typeLines(lines);
+  return lines.map((line, i) => (
+    <TypedLine key={i} text={line} age={0} stayVisible variant="thread" delay={starts[i]} />
+  ));
+}
