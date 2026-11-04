@@ -14,7 +14,7 @@ export function AnswerPanel({ answers, onSelect }: AnswerPanelProps) {
         {answers.map((answer, i) => (
           <li key={answer} className="w-full">
             <SheetRow divider={i < answers.length - 1} onPress={() => onSelect?.(answer)}>
-              <span className="text-sm leading-5 font-semibold whitespace-nowrap text-text-primary">
+              <span className="text-base leading-5 font-semibold whitespace-nowrap text-text-primary">
                 {answer}
               </span>
               <Radio />

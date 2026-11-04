@@ -39,38 +39,29 @@ export function GiftCard({ open, onOpen }: GiftCardProps) {
   return (
     // Not clipped: the wrapping falls out past the card's edges
     <div className="relative aspect-[4/3] w-full max-w-[368px] shrink-0">
-      {/* Underneath: the person's card, put in as the gift is opened (so its numbers count as it shows) */}
+      {/* Underneath: the person's card. Its art is always there so the reveal never waits on the image;
+          its text goes in as the gift is opened, so the numbers count as it shows */}
       <div className="absolute inset-0 flex overflow-clip rounded-card bg-page-light">
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--color-market-1)_0%,var(--color-market-2)_22.04%,var(--color-market-3)_49.93%,var(--color-market-4)_71.56%,var(--color-market-5)_99.93%)]" />
+        <img
+          alt=""
+          src={asset("/rewind/love/person-full.png")}
+          className="absolute inset-0 block size-full max-w-none object-cover"
+        />
         {open && (
-          <>
-            <div className="absolute inset-x-0 bottom-0 aspect-[4/3] bg-[linear-gradient(180deg,var(--color-market-1)_0%,var(--color-market-2)_22.04%,var(--color-market-3)_49.93%,var(--color-market-4)_71.56%,var(--color-market-5)_99.93%)]" />
-            {/* Figma slot "asset 1:2": the coin artwork across the card, with its orbit rings off the right edge */}
-            <div className="absolute inset-0 flex flex-col items-end justify-center overflow-clip">
-              <img
-                alt=""
-                src={asset("/rewind/love/person-coin.png")}
-                className="block aspect-[4/3] w-full max-w-none shrink-0 object-cover"
-              />
-              <img
-                alt=""
-                src={asset("/rewind/love/person-rings.svg")}
-                className="absolute top-[-48.6px] right-[-98.86px] block h-[477.353px] w-[197.726px] max-w-none"
-              />
+          <div className="relative flex min-w-px flex-1 flex-col">
+            <div className="flex min-h-px w-full flex-1 flex-col gap-1 px-4 pt-6 pb-4 text-on-accent">
+              <p className="w-full text-[32px] leading-10 font-bold">{LOVE_CARD.name}</p>
+              <p className="w-full text-sm leading-5 font-medium">
+                {LOVE_CARD.lines.map((line) => (
+                  <span key={line} className="block">
+                    <CountUp value={line} />
+                  </span>
+                ))}
+              </p>
             </div>
-            <div className="relative flex min-w-px flex-1 flex-col">
-              <div className="flex min-h-px w-full flex-1 flex-col gap-1 px-4 pt-6 pb-4 text-on-accent">
-                <p className="w-full text-[32px] leading-10 font-bold">{LOVE_CARD.name}</p>
-                <p className="w-full text-sm leading-5 font-medium">
-                  {LOVE_CARD.lines.map((line) => (
-                    <span key={line} className="block">
-                      <CountUp value={line} />
-                    </span>
-                  ))}
-                </p>
-              </div>
-              <ShareButton tone="light" className="px-4 pt-4 pb-6" />
-            </div>
-          </>
+            <ShareButton tone="cream" className="px-4 pt-4 pb-6" />
+          </div>
         )}
       </div>
 
@@ -89,30 +80,28 @@ export function GiftCard({ open, onOpen }: GiftCardProps) {
             className="absolute inset-0 z-10 flex cursor-pointer flex-col items-start justify-start overflow-clip rounded-card text-left disabled:cursor-default"
             exit={drop}
           >
-            <span className="absolute inset-x-0 bottom-0 aspect-[4/3] bg-[linear-gradient(180deg,var(--color-market-1)_0%,var(--color-market-2)_22.04%,var(--color-market-3)_49.93%,var(--color-market-4)_71.56%,var(--color-market-5)_99.93%)]" />
-            {/* Wrapped-box edge: an inset shadow on the left and bottom */}
-            <span className="absolute inset-0 rounded-[inherit] shadow-[inset_4px_-4px_0px_0px_rgb(0_0_0/0.56)]" />
-            <span className="relative flex flex-col items-start">
-              <span className="block w-full px-4 pt-6 pb-4 text-[32px] leading-10 font-bold text-on-accent">
+            <span className="absolute inset-0 bg-[linear-gradient(180deg,var(--color-market-1)_0%,var(--color-market-2)_22.04%,var(--color-market-3)_49.93%,var(--color-market-4)_71.56%,var(--color-market-5)_99.93%)]" />
+            <span className="relative flex size-full flex-col items-start">
+              <span className="block w-full px-4 pt-6 text-[32px] leading-10 font-bold text-on-accent">
                 {LOVE_CARD.teaser}
               </span>
-              <span className="px-4 pb-6">
-                <span className="flex items-center justify-center rounded-rounded bg-cream px-5 py-3 text-base leading-6 font-medium whitespace-nowrap text-text-primary">
+              <span className="flex min-h-px w-full flex-1 items-start px-4 pt-4 pb-6">
+                <span className="flex min-w-24 items-center justify-center rounded-rounded bg-cream px-5 py-3 text-base leading-6 font-medium whitespace-nowrap text-text-primary">
                   {LOVE_CARD.action}
                 </span>
               </span>
             </span>
 
             {/* Ribbon: a band across, a band down, and the bow where they cross */}
-            <span className="absolute inset-x-0 top-[191px] h-2.5 bg-cream shadow-[2px_2px_4px_0px_rgb(0_0_0/0.16)]" />
-            <span className="absolute inset-y-0 right-[19.46%] left-[77.59%] bg-cream shadow-[2px_2px_4px_0px_rgb(0_0_0/0.16)]" />
-            <span className="absolute top-[166px] right-[7.67%] left-[65.8%] h-[60px]">
-              <img
-                alt=""
-                src={asset("/rewind/love/gift-bow.svg")}
-                className="absolute inset-[0_-3.67%_0_0] block size-full max-w-none"
-              />
+            <span className="absolute inset-[74.32%_-0.1%_21.79%_0] bg-cream shadow-[2px_2px_4px_0px_rgb(0_0_0/0.16)]" />
+            <span className="absolute inset-[0_19.16%_0_77.92%] bg-cream shadow-[2px_2px_4px_0px_rgb(0_0_0/0.16)]" />
+            <span className="absolute inset-[64.59%_7.49%_12.06%_66.24%]">
+              <span className="absolute inset-[0_-3.94%_0_0]">
+                <img alt="" src={asset("/rewind/love/gift-bowtie.svg")} className="block size-full max-w-none" />
+              </span>
             </span>
+            {/* Wrapped-box edge: an inset shadow on the left and bottom, over everything */}
+            <span className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_4px_-4px_0px_0px_rgb(48_13_137/0.5)]" />
           </motion.button>
         )}
       </AnimatePresence>

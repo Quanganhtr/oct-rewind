@@ -10,15 +10,17 @@ export function BrandsCard() {
       label={label}
       title={title}
       pills={top}
-      gradient="bg-[linear-gradient(180deg,var(--color-brands-1)_0%,var(--color-brands-2)_22.6%,var(--color-brands-3)_46.64%,var(--color-brands-4)_75.96%,var(--color-brands-5)_100%)]"
+      gradient="bg-[linear-gradient(180deg,var(--color-shop-1)_0%,var(--color-shop-2)_22.6%,var(--color-shop-3)_46.64%,var(--color-shop-4)_75.96%,var(--color-shop-5)_100%)]"
+      fullArt
       art={
         <img
           alt=""
-          src={asset("/rewind/brands-planes.png")}
+          src={asset("/rewind/spending/brands-art.png")}
           className="absolute inset-0 block size-full max-w-none object-cover"
         />
       }
-      shareTone="dark"
+      shareTone="cream"
+      headingTone="dark"
       countPills
     />
   );

@@ -31,7 +31,7 @@ export function TopicMenu({ prompt = TOPICS_PROMPT, topics = TOPICS, onSelect }:
                 <span className="flex items-center justify-center overflow-clip rounded-lg bg-cream p-1">
                   <img alt="" src={asset(TOPIC_ICONS[topic])} className="block size-6" />
                 </span>
-                <span className="text-sm leading-5 font-semibold whitespace-nowrap text-text-primary">{topic}</span>
+                <span className="text-base leading-5 font-semibold whitespace-nowrap text-text-primary">{topic}</span>
               </span>
               <img alt="" src={asset("/rewind/arrow-right.svg")} className="block size-6" />
             </SheetRow>

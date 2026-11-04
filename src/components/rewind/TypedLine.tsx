@@ -26,8 +26,7 @@ export const DIM_DURATION = 0.6;
 export const countWords = (text: string) => text.split(/\s+/).filter(Boolean).length;
 
 /** Time for a line to fully type in: last word's start + its reveal. */
-export const typeDuration = (text: string, interval = WORD_INTERVAL) =>
-  (countWords(text) - 1) * interval + WORD_REVEAL;
+export const typeDuration = (text: string, interval = WORD_INTERVAL) => (countWords(text) - 1) * interval + WORD_REVEAL;
 
 interface TypedLineProps {
   text: string;
@@ -35,7 +34,7 @@ interface TypedLineProps {
   age: number;
   stayVisible: boolean;
   /** "intro": 24px chat line, dims with age. "thread": Step 5's 14px body. "greeting": Start's centred lines. */
-  variant: "intro" | "thread" | "greeting" | "prompt";
+  variant: "intro" | "thread" | "threadBold" | "greeting" | "prompt";
   /** Show already settled, no typing (opening straight on a later step). */
   instant?: boolean;
   /** Seconds before the first word starts. */
@@ -45,6 +44,7 @@ interface TypedLineProps {
 const VARIANT_CLASS = {
   intro: "w-full text-2xl leading-8 font-medium text-brand-primary",
   thread: "w-full text-base leading-6 font-medium text-text-primary",
+  threadBold: "w-full text-base leading-6 font-bold text-text-primary",
   greeting: "text-2xl leading-8 font-medium whitespace-nowrap text-brand-primary",
   prompt: "w-full text-base leading-6 font-normal text-text-primary",
 };
@@ -56,7 +56,7 @@ export function TypedLine({ text, age, stayVisible, variant, instant = false, de
   // Position of each word among words only (whitespace tokens get -1)
   const wordIndexes = tokens.map((t, i) => (t.trim() ? tokens.slice(0, i).filter((w) => w.trim()).length : -1));
   const restingOpacity = stayVisible ? 1 : LINE_OPACITY[1];
-  const isBody = variant === "thread" || variant === "prompt";
+  const isBody = variant === "thread" || variant === "threadBold" || variant === "prompt";
   const interval = isBody ? THREAD_WORD_INTERVAL : WORD_INTERVAL;
   const restColor = isBody ? "var(--color-text-primary)" : "var(--color-brand-primary)";
   const colors = [...WORD_GLOW, restColor];

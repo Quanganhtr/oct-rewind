@@ -884,7 +884,7 @@ export const SLIDES: DeckSlide[] = [
         <Slide
           eyebrow="Part 3 · Topic detail"
           title="Anatomy of a turn"
-          lead={<>Every exchange is the same five beats. Example: tapping “Em út nết na”.</>}
+          lead={<>Every exchange is the same five beats. Example: tapping “Cao thủ chắt chiu”.</>}
         >
           <Timeline beats={beats} total={ceilTo(t.sheetAt + FINALE_DURATION, 1)} step={1} />
           <div className="grid grid-cols-2 gap-8">
@@ -1180,10 +1180,6 @@ export const SLIDES: DeckSlide[] = [
               <>Tapping “Gửi” plays a normal turn (bubble → reply → card).</>,
             ]}
           />
-          <Callout tone="warn">
-            “Chuyện tiền tài” and “Chuyện sinh nhai” are placeholders (“To be updated”). They follow exactly the Part 3
-            rules once designed.
-          </Callout>
         </Slide>
       );
     },
@@ -1337,11 +1333,9 @@ export const SLIDES: DeckSlide[] = [
         <Rules
           items={[
             <>
-              Wrong answers: the prototype only wires the designed answer (e.g. “Em út nết na”). What do the other
+              Wrong answers: the prototype only wires the designed answer (e.g. “Cao thủ chắt chiu”). What do the other
               answers do?
             </>,
-            <>“Chuyện tiền tài” and “Chuyện sinh nhai” have no content yet (“To be updated”). Data and cards needed.</>,
-            <>“Chuyện thương ai”: what comes after “Đoán xem ai đứng đầu?” (answer options aren’t designed yet)?</>,
             <>“Chia sẻ ngay” share: what gets shared (image of the card? link?) and through which sheet?</>,
             <>Sound button and close (×) in the top bar: behaviour in the real app.</>,
             <>Name for Part 2 (“Warm-up” is a working title).</>,
@@ -1365,7 +1359,7 @@ function ScrollDiagram() {
         <span className="font-mono text-[8px] text-glow-2">16px</span>
       </div>
       <div className="absolute top-[75px] right-3 left-12 rounded-2xl border border-brand-primary px-3 py-2 text-[10px] text-text-primary">
-        Em út nết na?
+        Cao thủ chắt chiu?
       </div>
       <div className="absolute top-[120px] right-3 left-3 flex flex-col gap-2">
         <div className="h-2 w-4/5 rounded bg-text-primary/30" />

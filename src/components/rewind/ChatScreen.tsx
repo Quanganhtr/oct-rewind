@@ -39,6 +39,13 @@ import { SummaryCard } from "./SummaryCard";
 import { SupermarketCard } from "./SupermarketCard";
 import { GuestsCard } from "./GuestsCard";
 import { FanCard } from "./FanCard";
+import { GrowthCard } from "./GrowthCard";
+import { AssetsCard } from "./AssetsCard";
+import { GoodsCard } from "./GoodsCard";
+import { IncomeCard } from "./IncomeCard";
+import { RewardsCard } from "./RewardsCard";
+import { SavingsCard } from "./SavingsCard";
+import { PeakDayCard } from "./PeakDayCard";
 import { MonthsCard } from "./MonthsCard";
 import { ConcertCard } from "./ConcertCard";
 import { TopPeopleCard } from "./TopPeopleCard";
@@ -124,7 +131,7 @@ interface ChatScreenProps {
 }
 
 /** One beat of a turn after the reader's bubble: line(s) Tech Tech types, or a card. */
-type Beat = { lines: string[] } | { card: CardKind };
+type Beat = { lines: string[]; bold?: boolean } | { card: CardKind };
 
 /**
  * A turn as played: its topic (null for the summary) and step, with its sheet worked out as it starts
@@ -467,7 +474,7 @@ export function ChatScreen({
                 )}
                 {turn.beats.slice(0, Math.max(0, shown - 1)).map((beat, k) =>
                   "lines" in beat ? (
-                    <TypedLines key={k} lines={beat.lines} />
+                    <TypedLines key={k} lines={beat.lines} bold={beat.bold} />
                   ) : (
                     <motion.div
                       key={k}
@@ -494,6 +501,13 @@ export function ChatScreen({
                       {beat.card === "soundbox" && <SoundboxCard />}
                       {beat.card === "guests" && <GuestsCard />}
                       {beat.card === "fan" && <FanCard />}
+                      {beat.card === "peakDay" && <PeakDayCard />}
+                      {beat.card === "growth" && <GrowthCard />}
+                      {beat.card === "assets" && <AssetsCard />}
+                      {beat.card === "income" && <IncomeCard />}
+                      {beat.card === "rewards" && <RewardsCard />}
+                      {beat.card === "goods" && <GoodsCard />}
+                      {beat.card === "savings" && <SavingsCard />}
                       {beat.card === "months" && <MonthsCard />}
                       {beat.card === "concert" && <ConcertCard />}
                       {beat.card === "summary" && <SummaryCard />}
@@ -585,7 +599,14 @@ function beatsOf(turn: ThreadTurn, sheet: SheetNext): Beat[] {
     ...(turn.reply ? [beat(turn.reply)] : []),
     ...(turn.card ? [beat({ card: turn.card })] : []),
     ...(turn.after ?? []).map(beat),
-    ...(sheet.kind !== "end" && sheet.question ? [beat(sheet.question)] : []),
+    ...(sheet.kind !== "end" && sheet.question
+      ? [
+          {
+            lines: linesOf(sheet.question),
+            bold: (sheet.kind === "answers" || sheet.kind === "prompt") && sheet.boldQuestion,
+          },
+        ]
+      : []),
   ];
   return items.filter((b) => !("lines" in b) || b.lines.length > 0);
 }
@@ -614,9 +635,9 @@ function beatTimes(turn: PlayedTurn, from: number, at: number): [number, number]
 }
 
 /** Lines typed back to back, each starting once the one before has typed (plus LINE_GAP). */
-function TypedLines({ lines }: { lines: string[] }) {
+function TypedLines({ lines, bold = false }: { lines: string[]; bold?: boolean }) {
   const { starts } = typeLines(lines);
   return lines.map((line, i) => (
-    <TypedLine key={i} text={line} age={0} stayVisible variant="thread" delay={starts[i]} />
+    <TypedLine key={i} text={line} age={0} stayVisible variant={bold ? "threadBold" : "thread"} delay={starts[i]} />
   ));
 }

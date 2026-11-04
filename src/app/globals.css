@@ -48,6 +48,13 @@
   --color-brands-4: #56d4f4;
   --color-brands-5: #f1eed7;
 
+  /* "12 brand" card foreground (top → bottom) */
+  --color-shop-1: #022022;
+  --color-shop-2: #043134;
+  --color-shop-3: #0d5e5c;
+  --color-shop-4: #18b4b4;
+  --color-shop-5: #8de6b7;
+
   /* Supermarket card foreground (top → bottom) */
   --color-market-1: #051a3a;
   --color-market-2: #1d0b7e;

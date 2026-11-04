@@ -9,22 +9,26 @@ export interface CardRow {
 }
 
 interface PillCardProps {
-  /** Small line above the title… */
+  /** Small line above the title. */
   label?: string;
   title: string;
-  /** …or below it (Figma "Top 3 cái tên"). */
-  subtitle?: string;
+  /** 20px title under a shorter label, instead of 32px (Figma "Quang đã tậu được"). */
+  compactTitle?: boolean;
   /** Frosted pills under the title… */
   pills?: string[];
   /** …or label/value rows split by hairlines (Step 14 summary). */
   rows?: CardRow[];
   /** Full-card gradient (3:4, top-anchored). */
   gradient: string;
-  /** Optional artwork, bottom-anchored. */
+  /** Optional artwork, bottom-anchored… */
   art?: ReactNode;
-  shareTone: "light" | "dark";
+  /** …or artwork that fills the whole card. */
+  fullArt?: boolean;
+  shareTone: "light" | "dark" | "cream";
   /** Title and pill text: white (default) or dark, for light gradients (Figma "Quang vun vén"). */
   textTone?: "light" | "dark";
+  /** Heading colour when it differs from the pills (Figma "12 brand": dark heading, white pills). */
+  headingTone?: "light" | "dark";
   /** Count up the numbers in the pills/rows too (amounts, not "Top 1"-style ranks). */
   countPills?: boolean;
 }
@@ -33,29 +37,43 @@ interface PillCardProps {
 export function PillCard({
   label,
   title,
-  subtitle,
+  compactTitle = false,
   pills,
   rows,
   gradient,
   art,
+  fullArt = false,
   shareTone,
   textTone = "light",
+  headingTone = textTone,
   countPills = false,
 }: PillCardProps) {
-  const text = textTone === "dark" ? "text-text-primary" : "text-on-accent";
+  const toneClass = (tone: "light" | "dark") => (tone === "dark" ? "text-text-primary" : "text-on-accent");
+  const text = toneClass(textTone);
   return (
     <div className="relative flex aspect-[3/4] w-full shrink-0 flex-col items-center overflow-clip rounded-card bg-page-light">
       <div className={cn("absolute inset-x-0 top-0 aspect-[3/4]", gradient)} />
-      {art && <div className="absolute inset-x-0 bottom-0 aspect-[2/1] overflow-clip">{art}</div>}
+      {art && (
+        <div className={cn("absolute overflow-clip", fullArt ? "inset-0" : "inset-x-0 bottom-0 aspect-[2/1]")}>
+          {art}
+        </div>
+      )}
 
       <div className="relative flex w-full shrink-0 flex-col items-start gap-4 px-4 pt-6 pb-4">
-        <div className={cn("flex w-full flex-col items-center justify-center gap-1 text-center", text)}>
-          {label && <p className="h-6 w-full text-sm leading-5 font-medium">{label}</p>}
+        <div
+          className={cn("flex w-full flex-col items-center justify-center gap-1 text-center", toneClass(headingTone))}
+        >
+          {label && <p className={cn("w-full text-sm leading-5 font-medium", !compactTitle && "h-6")}>{label}</p>}
           {/* Figma sets the title at 40px line height over pills, 44px over the summary's rows */}
-          <p className={cn("w-full text-[32px] font-bold", rows ? "leading-11" : "leading-10")}>
+          <p
+            className={cn(
+              "w-full font-bold",
+              compactTitle ? "text-xl leading-7" : "text-[32px]",
+              !compactTitle && (rows ? "leading-11" : "leading-10"),
+            )}
+          >
             <CountUp value={title} />
           </p>
-          {subtitle && <p className="w-full text-sm leading-5 font-medium">{subtitle}</p>}
         </div>
         {pills && (
           <ul className="flex w-full flex-col items-start gap-2">

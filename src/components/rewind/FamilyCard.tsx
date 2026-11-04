@@ -2,23 +2,24 @@ import { asset } from "@/lib/asset";
 import { FAMILY_CARD } from "@/data/rewind";
 import { PillCard } from "./PillCard";
 
-/** Figma "Chuyện thương ai - 7" card: the family group, group funds and insurance in the reader's name. */
+/** Figma "Chuyện thương ai" card: the family group, group funds and insurance in the reader's name. */
 export function FamilyCard() {
-  const { title, pills } = FAMILY_CARD;
+  const { label, title, pills } = FAMILY_CARD;
   return (
     <PillCard
+      label={label}
       title={title}
       pills={pills}
-      gradient="bg-[linear-gradient(180deg,var(--color-brands-5)_0%,var(--color-brands-4)_24.04%,var(--color-brands-3)_53.37%,var(--color-brands-2)_77.4%,var(--color-brands-1)_100%)]"
+      gradient="bg-[linear-gradient(0deg,var(--color-spend-4)_0%,var(--color-spend-3)_33.65%,var(--color-spend-2)_66.83%,var(--color-spend-1)_100%)]"
+      fullArt
       art={
         <img
           alt=""
-          src={asset("/rewind/love/family-art.png")}
-          className="absolute top-1/2 left-1/2 block h-[180.5px] w-[361px] max-w-none -translate-1/2 object-cover"
+          src={asset("/rewind/love/family-full.png")}
+          className="absolute inset-0 block size-full max-w-none object-cover"
         />
       }
-      shareTone="light"
-      textTone="dark"
+      shareTone="cream"
       countPills
     />
   );
