@@ -31,6 +31,8 @@ interface PillCardProps {
   headingTone?: "light" | "dark";
   /** Count up the numbers in the pills/rows too (amounts, not "Top 1"-style ranks). */
   countPills?: boolean;
+  /** Count up the number in the title (off for "Top 3"-style ranks). */
+  countTitle?: boolean;
 }
 
 /** Figma 3:4 card with a heading over pills (Step 9 "64 nơi") or rows (Step 14 summary). */
@@ -47,6 +49,7 @@ export function PillCard({
   textTone = "light",
   headingTone = textTone,
   countPills = false,
+  countTitle = true,
 }: PillCardProps) {
   const toneClass = (tone: "light" | "dark") => (tone === "dark" ? "text-text-primary" : "text-on-accent");
   const text = toneClass(textTone);
@@ -72,7 +75,7 @@ export function PillCard({
               !compactTitle && (rows ? "leading-11" : "leading-10"),
             )}
           >
-            <CountUp value={title} />
+            {countTitle ? <CountUp value={title} /> : title}
           </p>
         </div>
         {pills && (

@@ -76,16 +76,16 @@ const FINANCE_THREAD: ThreadTurn[] = [
     reply: "Chúc mừng anh năm Ngọ chinh phục thành tựu lớn.",
     card: "priorityNewAssets",
     next: {
-      kind: "prompt",
+      kind: "answers",
       question: "Anh có nhớ thời gian dài nhất mình kiên trì tích luỹ?",
       boldQuestion: true,
-      prompt: "Chắc là 9 tháng",
-      action: "Gửi",
+      answers: ["3 tháng", "9 tháng", "12 tháng"],
     },
   },
   {
-    trigger: "Chắc là 9 tháng",
-    userMessage: "Chắc là 9 tháng",
+    // Figma "Tài chính an vững - 14" shows "9 tháng"; every guess gets the real answer, with its own bubble
+    trigger: ANY_ANSWER,
+    userMessage: "",
     reply: "Gần 12 tháng bên bỉ, tích tiểu thành đại.",
     card: "prioritySavings",
     next: {

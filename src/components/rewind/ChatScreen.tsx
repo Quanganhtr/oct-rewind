@@ -52,6 +52,14 @@ import {
   PriorityPerksCard,
   PriorityRewardsCard,
 } from "./PriorityExperienceCards";
+import {
+  PrivateCountriesCard,
+  PrivateEventsCard,
+  PrivateFamilyCard,
+  PrivateMomentsCard,
+  PrivateRevenueCard,
+  PrivateShieldsCard,
+} from "./PrivateCards";
 import { SummaryCard } from "./SummaryCard";
 import { SupermarketCard } from "./SupermarketCard";
 import { GuestsCard } from "./GuestsCard";
@@ -548,6 +556,12 @@ export function ChatScreen({
                       {beat.card === "priorityBrand" && <PriorityBrandCard />}
                       {beat.card === "priorityCountries" && <PriorityCountriesCard />}
                       {beat.card === "priorityRewards" && <PriorityRewardsCard />}
+                      {beat.card === "privateRevenue" && <PrivateRevenueCard />}
+                      {beat.card === "privateEvents" && <PrivateEventsCard />}
+                      {beat.card === "privateMoments" && <PrivateMomentsCard />}
+                      {beat.card === "privateCountries" && <PrivateCountriesCard />}
+                      {beat.card === "privateShields" && <PrivateShieldsCard />}
+                      {beat.card === "privateFamily" && <PrivateFamilyCard />}
                     </motion.div>
                   ),
                 )}

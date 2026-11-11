@@ -6,10 +6,9 @@ import {
   EXPERIENCE_PERKS_CARD,
   EXPERIENCE_REWARDS_CARD,
 } from "@/data/priority";
-import { CountUp } from "./CountUp";
 import { PillCard } from "./PillCard";
-import { ShareButton } from "./ShareButton";
 import { StatStackCard } from "./StatStackCard";
+import { TitleNoteCard } from "./TitleNoteCard";
 
 /*
  * Priority "Trải nghiệm xứng tầm" cards (Figma section 504:10351). Full-card artwork over Figma's
@@ -38,33 +37,8 @@ export function PriorityPerksCard() {
 
 /** "2026, anh yêu nhất Ẩm thực": the category the reader spent most on, and its share (4:3). */
 export function PriorityDiningCard() {
-  const { label, title, notes } = EXPERIENCE_DINING_CARD;
-  return (
-    <div className="relative flex aspect-[4/3] max-h-[276px] w-full max-w-[368px] shrink-0 overflow-clip rounded-card bg-card-base">
-      {/* Figma lays the art over a 50% white wash, mirrored left to right */}
-      <div className="absolute inset-0 bg-page-light/50" />
-      <img
-        alt=""
-        src={asset(SATIN)}
-        className="absolute inset-0 block size-full max-w-none -scale-x-100 object-cover"
-      />
-
-      <div className="relative flex min-w-px flex-1 flex-col">
-        <div className="flex min-h-px w-full flex-1 flex-col gap-1 px-4 pt-6 pb-4 text-cream">
-          <p className="h-6 w-full text-sm leading-5 font-medium">{label}</p>
-          <p className="w-full text-[32px] leading-10 font-bold">{title}</p>
-          <p className="w-full text-sm leading-5 font-medium">
-            {notes.map((line) => (
-              <span key={line} className="block">
-                <CountUp value={line} />
-              </span>
-            ))}
-          </p>
-        </div>
-        <ShareButton tone="cream" className="px-4 pt-4 pb-6" />
-      </div>
-    </div>
-  );
+  // Figma lays the art over a 50% white wash, mirrored left to right
+  return <TitleNoteCard {...EXPERIENCE_DINING_CARD} image={SATIN} mirrorImage wash tone="cream" />;
 }
 
 /** "Anh là khách sộp nhà Hermes": the luxury brand the reader returned to, visits and spend. */

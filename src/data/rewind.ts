@@ -252,7 +252,14 @@ export type CardKind =
   | "priorityDining"
   | "priorityBrand"
   | "priorityCountries"
-  | "priorityRewards";
+  | "priorityRewards"
+  // Private tier, "Rất sẵn lòng"
+  | "privateRevenue"
+  | "privateEvents"
+  | "privateMoments"
+  | "privateCountries"
+  | "privateShields"
+  | "privateFamily";
 
 export type ThreadTurn = {
   /** Answer, topic or sent prompt that starts this turn — ANY_ANSWER takes whichever answer was picked. */

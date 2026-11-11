@@ -9,6 +9,13 @@ import {
   type TopicSet,
 } from "./rewind";
 import { PRIORITY_THREADS, PRIORITY_TOPICS, PRIORITY_TOPICS_PROMPT, PRIORITY_USER_NAME } from "./priority";
+import {
+  PRIVATE_INTRO_LINES,
+  PRIVATE_THREADS,
+  PRIVATE_TOPICS,
+  PRIVATE_TOPICS_PROMPT,
+  PRIVATE_USER_NAME,
+} from "./private";
 
 /**
  * A customer tier: the same flow and motion, with its own palette, assets and copy.
@@ -50,7 +57,7 @@ export interface Tier {
   handoff: boolean;
 }
 
-export type TierId = "standard" | "priority";
+export type TierId = "standard" | "priority" | "private";
 
 const STANDARD: Tier = {
   assetDir: "/rewind",
@@ -112,4 +119,17 @@ const PRIORITY: Tier = {
   handoff: false,
 };
 
-export const TIERS: Record<TierId, Tier> = { standard: STANDARD, priority: PRIORITY };
+/** Figma "Opening" (Private, node 512:13542): Priority's palette, marks and icons, with its own copy. */
+const PRIVATE: Tier = {
+  ...PRIORITY,
+  greeting: [PRIVATE_USER_NAME, "Một năm gói lại đôi lời"],
+  introLines: PRIVATE_INTRO_LINES,
+  topicsPrompt: PRIVATE_TOPICS_PROMPT,
+  topics: PRIVATE_TOPICS,
+  /** Figma Step 59 topic icon: chat-heart (the same file as Priority's love topic). */
+  topicIcons: { [PRIVATE_TOPICS[0]]: "/priority/topic-love.svg" },
+  threads: PRIVATE_THREADS,
+  topicSet: { topics: PRIVATE_TOPICS, moreTopicsPrompt: PRIVATE_TOPICS_PROMPT },
+};
+
+export const TIERS: Record<TierId, Tier> = { standard: STANDARD, priority: PRIORITY, private: PRIVATE };
