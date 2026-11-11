@@ -128,6 +128,16 @@ body {
 }
 
 /*
+ * iOS Safari: a rounded box with overflow clip lets composited children (card art, frosted pills,
+ * a card still easing in with blur/scale) spill past its corners as square edges. A mask that
+ * hides nothing makes WebKit clip them to the radius. Cards only; the glass sheet is fine.
+ */
+.overflow-clip:is(.rounded-card, .rounded-2xl):not([class*="backdrop-blur"]) {
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+}
+
+/*
  * Priority tier (Figma "rewind-2026/Priority"): the same flow in umber and sand. Set on the
  * flow's root, it re-points the tokens above for everything inside.
  */
