@@ -18,7 +18,8 @@ type Layer = {
  * Figma "Gradient": seven blurred pills stacked from the outside in. While playing, each spins
  * -180° and breathes 1 → 1.2 → 1 on the shared 2s loop.
  *  • dome — inside the key gradient: deep red outside, peach centre.
- *  • chat — parked at the bottom of the chat: 1.25× larger, softer, colors reversed.
+ *  • chat — parked at the bottom of the chat: 1.25× larger, softer, in its own color tokens
+ *    (the dome's reversed on the base tier).
  */
 const VARIANTS: Record<"dome" | "chat", Layer[]> = {
   dome: [
@@ -31,13 +32,13 @@ const VARIANTS: Record<"dome" | "chat", Layer[]> = {
     { box: "h-[76px] w-[132px]", pill: "h-[76px] w-[132px] bg-ember-1 blur-[12px]", rotate: "" },
   ],
   chat: [
-    { box: "h-[525px] w-[455px]", pill: "h-[455px] w-[525px] bg-ember-1 blur-[37.5px]", rotate: "rotate-90" },
-    { box: "h-[551.389px] w-[501.892px]", pill: "h-[395px] w-[465px] bg-ember-2 blur-[22.5px]", rotate: "rotate-75" },
-    { box: "h-[518.24px] w-[492.619px]", pill: "h-[335px] w-[405px] bg-ember-3 blur-[22.5px]", rotate: "rotate-60" },
-    { box: "size-[438.406px]", pill: "h-[275px] w-[345px] bg-ember-4 blur-[22.5px]", rotate: "rotate-45" },
-    { box: "h-[328.695px] w-[354.317px]", pill: "h-[215px] w-[285px] bg-ember-5 blur-[17.5px]", rotate: "rotate-30" },
-    { box: "h-[207.953px] w-[257.45px]", pill: "h-[155px] w-[225px] bg-ember-6 blur-[17.5px]", rotate: "rotate-15" },
-    { box: "h-[95px] w-[165px]", pill: "h-[95px] w-[165px] bg-ember-7 blur-[15px]", rotate: "" },
+    { box: "h-[525px] w-[455px]", pill: "h-[455px] w-[525px] bg-chat-orb-1 blur-[37.5px]", rotate: "rotate-90" },
+    { box: "h-[551.389px] w-[501.892px]", pill: "h-[395px] w-[465px] bg-chat-orb-2 blur-[22.5px]", rotate: "rotate-75" },
+    { box: "h-[518.24px] w-[492.619px]", pill: "h-[335px] w-[405px] bg-chat-orb-3 blur-[22.5px]", rotate: "rotate-60" },
+    { box: "size-[438.406px]", pill: "h-[275px] w-[345px] bg-chat-orb-4 blur-[22.5px]", rotate: "rotate-45" },
+    { box: "h-[328.695px] w-[354.317px]", pill: "h-[215px] w-[285px] bg-chat-orb-5 blur-[17.5px]", rotate: "rotate-30" },
+    { box: "h-[207.953px] w-[257.45px]", pill: "h-[155px] w-[225px] bg-chat-orb-6 blur-[17.5px]", rotate: "rotate-15" },
+    { box: "h-[95px] w-[165px]", pill: "h-[95px] w-[165px] bg-chat-orb-7 blur-[15px]", rotate: "" },
   ],
 };
 

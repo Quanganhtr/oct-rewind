@@ -19,8 +19,6 @@ import {
   linesOf,
   resolveNext,
   type SheetNext,
-  SUMMARY_TURN,
-  TOPIC_THREADS,
   type ThreadTurn,
 } from "@/data/rewind";
 import { AnswerPanel } from "./AnswerPanel";
@@ -35,6 +33,25 @@ import { EmojiRain } from "./EmojiRain";
 import { FamilyCard } from "./FamilyCard";
 import { GiftCard } from "./GiftCard";
 import { PromptPanel } from "./PromptPanel";
+import {
+  PriorityGrowthCard,
+  PriorityNewAssetsCard,
+  PriorityReturnsCard,
+  PrioritySavingsCard,
+} from "./PriorityFinanceCards";
+import {
+  PriorityBirthdayCard,
+  PriorityDonationCard,
+  PriorityFamilyCard,
+  PriorityGiftCard,
+} from "./PriorityLoveCards";
+import {
+  PriorityBrandCard,
+  PriorityCountriesCard,
+  PriorityDiningCard,
+  PriorityPerksCard,
+  PriorityRewardsCard,
+} from "./PriorityExperienceCards";
 import { SummaryCard } from "./SummaryCard";
 import { SupermarketCard } from "./SupermarketCard";
 import { GuestsCard } from "./GuestsCard";
@@ -52,6 +69,7 @@ import { TopPeopleCard } from "./TopPeopleCard";
 import { HomeIndicator } from "./HomeIndicator";
 import { SoundboxCard } from "./SoundboxCard";
 import { SpendingCard } from "./SpendingCard";
+import { useTier } from "./TierContext";
 import { TopicMenu } from "./TopicMenu";
 import { TopNavigation } from "./TopNavigation";
 import { DIM_DELAY, THREAD_WORD_INTERVAL, typeDuration, TypedLine } from "./TypedLine";
@@ -159,6 +177,7 @@ export function ChatScreen({
   onClose,
 }: ChatScreenProps) {
   const reduceMotion = useReducedMotion();
+  const { threads, topicSet } = useTier();
   const newestLine = lines[lines.length - 1];
   const opensOnMenu = startAt === "menu";
   const [showMenu, setShowMenu] = useState(opensOnMenu);
@@ -262,7 +281,7 @@ export function ChatScreen({
     setProgress(0);
     setPlayed((sofar) => {
       const visited = [...sofar.map((t) => t.topic), topic].filter((t): t is string => t !== null);
-      const sheet = resolveNext(turn, visited);
+      const sheet = resolveNext(turn, visited, topicSet);
       return [...sofar, { ...turn, topic, step, sheet, beats: beatsOf(turn, sheet) }];
     });
   };
@@ -270,9 +289,9 @@ export function ChatScreen({
   /** The first menu (Step 4): any topic can start the thread. */
   const pickTopic = (topic: string) => {
     // `topicPicked` is stale in a menu still sliding out; the ref already knows a turn started
-    if (topicPicked || startedRef.current > 0 || !TOPIC_THREADS[topic]) return;
+    if (topicPicked || startedRef.current > 0 || !threads[topic]) return;
     onPhaseChange?.("spending");
-    startTurn(TOPIC_THREADS[topic][0], topic, 0);
+    startTurn(threads[topic][0], topic, 0);
     setShowMenu(false);
     animate(orbY, ORB_EXIT_Y, {
       duration: reduceMotion ? 0 : ORB_EXIT,
@@ -285,11 +304,15 @@ export function ChatScreen({
     // A sheet still sliding out keeps this handler from its own render: a second tap there is stale
     if (!sheetUp || startedRef.current !== turnCount) return;
     if (current.sheet.kind === "topics") {
-      if (current.sheet.topics.includes(answer)) startTurn(TOPIC_THREADS[answer][0], answer, 0);
+      // A topic whose conversation isn't built yet stays put
+      if (current.sheet.topics.includes(answer) && threads[answer]) startTurn(threads[answer][0], answer, 0);
       return;
     }
-    if (current.next.kind === "continue") return startTurn(SUMMARY_TURN, null, 0);
-    const following = current.topic ? TOPIC_THREADS[current.topic][current.step + 1] : undefined;
+    if (current.next.kind === "continue") {
+      if (topicSet.summary) startTurn(topicSet.summary, null, 0);
+      return;
+    }
+    const following = current.topic ? threads[current.topic][current.step + 1] : undefined;
     if (!following || (following.trigger !== answer && following.trigger !== ANY_ANSWER)) return;
     // An ANY_ANSWER turn shows the reader's pick as their bubble
     startTurn({ ...following, userMessage: following.userMessage || answer }, current.topic, current.step + 1);
@@ -399,6 +422,12 @@ export function ChatScreen({
     followRef.current = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 8;
   };
 
+  /** A gift in turn `i`: open once tapped, and tappable only while it's the newest turn's. */
+  const giftProps = (i: number) => ({
+    open: opened.includes(i),
+    onOpen: i === latest && !opened.includes(i) ? () => setOpened((o) => [...o, i]) : undefined,
+  });
+
   const enter = (from: TargetAndTransition): TargetAndTransition =>
     reduceMotion ? { opacity: 0 } : { opacity: 0, filter: "blur(8px)", ...from };
 
@@ -488,12 +517,8 @@ export function ChatScreen({
                       {beat.card === "compare" && <CompareCard />}
                       {beat.card === "brands" && <BrandsCard />}
                       {beat.card === "supermarket" && <SupermarketCard />}
-                      {beat.card === "gift" && (
-                        <GiftCard
-                          open={opened.includes(i)}
-                          onOpen={i === latest && !opened.includes(i) ? () => setOpened((o) => [...o, i]) : undefined}
-                        />
-                      )}
+                      {beat.card === "gift" && <GiftCard {...giftProps(i)} />}
+                      {beat.card === "priorityGift" && <PriorityGiftCard {...giftProps(i)} />}
                       {beat.card === "topPeople" && <TopPeopleCard />}
                       {beat.card === "birthday" && <BirthdayCard />}
                       {beat.card === "family" && <FamilyCard />}
@@ -511,6 +536,18 @@ export function ChatScreen({
                       {beat.card === "months" && <MonthsCard />}
                       {beat.card === "concert" && <ConcertCard />}
                       {beat.card === "summary" && <SummaryCard />}
+                      {beat.card === "priorityGrowth" && <PriorityGrowthCard />}
+                      {beat.card === "priorityNewAssets" && <PriorityNewAssetsCard />}
+                      {beat.card === "prioritySavings" && <PrioritySavingsCard />}
+                      {beat.card === "priorityReturns" && <PriorityReturnsCard />}
+                      {beat.card === "priorityFamily" && <PriorityFamilyCard />}
+                      {beat.card === "priorityDonation" && <PriorityDonationCard />}
+                      {beat.card === "priorityBirthday" && <PriorityBirthdayCard />}
+                      {beat.card === "priorityPerks" && <PriorityPerksCard />}
+                      {beat.card === "priorityDining" && <PriorityDiningCard />}
+                      {beat.card === "priorityBrand" && <PriorityBrandCard />}
+                      {beat.card === "priorityCountries" && <PriorityCountriesCard />}
+                      {beat.card === "priorityRewards" && <PriorityRewardsCard />}
                     </motion.div>
                   ),
                 )}

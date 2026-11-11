@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { CountUp } from "./CountUp";
 import { ShareButton } from "./ShareButton";
@@ -5,8 +6,8 @@ import { ShareButton } from "./ShareButton";
 interface CenterStatCardProps {
   label: string;
   value: string;
-  /** Line under the value; Figma keeps its space even when there's none. */
-  note?: string;
+  /** Line(s) under the value; Figma keeps its space even when there's none. */
+  note?: ReactNode;
   /** 32px value under a taller label, instead of 20px. */
   large?: boolean;
   /** Full-card gradient behind the image. */

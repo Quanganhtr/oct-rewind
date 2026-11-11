@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { asset } from "@/lib/asset";
+import { useTier } from "./TierContext";
 
 interface TopNavigationProps {
   /** Background the bar sits on — picks the matching icon set and label color. */
@@ -9,7 +10,8 @@ interface TopNavigationProps {
 }
 
 export function TopNavigation({ tone, onClose, className }: TopNavigationProps) {
-  const icon = (name: string) => asset(`/rewind/${name}-${tone}-bg.svg`);
+  const { assetDir } = useTier();
+  const icon = (name: string) => asset(`${assetDir}/${name}-${tone}-bg.svg`);
   const label = tone === "dark" ? "text-on-accent" : "text-text-primary";
 
   return (

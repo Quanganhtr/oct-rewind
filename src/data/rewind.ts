@@ -236,7 +236,23 @@ export type CardKind =
   | "savings"
   | "months"
   | "concert"
-  | "summary";
+  | "summary"
+  // Priority tier, "Tài chính an vững"
+  | "priorityGrowth"
+  | "priorityNewAssets"
+  | "prioritySavings"
+  | "priorityReturns"
+  // Priority tier, "Yêu thương trọn tâm"
+  | "priorityFamily"
+  | "priorityDonation"
+  | "priorityGift"
+  | "priorityBirthday"
+  // Priority tier, "Trải nghiệm xứng tầm"
+  | "priorityPerks"
+  | "priorityDining"
+  | "priorityBrand"
+  | "priorityCountries"
+  | "priorityRewards";
 
 export type ThreadTurn = {
   /** Answer, topic or sent prompt that starts this turn — ANY_ANSWER takes whichever answer was picked. */
@@ -244,7 +260,7 @@ export type ThreadTurn = {
   /** The reader's bubble; empty for an ANY_ANSWER turn, which shows the answer itself. */
   userMessage: string;
   reply?: Lines;
-  /** "gift" waits for the reader to open it before the turn carries on. */
+  /** A gift ("gift", "priorityGift") waits for the reader to open it before the turn carries on. */
   card?: CardKind;
   /** More beats after the card, before `next`: line(s) to type, or another card. */
   after?: (Lines | { card: CardKind })[];
@@ -264,7 +280,7 @@ export type SheetNext =
   | { kind: "topics"; question?: Lines; prompt: string; topics: string[] };
 
 /** Cards the reader has to tap open before the turn goes on. */
-export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift"]);
+export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift", "priorityGift"]);
 
 /** A turn `trigger` that any of the previous turn's answers starts (for answers whose follow-ups aren't designed). */
 export const ANY_ANSWER = "*";
@@ -584,19 +600,37 @@ export const SUMMARY_TURN: ThreadTurn = {
   next: { kind: "end" },
 };
 
+/** A tier's topics, as far as working out what follows a finished topic goes. */
+export interface TopicSet {
+  topics: string[];
+  /** Heading of the topic list offered after a topic ends. */
+  moreTopicsPrompt: string;
+  /** Played once every topic is done; without one, the flow just ends there. */
+  summary?: ThreadTurn;
+}
+
+/** The base tier's topics, closing on the summary. */
+export const STANDARD_TOPIC_SET: TopicSet = {
+  topics: TOPICS,
+  moreTopicsPrompt: MORE_TOPICS_PROMPT,
+  summary: SUMMARY_TURN,
+};
+
 /** Works out a turn's sheet: a topic that ends offers the topics left, or the summary once none are. */
-export function resolveNext(turn: ThreadTurn, visited: readonly string[]): SheetNext {
+export function resolveNext(turn: ThreadTurn, visited: readonly string[], set = STANDARD_TOPIC_SET): SheetNext {
   const { next } = turn;
   if (next.kind !== "continue") return next;
   const closing = linesOf(next.question);
-  const left = TOPICS.filter((topic) => !visited.includes(topic));
+  const left = set.topics.filter((topic) => !visited.includes(topic));
   if (!left.length) {
-    return { kind: "prompt", question: closing, prompt: SUMMARY_PROMPT, action: "Gửi", typed: true };
+    return set.summary
+      ? { kind: "prompt", question: closing, prompt: set.summary.trigger, action: "Gửi", typed: true }
+      : { kind: "end" };
   }
   const question = next.ask
     ? [...closing.slice(0, -1), [closing.at(-1), next.ask].filter(Boolean).join("\n")]
     : closing;
-  return { kind: "topics", question, prompt: MORE_TOPICS_PROMPT, topics: left };
+  return { kind: "topics", question, prompt: set.moreTopicsPrompt, topics: left };
 }
 
 /** Every turn in the default topic order, then the summary (for the handoff deck). */

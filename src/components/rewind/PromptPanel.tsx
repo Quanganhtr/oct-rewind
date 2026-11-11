@@ -1,5 +1,7 @@
 import { asset } from "@/lib/asset";
+import { cn } from "@/lib/cn";
 import { GlassSheet } from "./GlassSheet";
+import { useTier } from "./TierContext";
 import { TypedLine } from "./TypedLine";
 
 interface PromptPanelProps {
@@ -12,6 +14,7 @@ interface PromptPanelProps {
 
 /** Figma Step 8 "Bottom": Tech Tech's next question inside the sheet, with a send button. */
 export function PromptPanel({ prompt, action, typed = false, onAction }: PromptPanelProps) {
+  const { assetDir, sendButtonClass } = useTier();
   return (
     // p-[17px] = Figma's 16px + 1px stroke
     <GlassSheet className="p-[17px]">
@@ -27,10 +30,10 @@ export function PromptPanel({ prompt, action, typed = false, onAction }: PromptP
           e.stopPropagation();
           onAction?.();
         }}
-        className="flex shrink-0 items-center justify-center gap-2.5 rounded-rounded bg-brand-primary px-6 py-4"
+        className={cn("flex shrink-0 items-center justify-center gap-2.5 rounded-rounded bg-brand-primary", sendButtonClass)}
       >
-        <span className="text-base leading-6 font-medium whitespace-nowrap text-on-accent">{action}</span>
-        <img alt="" src={asset("/rewind/send.svg")} className="block size-6" />
+        <span className="text-base leading-6 font-medium whitespace-nowrap text-on-brand">{action}</span>
+        <img alt="" src={asset(`${assetDir}/send.svg`)} className="block size-6" />
       </button>
     </GlassSheet>
   );

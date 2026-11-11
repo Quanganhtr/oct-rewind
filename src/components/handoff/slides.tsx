@@ -242,7 +242,7 @@ export const SLIDES: DeckSlide[] = [
         name="Intro"
         range="Loading → Start"
         points={[
-          "Loading screen and its progress bar",
+          "Loading screen (no progress bar: it waits for loading)",
           "The dome and its 4 ambient loops",
           "The Loading → Start transition (one shared 1.4s settle)",
           "The Start greeting typing in",
@@ -258,7 +258,7 @@ export const SLIDES: DeckSlide[] = [
       <Slide
         eyebrow="Part 1 · Intro"
         title="Loading screen"
-        lead="No tap needed. The bar shows real loading progress; when loading finishes, the screen settles into Start on its own."
+        lead="No tap needed and no progress bar. When loading finishes, the screen settles into Start on its own."
         aside={<IntroDemo />}
       >
         <Specs
@@ -279,18 +279,6 @@ export const SLIDES: DeckSlide[] = [
               "2026 mark",
               <>
                 Cream SVG · <V>189 × 55</V>
-              </>,
-            ],
-            [
-              "Progress track",
-              <>
-                <V>124px</V> wide · 1px padding · white 30% · fully rounded
-              </>,
-            ],
-            [
-              "Progress fill",
-              <>
-                <V>2px</V> tall · cream · fill width follows real loading progress, <V>0 → 100%</V>
               </>,
             ],
             [
@@ -1286,7 +1274,7 @@ export const SLIDES: DeckSlide[] = [
           <Specs
             labelWidth="w-[150px]"
             rows={[
-              ["Loading bar", "real progress"],
+              ["Loading", "until loaded"],
               ["Loading → Start", sec(SETTLE_DURATION)],
               ["Dome exit", sec(DOME_EXIT_DURATION)],
               ["Screen crossfade", sec(SCREEN_FADE)],

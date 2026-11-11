@@ -1,4 +1,6 @@
+import { asset } from "@/lib/asset";
 import { GlassSheet, SheetRow } from "./GlassSheet";
+import { useTier } from "./TierContext";
 
 interface AnswerPanelProps {
   answers: string[];
@@ -26,8 +28,13 @@ export function AnswerPanel({ answers, onSelect }: AnswerPanelProps) {
   );
 }
 
-/** Figma "Radio" (unselected): 20px cream circle with a 29% outline, 12px inner dot, in a 24px box. */
+/**
+ * Figma "Radio" (unselected): 20px cream circle with a 29% outline, 12px inner dot, in a 24px box.
+ * A tier can swap in its own (Priority's has a gradient ring).
+ */
 function Radio() {
+  const { radioIcon } = useTier();
+  if (radioIcon) return <img alt="" src={asset(radioIcon)} className="block size-6 shrink-0" />;
   return (
     <span aria-hidden className="relative flex size-6 shrink-0 items-center justify-center">
       <span className="flex size-5 items-center justify-center rounded-full border border-stroke/29 bg-radio">

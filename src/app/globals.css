@@ -19,6 +19,9 @@
   --radius-card: 24px; /* alias-size/radius/lg */
   --color-glass: rgb(255 245 235 / 0.55); /* frosted cream card */
   --color-stroke: #303030; /* card outline; used with opacity modifiers */
+  /* Bottom sheet outline, top → bottom (#303030 29% fading out) */
+  --color-sheet-edge-top: rgb(48 48 48 / 0.29);
+  --color-sheet-edge-bottom: rgb(48 48 48 / 0);
   --color-divider: rgb(48 48 48 / 0.1); /* alias-color/separator/neutral/divider */
   --color-radio: #fff2e7; /* radio button fill */
 
@@ -70,14 +73,25 @@
   --color-give-5: #fff0bc;
 
   --color-frost: rgb(255 255 255 / 0.35); /* alias-color/bg/alpha/bg-blur/md — pills on cards */
+  --color-card-base: #5c5c5c; /* grey card base under full-card artwork (Priority cards) */
+  --color-on-brand: #ffffff; /* label on the brand-primary send button */
   --color-row-line: #ebedf0; /* miscellaneous/keyboard-accessory-bar---selection — summary card rows */
+
+  /* Loading screen background, top → bottom (solid black; a gradient on other tiers) */
+  --color-loading-from: #000000;
+  --color-loading-via: #000000;
+  --color-loading-to: #000000;
 
   /* Key gradient (dome) */
   --color-key-from: #b81f14;
   --color-key-to: #ffb165;
+  /* Inner glow rings, innermost first. Colors are tokens so a tier can recolor the shadow. */
+  --color-key-glow-1: rgb(255 255 255 / 0.32);
+  --color-key-glow-2: rgb(255 255 255 / 0.56);
+  --color-key-glow-3: rgb(255 178 102 / 0.56);
   --shadow-key-glow:
-    inset 0 0 16px 0 rgb(255 255 255 / 0.32), inset 0 0 24px 0 rgb(255 255 255 / 0.56),
-    inset 0 0 56px 0 rgb(255 178 102 / 0.56), inset 0 0 96px 0 rgb(255 178 102 / 0.56);
+    inset 0 0 16px 0 var(--color-key-glow-1), inset 0 0 24px 0 var(--color-key-glow-2),
+    inset 0 0 56px 0 var(--color-key-glow-3), inset 0 0 96px 0 var(--color-key-glow-3);
 
   /* Orb ("Gradient") layers, lightest → darkest. The dome orb runs light→dark centre→edge;
      the chat orb runs the other way. */
@@ -88,6 +102,14 @@
   --color-ember-5: #d0502f;
   --color-ember-6: #c43722;
   --color-ember-7: #b81f14;
+  /* The chat orb's layers, outside → in (here the dome's colors reversed) */
+  --color-chat-orb-1: #ffb165;
+  --color-chat-orb-2: #f39958;
+  --color-chat-orb-3: #e7804a;
+  --color-chat-orb-4: #dc683d;
+  --color-chat-orb-5: #d0502f;
+  --color-chat-orb-6: #c43722;
+  --color-chat-orb-7: #b81f14;
 
   /* Typing glow on new words: peach → red, then the text color */
   --color-glow-1: #ffb165;
@@ -103,4 +125,52 @@
 
 body {
   background: var(--color-stage);
+}
+
+/*
+ * Priority tier (Figma "rewind-2026/Priority"): the same flow in umber and sand. Set on the
+ * flow's root, it re-points the tokens above for everything inside.
+ */
+.tier-priority {
+  --color-brand-primary: #0f0f0f; /* rewind-2026/Priority/secondary */
+  --color-text-primary: #0f0f0f;
+  --color-cream: #fff5eb; /* rewind-2026/Priority/primary */
+
+  --color-loading-from: #0f0f0f;
+  --color-loading-via: #5b453e;
+  --color-loading-to: #f1d5ad;
+
+  --color-key-from: #5b453e;
+  --color-key-to: #f1d5ad;
+  --color-key-glow-1: rgb(241 213 173 / 0.32);
+  --color-key-glow-2: rgb(241 213 173 / 0.56);
+  --color-key-glow-3: rgb(241 213 173 / 0.56);
+
+  /* Orb layers, lightest → darkest. Unlike the base tier, the chat orb keeps the dome's order,
+     with softer outer layers (Figma Steps 1–4). */
+  --color-ember-1: #f1d5ad;
+  --color-ember-2: #f4d7ae;
+  --color-ember-3: #f2ca9d;
+  --color-ember-4: #e7ac7a;
+  --color-ember-5: #cc7d4f;
+  --color-ember-6: #9e5d42;
+  --color-ember-7: #734d40;
+  --color-chat-orb-1: #9b7061;
+  --color-chat-orb-2: #bb7b61;
+  --color-chat-orb-3: #cc7d4f;
+  --color-chat-orb-4: #e7ac7a;
+  --color-chat-orb-5: #f2ca9d;
+  --color-chat-orb-6: #f4d7ae;
+  --color-chat-orb-7: #f1d5ad;
+
+  /* Typing glow on new words: sand → umber, then the text color */
+  --color-glow-1: #d3ac8a;
+  --color-glow-2: #734d40;
+
+  --color-on-brand: #fff5eb;
+
+  --color-glass: rgb(255 245 235 / 0.24); /* rewind-2026/Priority/blur */
+  /* Sheet outline: #5B453E 30% fading to cream 0% (a gradient stroke in Figma) */
+  --color-sheet-edge-top: rgb(91 69 62 / 0.3);
+  --color-sheet-edge-bottom: rgb(255 245 235 / 0);
 }

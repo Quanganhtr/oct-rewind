@@ -67,7 +67,7 @@ export function PillCard({
           {/* Figma sets the title at 40px line height over pills, 44px over the summary's rows */}
           <p
             className={cn(
-              "w-full font-bold",
+              "w-full font-bold whitespace-pre-line",
               compactTitle ? "text-xl leading-7" : "text-[32px]",
               !compactTitle && (rows ? "leading-11" : "leading-10"),
             )}

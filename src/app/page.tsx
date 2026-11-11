@@ -1,12 +1,8 @@
-import { readdirSync } from "node:fs";
-import { join } from "node:path";
 import { RewindFlow } from "@/components/rewind/RewindFlow";
+import { listImages } from "@/lib/listImages";
 
-/** Every image under public/rewind, listed at build time so Loading can preload them all. */
-const IMAGES = readdirSync(join(process.cwd(), "public/rewind"), { recursive: true, encoding: "utf8" })
-  .filter((file) => /\.(png|jpe?g|webp|gif|svg)$/i.test(file))
-  .map((file) => `/rewind/${file.split("\\").join("/")}`)
-  .sort();
+/** Every image under public/rewind, so Loading can preload them all. */
+const IMAGES = listImages("rewind");
 
 export default function Home() {
   return (

@@ -1,12 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   animate,
   AnimatePresence,
-  cubicBezier,
   motion,
-  useAnimationFrame,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
@@ -15,10 +13,10 @@ import {
 import { cn } from "@/lib/cn";
 import { asset } from "@/lib/asset";
 import { easeInOutCubic, easeInOutSine } from "@/lib/motion";
-import { START_GREETING } from "@/data/rewind";
 import { BlobGradient, ORB_DOCK, ORB_HIDDEN_Y } from "./BlobGradient";
 import { DroppingStars } from "./KeyEffects";
 import { KeyGradient } from "./KeyGradient";
+import { useTier } from "./TierContext";
 import { TopNavigation } from "./TopNavigation";
 import { countWords, TypedLine, WORD_INTERVAL } from "./TypedLine";
 
@@ -28,35 +26,38 @@ interface IntroScreenProps {
    * up, and the key rises into view.
    */
   phase: "loading" | "start";
-  /** Share of the app's images loaded so far (0–1). The bar can't fill past it. Defaults to done. */
+  /** Share of the app's images loaded so far (0–1). Loading holds until it reaches 1. Defaults to done. */
   loadProgress?: number;
-  /** Fires once the loading bar has filled: its minimum run is over and everything is loaded. */
+  /** Fires once Loading has run its minimum time and everything is loaded. */
   onLoaded: () => void;
   onStart: () => void;
   onClose: () => void;
 }
 
+/** Loading's minimum run, even when everything is already loaded. */
 export const LOADING_DURATION = 2.2;
 export const SETTLE_DURATION = 1.4;
 export const DOME_EXIT_DURATION = 1.2;
-/** "Nhìn lại" and the progress bar fade out as Start takes over. */
+/** "Nhìn lại" fades out as Start takes over. */
 export const LOADING_FADE = 0.3;
 /** The 2026 mark and greeting vanish this fast once the dome's top reaches the top of the screen. */
 export const START_CONTENT_EXIT = 0.15;
 
 /** Word offset where each greeting line starts, so line 2 picks up right after line 1. */
-const greetingLineStarts = START_GREETING.map((_, i) =>
-  START_GREETING.slice(0, i).reduce((words, line) => words + countWords(line), 0),
-);
+const lineStarts = (lines: string[]) =>
+  lines.map((_, i) => lines.slice(0, i).reduce((words, line) => words + countWords(line), 0));
 
 export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClose }: IntroScreenProps) {
   const reduceMotion = useReducedMotion();
+  const { eyebrowClass, yearMark, greeting } = useTier();
+  const greetingLineStarts = lineStarts(greeting);
   const isLoading = phase === "loading";
   // Loading → Start: one long, soft ease shared by everything that moves
   const settle = { duration: reduceMotion ? 0 : SETTLE_DURATION, ease: easeInOutSine };
   // The greeting waits for the 2026 to land — unless Start opened directly (Back button)
   const [openedOnStart] = useState(phase === "start");
   const greetingDelay = reduceMotion || openedOnStart ? 0 : SETTLE_DURATION;
+  useLoadingGate(isLoading, reduceMotion ? 0.6 : LOADING_DURATION, loadProgress, onLoaded);
 
   // Tapping "Bắt đầu" slides the dome up and off-screen. The 2026 mark and greeting vanish as the
   // dome's top edge reaches the top of the screen. Once its bottom edge reaches mid-screen, the chat
@@ -88,8 +89,11 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
   };
 
   return (
-    <div ref={screenRef} className="absolute inset-0 flex flex-col items-end overflow-clip bg-brand-primary">
-      {/* Loading is black, Start is cream. initial={false}: start in the current phase's state,
+    <div
+      ref={screenRef}
+      className="absolute inset-0 flex flex-col items-end overflow-clip bg-linear-to-b from-loading-from via-loading-via to-loading-to"
+    >
+      {/* Loading is black (or the tier's gradient), Start is cream. initial={false}: start in the current phase's state,
           so the first load stays black instead of fading the cream out. */}
       <motion.div
         className="pointer-events-none absolute inset-0 bg-cream"
@@ -129,31 +133,31 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
               key="eyebrow"
               exit={{ opacity: 0 }}
               transition={{ duration: reduceMotion ? 0 : LOADING_FADE }}
-              className="text-2xl leading-8 font-light whitespace-nowrap text-cream"
+              className={cn("text-2xl leading-8 whitespace-nowrap text-cream", eyebrowClass)}
             >
               Nhìn lại
             </motion.p>
           )}
         </AnimatePresence>
 
-        {/* "2026": small and cream on Loading, full size and black on Start — it grows and
+        {/* "2026": small and cream on Loading, full size and dark on Start — it grows and
             cross-fades while it glides up */}
         <motion.div
           layout
           transition={settle}
-          className={cn("relative shrink-0", isLoading ? "h-[55px] w-[189px]" : "h-[90.74px] w-[311px]")}
+          className={cn("relative shrink-0", isLoading ? yearMark.loadingSize : yearMark.startSize)}
         >
-          {(["cream", "dark"] as const).map((tone) => (
+          {(["loading", "start"] as const).map((mark) => (
             <motion.div
-              key={tone}
-              className={cn("absolute", tone === "cream" ? "inset-0" : "inset-[0_0_0_0.71%]")}
+              key={mark}
+              className={cn("absolute", mark === "loading" ? "inset-0" : yearMark.startInset)}
               initial={false}
-              animate={{ opacity: (tone === "cream") === isLoading ? 1 : 0 }}
+              animate={{ opacity: (mark === "loading") === isLoading ? 1 : 0 }}
               transition={settle}
             >
               <img
-                alt={tone === "dark" ? "2026" : ""}
-                src={asset(`/rewind/year-2026-${tone}.svg`)}
+                alt={mark === "start" ? "2026" : ""}
+                src={asset(yearMark[mark])}
                 className="block size-full max-w-none"
               />
             </motion.div>
@@ -161,25 +165,10 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
         </motion.div>
 
         <AnimatePresence mode="popLayout">
-          {isLoading ? (
-            <motion.div
-              key="progress"
-              exit={{ opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : LOADING_FADE }}
-              className="w-[124px] shrink-0 rounded-[999px] bg-on-accent/30 p-px"
-              role="progressbar"
-              aria-label="Đang tải"
-            >
-              <LoadingBar
-                duration={reduceMotion ? 0.6 : LOADING_DURATION}
-                loadProgress={loadProgress}
-                onDone={onLoaded}
-              />
-            </motion.div>
-          ) : (
+          {!isLoading && (
             // Types in once the 2026 has landed, line after line, like the chat's lines
             <motion.div key="greeting" layout="position" className="flex w-full flex-col items-center gap-2">
-              {START_GREETING.map((line, i) => (
+              {greeting.map((line, i) => (
                 <TypedLine
                   key={line}
                   text={line}
@@ -221,42 +210,23 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
   );
 }
 
-const easeBar = cubicBezier(...easeInOutSine);
-/** How quickly the bar catches up when loading, not time, was holding it back (per second). */
-const CATCH_UP = 6;
-/** Within this much of its target, the bar locks on rather than easing forever. */
-const SNAP = 0.02;
-
 /**
- * The Loading progress bar. It fills on its usual eased timeline but never runs ahead of what's
- * actually loaded; if loading is behind, it waits there and then glides on as images arrive.
+ * Loading hands off to Start once it has run for `duration` seconds and everything is loaded,
+ * whichever comes last.
  */
-function LoadingBar({ duration, loadProgress, onDone }: { duration: number; loadProgress: number; onDone: () => void }) {
-  const fill = useMotionValue(0);
-  const x = useTransform(fill, (f) => `${(f - 1) * 100}%`);
-  const elapsed = useRef(0);
-  const finished = useRef(false);
+function useLoadingGate(isLoading: boolean, duration: number, loadProgress: number, onDone: () => void) {
+  const [minRunOver, setMinRunOver] = useState(false);
+  const done = useRef(false);
 
-  useAnimationFrame((_, delta) => {
-    if (finished.current) return;
-    elapsed.current += delta / 1000;
-    const onSchedule = easeBar(Math.min(1, elapsed.current / duration));
-    const target = Math.min(onSchedule, loadProgress);
-    const current = fill.get();
-    // Close to its target it tracks it exactly; after a hold-up it glides there instead of jumping
-    const next =
-      Math.abs(target - current) < SNAP ? target : current + (target - current) * Math.min(1, (CATCH_UP * delta) / 1000);
-    fill.set(Math.max(current, next));
-    if (onSchedule >= 1 && loadProgress >= 1 && fill.get() >= 0.999) {
-      fill.set(1);
-      finished.current = true;
-      onDone();
-    }
-  });
+  useEffect(() => {
+    if (!isLoading) return;
+    const t = setTimeout(() => setMinRunOver(true), duration * 1000);
+    return () => clearTimeout(t);
+  }, [isLoading, duration]);
 
-  return (
-    <div className="h-0.5 w-full overflow-clip rounded-[999px]">
-      <motion.div className="size-full rounded-[999px] bg-cream" style={{ x }} />
-    </div>
-  );
+  useEffect(() => {
+    if (!isLoading || !minRunOver || loadProgress < 1 || done.current) return;
+    done.current = true;
+    onDone();
+  }, [isLoading, minRunOver, loadProgress, onDone]);
 }
