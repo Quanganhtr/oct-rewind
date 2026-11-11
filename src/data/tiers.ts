@@ -55,6 +55,11 @@ export interface Tier {
   sendButtonClass: string;
   /** Whether the stage shows the "Dev handoff" link (the deck documents the base tier). */
   handoff: boolean;
+  /**
+   * Step 4 as a send sheet that types the first topic in, instead of the topic list; sending it
+   * starts that topic (Figma Private "Step 61").
+   */
+  openWithPrompt?: boolean;
 }
 
 export type TierId = "standard" | "priority" | "private";
@@ -126,10 +131,11 @@ const PRIVATE: Tier = {
   introLines: PRIVATE_INTRO_LINES,
   topicsPrompt: PRIVATE_TOPICS_PROMPT,
   topics: PRIVATE_TOPICS,
-  /** Figma Step 59 topic icon: chat-heart (the same file as Priority's love topic). */
-  topicIcons: { [PRIVATE_TOPICS[0]]: "/priority/topic-love.svg" },
+  topicIcons: {},
   threads: PRIVATE_THREADS,
   topicSet: { topics: PRIVATE_TOPICS, moreTopicsPrompt: PRIVATE_TOPICS_PROMPT },
+  // Figma "Step 61": "Rất sẵn lòng" types into a send sheet
+  openWithPrompt: true,
 };
 
 export const TIERS: Record<TierId, Tier> = { standard: STANDARD, priority: PRIORITY, private: PRIVATE };

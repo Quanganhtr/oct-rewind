@@ -185,7 +185,7 @@ export function ChatScreen({
   onClose,
 }: ChatScreenProps) {
   const reduceMotion = useReducedMotion();
-  const { threads, topicSet } = useTier();
+  const { threads, topicSet, topics, openWithPrompt } = useTier();
   const newestLine = lines[lines.length - 1];
   const opensOnMenu = startAt === "menu";
   const [showMenu, setShowMenu] = useState(opensOnMenu);
@@ -593,7 +593,11 @@ export function ChatScreen({
                 },
               }}
             >
-              <TopicMenu onSelect={pickTopic} />
+              {openWithPrompt ? (
+                <PromptPanel prompt={topics[0]} action="Gửi" typed onAction={() => pickTopic(topics[0])} />
+              ) : (
+                <TopicMenu onSelect={pickTopic} />
+              )}
             </motion.div>
           )}
           {sheetUp && current.sheet.kind !== "end" && (
