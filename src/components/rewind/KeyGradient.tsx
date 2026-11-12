@@ -12,7 +12,7 @@ interface KeyGradientProps {
   label: string;
   /** Label size, replacing the default 20px (Priority uses 16px). */
   labelClass?: string;
-  /** 20px icon after the label, 4px away (Priority's "Bắt đầu ⌃"). */
+  /** 16px icon after the label, 4px away (Priority's "Bắt đầu ↑"). */
   icon?: string;
   /** When set, the centre label becomes the tap target. */
   onPress?: () => void;
@@ -106,7 +106,7 @@ export function KeyGradient({ label, labelClass, icon, onPress, readyDelay, clas
                 transition={{ duration: 0.2 }}
               >
                 {label}
-                {icon && <img alt="" src={asset(icon)} className="block size-5 shrink-0" />}
+                {icon && <img alt="" src={asset(icon)} className="block size-4 shrink-0" />}
               </motion.span>
             </AnimatePresence>
           </button>

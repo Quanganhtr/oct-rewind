@@ -133,8 +133,8 @@ const PRIORITY: Tier = {
   topicSet: { topics: PRIORITY_TOPICS, moreTopicsPrompt: PRIORITY_TOPICS_PROMPT },
   radioIcon: "/priority/radio.svg",
   sendButtonClass: "min-w-24 px-5 py-3",
-  // Figma "Start" (node 522:18628): 16px label + chevron-up
-  startKey: { labelClass: "text-base leading-7", icon: "/priority/chevron-up.svg" },
+  // Figma "Start" (node 526:20372): 16px label + 16px arrow-up
+  startKey: { labelClass: "text-base leading-7", icon: "/priority/arrow-up.svg" },
   handoff: false,
 };
 
