@@ -10,6 +10,7 @@ import {
 } from "./rewind";
 import { PRIORITY_THREADS, PRIORITY_TOPICS, PRIORITY_TOPICS_PROMPT, PRIORITY_USER_NAME } from "./priority";
 import {
+  PRIVATE_GREETING_CARD,
   PRIVATE_INTRO_LINES,
   PRIVATE_THREADS,
   PRIVATE_TOPICS,
@@ -53,6 +54,8 @@ export interface Tier {
   radioIcon?: string;
   /** Size of the prompt sheet's send button. */
   sendButtonClass: string;
+  /** The dome's "Bắt đầu" key, when the tier restyles it: label size, and an icon after the label. */
+  startKey?: { labelClass: string; icon: string };
   /** Whether the stage shows the "Dev handoff" link (the deck documents the base tier). */
   handoff: boolean;
   /**
@@ -60,6 +63,15 @@ export interface Tier {
    * starts that topic (Figma Private "Step 61").
    */
   openWithPrompt?: boolean;
+  /** The cards' share circle and icon, when not the base white circle with a black icon. */
+  shareCircle?: { className: string; icon: string };
+  /**
+   * How far (px, negative = up) the orb rises from its docked spot (centre on the screen's bottom
+   * edge) to rest under the Step 4 sheet. Unset: ChatScreen's ORB_FINAL_LIFT.
+   */
+  menuOrbLift?: number;
+  /** The full-screen card a "greeting" sheet opens at the end: greeting lines, the wish, the art. */
+  greetingCard?: { lines: string[]; wish: string; image: string };
 }
 
 export type TierId = "standard" | "priority" | "private";
@@ -121,6 +133,8 @@ const PRIORITY: Tier = {
   topicSet: { topics: PRIORITY_TOPICS, moreTopicsPrompt: PRIORITY_TOPICS_PROMPT },
   radioIcon: "/priority/radio.svg",
   sendButtonClass: "min-w-24 px-5 py-3",
+  // Figma "Start" (node 522:18628): 16px label + chevron-up
+  startKey: { labelClass: "text-base leading-7", icon: "/priority/chevron-up.svg" },
   handoff: false,
 };
 
@@ -136,6 +150,11 @@ const PRIVATE: Tier = {
   topicSet: { topics: PRIVATE_TOPICS, moreTopicsPrompt: PRIVATE_TOPICS_PROMPT },
   // Figma "Step 61": "Rất sẵn lòng" types into a send sheet
   openWithPrompt: true,
+  // Figma Private cards: cream share circle, #0F0F0F icon
+  shareCircle: { className: "bg-cream", icon: "/private/share.svg" },
+  // Figma "Step 62" (node 525:19363): orb centre at 50% + 396px, just 10px above the docked 50% + 406px
+  menuOrbLift: -10,
+  greetingCard: PRIVATE_GREETING_CARD,
 };
 
 export const TIERS: Record<TierId, Tier> = { standard: STANDARD, priority: PRIORITY, private: PRIVATE };

@@ -3,12 +3,17 @@ import { cn } from "@/lib/cn";
 import { CountUp } from "./CountUp";
 import { ShareButton } from "./ShareButton";
 
+/** A line under the title: plain text, or Bold and/or left still (a "Top 2%" rank shouldn't count). */
+export type NoteLine = string | { text: string; bold?: boolean; fixed?: boolean };
+
 interface TitleNoteCardProps {
   label: string;
   title: string;
-  /** Line(s) under the title; numbers in them count up. */
-  notes: string[];
-  /** Notes in Bold instead of Medium. */
+  /** Count up the number in the title ("Tăng 18%"). */
+  countTitle?: boolean;
+  /** Line(s) under the title; numbers in them count up unless `fixed`. None: just label and title. */
+  notes?: NoteLine[];
+  /** Every note in Bold instead of Medium. */
   boldNotes?: boolean;
   image: string;
   /** Figma flips some artwork left to right. */
@@ -17,21 +22,25 @@ interface TitleNoteCardProps {
   wash?: boolean;
   /** "light": white text. "cream": Priority's cream text. */
   tone?: "light" | "cream";
+  /** Share label colour: cream (default) or the text colour ("ink", for light art). */
+  shareTone?: "cream" | "ink";
 }
 
 /** Figma 4:3 card over full-card art: small label, 32px title, a note or two, share at the foot. */
 export function TitleNoteCard({
   label,
   title,
-  notes,
+  countTitle = false,
+  notes = [],
   boldNotes = false,
   image,
   mirrorImage = false,
   wash = false,
   tone = "light",
+  shareTone = "cream",
 }: TitleNoteCardProps) {
   return (
-    <div className="relative flex aspect-[4/3] max-h-[276px] w-full max-w-[368px] shrink-0 overflow-clip rounded-card bg-card-base">
+    <div className="relative flex aspect-[4/3] w-full shrink-0 overflow-clip rounded-card bg-card-base">
       {wash && <div className="absolute inset-0 bg-page-light/50" />}
       <img
         alt=""
@@ -47,16 +56,21 @@ export function TitleNoteCard({
           )}
         >
           <p className="h-6 w-full text-sm leading-5 font-medium">{label}</p>
-          <p className="w-full text-[32px] leading-10 font-bold">{title}</p>
-          <p className={cn("w-full text-sm leading-5", boldNotes ? "font-bold" : "font-medium")}>
-            {notes.map((line) => (
-              <span key={line} className="block">
-                <CountUp value={line} />
-              </span>
-            ))}
-          </p>
+          <p className="w-full text-[32px] leading-10 font-bold">{countTitle ? <CountUp value={title} /> : title}</p>
+          {notes.length > 0 && (
+            <p className="w-full text-sm leading-5 font-medium">
+              {notes.map((note) => {
+                const { text, bold = boldNotes, fixed = false } = typeof note === "string" ? { text: note } : note;
+                return (
+                  <span key={text} className={cn("block", bold && "font-bold")}>
+                    {fixed ? text : <CountUp value={text} />}
+                  </span>
+                );
+              })}
+            </p>
+          )}
         </div>
-        <ShareButton tone="cream" className="px-4 pt-4 pb-6" />
+        <ShareButton tone={shareTone} className="px-4 pt-4 pb-6" />
       </div>
     </div>
   );

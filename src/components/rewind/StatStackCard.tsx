@@ -20,10 +20,19 @@ interface StatStackCardProps {
   flipImage?: boolean;
   /** "light": white text. "cream": Priority's cream text. */
   tone?: "light" | "cream";
+  /** Share label: cream (default), or the text colour on Private's lighter art. */
+  shareTone?: "cream" | "ink";
 }
 
 /** Figma 3:4 card with label/value pairs stacked on the left, over full-card artwork ("Chuyện sinh nhai"). */
-export function StatStackCard({ rows, gradient, image, flipImage = false, tone = "light" }: StatStackCardProps) {
+export function StatStackCard({
+  rows,
+  gradient,
+  image,
+  flipImage = false,
+  tone = "light",
+  shareTone = "cream",
+}: StatStackCardProps) {
   return (
     <div className="relative flex aspect-[3/4] w-full shrink-0 flex-col items-center overflow-clip rounded-card bg-page-light">
       <div className={cn("absolute inset-0", gradient)} />
@@ -47,7 +56,7 @@ export function StatStackCard({ rows, gradient, image, flipImage = false, tone =
         ))}
       </div>
 
-      <ShareButton tone="cream" className="relative px-4 pt-4 pb-5" />
+      <ShareButton tone={shareTone} className="relative px-4 pt-4 pb-5" />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { easeInOutSine } from "@/lib/motion";
 import { preloadImages } from "@/lib/preloadImages";
 import { ChatScreen, type ChatPhase, lineStepMs } from "./ChatScreen";
 import { IntroScreen, SETTLE_DURATION } from "./IntroScreen";
+import { MusicProvider } from "./MusicContext";
 import { TierContext } from "./TierContext";
 
 export type Screen =
@@ -118,7 +119,7 @@ export function RewindFlow({ initial = { name: "loading" }, controls = true, ima
 
   const isIntro = screen.name !== "chat";
 
-  return (
+  const flow = (
     <TierContext value={theme}>
       {/* `contents`: only here to scope the tier's palette, it adds no box of its own */}
       <div ref={themeRef} className={cn("contents", theme.themeClass)}>
@@ -173,4 +174,6 @@ export function RewindFlow({ initial = { name: "loading" }, controls = true, ima
       </div>
     </TierContext>
   );
+  // Music only on the real page, not in the handoff deck's embedded demos
+  return controls ? <MusicProvider>{flow}</MusicProvider> : flow;
 }

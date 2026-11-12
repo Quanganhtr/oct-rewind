@@ -14,60 +14,71 @@ export const PRIVATE_INTRO_LINES = [
 export const PRIVATE_TOPICS = ["Rất sẵn lòng"];
 export const PRIVATE_TOPICS_PROMPT = "Kể tôi nghe chuyện";
 
-/** Figma "Private - 01": how the reader's business grew. */
+/** Figma "Dashboard" (node 525:19417): the New Year card "Mở thiệp chúc mừng" opens at the end. */
+export const PRIVATE_GREETING_CARD = {
+  lines: ["Kính chúc Quý khách", PRIVATE_USER_NAME],
+  wish: "“Tam dương khai thái\nPhúc lộc song toàn”",
+  image: "/private/greeting-full.png",
+};
+
+/*
+ * "Rất sẵn lòng" (Figma section 519:16350). Every card has cream text over its own art; the 3:4
+ * cards' lighter art takes a dark share label.
+ */
+
+/** How the reader's business grew, and its rank among peers (4:3). */
 export const PRIVATE_REVENUE_CARD = {
   label: "Doanh thu",
-  value: "Tăng 18%",
-  note: "Top 12% doanh nghiệp dẫn đầu",
+  title: "Tăng 18%",
+  notes: [{ text: "Top 2%", bold: true, fixed: true }, "doanh nghiệp dẫn đầu"],
 };
 
-/** Figma "Private - 03": the Private events attended. */
+/** The Private events attended (4:3, Figma "Tài chính an vững - 52", node 525:19114). */
 export const PRIVATE_EVENTS_CARD = {
-  rows: [
-    { label: "Kết nối cùng", value: "8 sự kiện Private" },
-    { label: "Trọn vẹn", value: "124 giờ" },
-  ],
+  label: "Kết nối cùng",
+  title: "8 sự kiện Private",
 };
 
-/** Figma "Private - 05": Private perks used this year. */
+/** Private perks used this year. */
 export const PRIVATE_MOMENTS_CARD = {
   label: "Với đặc quyền Private, Quý khách có thêm",
-  title: "18 khoảnh khắc\nan nhiên",
+  title: "18 khoảnh khắc\nthư thái",
   pills: ["8 lượt chơi golf", "5 lần mua sắm cao cấp", "5 lần sử dụng phòng chờ"],
 };
 
-/** Figma "Private - 07": favourite destinations. */
+/** Favourite destinations. */
 export const PRIVATE_COUNTRIES_CARD = {
   label: "Huy hiệu “Điểm đến yêu thích” thuộc về",
   title: "Top 3 quốc gia",
   pills: ["Nhật Bản", "Hàn Quốc", "Pháp"],
 };
 
-/** Figma "Private - 09": insurance policies held with TCGI. */
+/** Insurance policies held with TCLife (square). */
 export const PRIVATE_SHIELDS_CARD = {
   label: "2026 an yên khi có thêm",
   value: "3 khiên vàng kiên cố",
-  note: "TCGi cảm ơn Quý khách đã trao gửi niềm tin",
+  note: "TCLife cảm ơn Quý khách đã trao gửi niềm tin",
 };
 
-/** Figma "Private - 11": the family group the reader set up. */
+/** The family group the reader set up (4:3). */
 export const PRIVATE_FAMILY_CARD = {
   label: "Nhóm gia đình",
   title: "Gia tộc họ Tô",
-  notes: ["Tiếp bước danh hiệu “Trường Tồn\""],
+  notes: ["Tiếp bước danh hiệu", "“Trường Tồn\""],
 };
 
-// Figma "Private" (section 513:14080)
 const LEGACY_THREAD: ThreadTurn[] = [
   {
     trigger: PRIVATE_TOPICS[0],
     userMessage: PRIVATE_TOPICS[0],
     reply: [
-      "“Tùng xanh rễ chắc bám sâu\nBốn mùa vững chãi, dãi dầu chẳng phai.”",
-      "Từ nền móng vững vàng ấy, năm 2026, doanh nghiệp của Quý khách đã vươn mình rực rỡ.",
+      "“Tùng ngay vững giữa đất trời\nThân cao đón gió, xanh ngời cành vươn.”",
+      "Năm 2026, doanh nghiệp của Quý khách vươn mình rực rỡ.",
     ],
     card: "privateRevenue",
     after: [
+      // Figma 526:19738: 12px footnote at 50%, wrapping on its own
+      { note: "*Dữ liệu khách hàng doanh nghiệp vừa và nhỏ thuộc cùng nhóm ngành" },
       "Techcombank vinh dự được góp mặt trên hành trình đó. Cùng Quý khách kiến tạo di sản và lan toả các giá trị vượt thời.",
     ],
     next: { kind: "prompt", prompt: "Nhìn lại khoảnh khắc lan toả giá trị", action: "Gửi" },
@@ -79,11 +90,11 @@ const LEGACY_THREAD: ThreadTurn[] = [
     card: "privateEvents",
     // "{sự kiện n}" are Figma's own placeholders for the events' names
     after: [
-      "{sự kiện 1}\n{sự kiện 2}\n...\n{sự kiện 8}\n\nMỗi cuộc gặp gỡ là mỗi lần truyền cảm hứng, để giá trị mãi sinh sôi.",
+      "{sự kiện 1}\n{sự kiện 2}\n{sự kiện 3}\n...\n\nMỗi cuộc gặp gỡ là mỗi lần kết nối và truyền cảm hứng, để giá trị mãi sinh sôi.",
     ],
     next: {
       kind: "prompt",
-      question: "Giữa những bộn bề ấy, Quý khách luôn giữ được những khoảng lặng cho riêng mình.",
+      question: "Và giữa những phồn hoa ấy, Quý khách vẫn luôn giữ cho mình những khoảng lặng riêng.",
       prompt: "Khoảng lặng nào?",
       action: "Gửi",
     },
@@ -91,31 +102,31 @@ const LEGACY_THREAD: ThreadTurn[] = [
   {
     trigger: "Khoảng lặng nào?",
     userMessage: "Khoảng lặng nào?",
-    reply: "Khoảng lặng của những phút giây thư thái và nuôi dưỡng tâm hồn.",
+    reply: "Khoảng lặng của những giây phút an lạc và nuôi dưỡng tâm hồn.",
     card: "privateMoments",
     next: {
       kind: "answers",
-      question: "Còn nhớ năm Ngọ dặm xa, Quý khách đi qua bao nhiêu quốc gia?",
+      question: "Năm Ngọ viễn du, Quý khách có nhớ đã đi qua bao nhiêu quốc gia?",
       boldQuestion: true,
-      answers: ["3 tháng", "6 tháng", "12 tháng"],
+      answers: ["3 quốc gia", "6 quốc gia", "12 quốc gia"],
     },
   },
   {
-    // Only "6 tháng" is designed; the other answers play it too, with their own bubble
+    // Figma's bubble for "6 quốc gia" reads "Tôi nhớ là khoảng 6 quốc gia"; every guess gets the real number
     trigger: ANY_ANSWER,
-    userMessage: "",
+    userMessage: "Tôi nhớ là khoảng {answer}",
     reply: "Gần 12 tháng, không dưới 8 quốc gia.",
     card: "privateCountries",
     next: {
       kind: "prompt",
-      question: "Trong đó, Pháp là quốc gia Quý khách trao trọn tin yêu.",
-      prompt: "Xuôi ngược cả năm",
+      question: "Trong đó, Pháp là quốc gia Quý khách trao trọn niềm yêu.",
+      prompt: "Một năm đi ngược về xuôi",
       action: "Gửi",
     },
   },
   {
-    trigger: "Xuôi ngược cả năm",
-    userMessage: "Xuôi ngược cả năm",
+    trigger: "Một năm đi ngược về xuôi",
+    userMessage: "Một năm đi ngược về xuôi",
     reply: "Vậy nhưng Quý khách không quên che chở cho những điều mình trân quý.",
     card: "privateShields",
     next: { kind: "prompt", prompt: "Còn gì nữa không?", action: "Gửi" },
@@ -130,10 +141,10 @@ const LEGACY_THREAD: ThreadTurn[] = [
     card: "privateFamily",
     after: [
       "Giữ giá trị mãi sinh sôi để tài sản nảy lộc vượt thời.",
-      "Xuân Đinh Mùi gõ cửa, Techcombank kính chúc quý khách:\n”Tam dương khai thái\nPhúc lộc song toàn”",
+      "Xuân Đinh Mùi gõ cửa, Techcombank gửi tới Quý khách lời chúc năm mới cát tường...",
     ],
-    // The only topic: the flow ends here
-    next: { kind: "continue" },
+    // Figma "End" (node 525:19433): the only topic, so it closes on the greeting card
+    next: { kind: "greeting", action: "Mở thiệp chúc mừng" },
   },
 ];
 

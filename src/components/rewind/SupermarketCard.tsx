@@ -6,13 +6,13 @@ import { ShareButton } from "./ShareButton";
 /** Figma Step 10 "Card": supermarket days and total spend, side by side under the basket artwork. */
 export function SupermarketCard() {
   return (
-    <div className="relative flex aspect-square max-h-[368px] w-full max-w-[368px] shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
+    <div className="relative flex aspect-square w-full shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
       <div className="absolute inset-x-0 bottom-0 aspect-square bg-[linear-gradient(180deg,var(--color-market-1)_0%,var(--color-market-2)_22.04%,var(--color-market-3)_49.93%,var(--color-market-4)_71.56%,var(--color-market-5)_99.93%)]" />
       <div className="absolute inset-x-0 top-0 bottom-1/2 overflow-clip">
         <img
           alt=""
           src={asset("/rewind/supermarket-basket.png")}
-          className="absolute top-0 left-0 block h-[180.5px] w-[361px] max-w-none object-cover"
+          className="absolute top-0 left-0 block h-[98.1%] w-[98.1%] max-w-none object-cover"
         />
       </div>
 

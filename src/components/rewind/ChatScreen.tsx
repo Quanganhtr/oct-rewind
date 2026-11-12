@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   animate,
   AnimatePresence,
@@ -10,6 +10,7 @@ import {
   type AnimationPlaybackControls,
   type TargetAndTransition,
 } from "framer-motion";
+import { cn } from "@/lib/cn";
 import { easeInCubic, easeInOutCubic, easeOutQuint } from "@/lib/motion";
 import {
   ANY_ANSWER,
@@ -74,6 +75,7 @@ import { PeakDayCard } from "./PeakDayCard";
 import { MonthsCard } from "./MonthsCard";
 import { ConcertCard } from "./ConcertCard";
 import { TopPeopleCard } from "./TopPeopleCard";
+import { GreetingButton, GreetingCard } from "./GreetingCard";
 import { HomeIndicator } from "./HomeIndicator";
 import { SoundboxCard } from "./SoundboxCard";
 import { SpendingCard } from "./SpendingCard";
@@ -112,10 +114,21 @@ export const SCROLL_DURATION = 0.8;
 export const FIRST_BUBBLE_AT = 0.45; // first turn: as the intro lines finish leaving
 export const NEXT_BUBBLE_AT = 0.1; // later turns: right away, while the answers drop out
 export const REPLY_GAP = 0.75; // after the bubble
+/**
+ * The intro, now 16px chat history, fades in only once the first bubble has finished pushing the
+ * 24px lines up (it appears at FIRST_BUBBLE_AT and glides for SCROLL_DURATION), not during the push.
+ */
+export const HISTORY_DELAY = FIRST_BUBBLE_AT + SCROLL_DURATION;
+export const HISTORY_ENTER = 0.5;
 export const CARD_GAP = 0.3; // after the reply has typed
 export const QUESTION_GAP = 0.9; // after the card starts (or after a gift is tapped open)
 export const LINE_GAP = 0.3; // between lines typed back to back
 export const ANSWERS_EXIT = 0.5;
+/** Opening the greeting: the chat dims and blurs over this long while the card rises… */
+export const GREETING_DIM = 0.4;
+/** …and the shared header and home indicator switch to their on-dark look as its top arrives. */
+export const GREETING_CHROME_DELAY = 0.15;
+export const GREETING_CHROME = 0.4;
 
 /** When each of several lines starts typing (back to back, LINE_GAP apart), and when the last is in. */
 export const typeLines = (lines: string[]) => {
@@ -157,7 +170,7 @@ interface ChatScreenProps {
 }
 
 /** One beat of a turn after the reader's bubble: line(s) Tech Tech types, or a card. */
-type Beat = { lines: string[]; bold?: boolean } | { card: CardKind };
+type Beat = { lines: string[]; bold?: boolean; note?: boolean } | { card: CardKind };
 
 /**
  * A turn as played: its topic (null for the summary) and step, with its sheet worked out as it starts
@@ -185,7 +198,7 @@ export function ChatScreen({
   onClose,
 }: ChatScreenProps) {
   const reduceMotion = useReducedMotion();
-  const { threads, topicSet, topics, openWithPrompt } = useTier();
+  const { threads, topicSet, topics, openWithPrompt, menuOrbLift = ORB_FINAL_LIFT } = useTier();
   const newestLine = lines[lines.length - 1];
   const opensOnMenu = startAt === "menu";
   const [showMenu, setShowMenu] = useState(opensOnMenu);
@@ -197,13 +210,20 @@ export function ChatScreen({
   const [progress, setProgress] = useState(0);
   /** Turns whose gated card (the gift) the reader has opened. */
   const [opened, setOpened] = useState<number[]>([]);
+  /** The ending's "Mở thiệp chúc mừng" was tapped: the full-screen greeting card is up. */
+  const [greetingOpen, setGreetingOpen] = useState(false);
+  const greetingChrome = {
+    duration: reduceMotion ? 0 : GREETING_CHROME,
+    delay: reduceMotion ? 0 : GREETING_CHROME_DELAY,
+    ease: "easeInOut" as const,
+  };
   const topicPicked = turnCount > 0;
   const latest = turnCount - 1;
 
   const orbScale = useMotionValue(1);
   // The orb's swirl runs only while a line is typing; it rests between lines and once all are in
   const [restingLine, setRestingLine] = useState<string | null>(null);
-  const orbY = useMotionValue(opensOnMenu ? ORB_FINAL_LIFT : 0);
+  const orbY = useMotionValue(opensOnMenu ? menuOrbLift : 0);
 
   // Chat scroll: a real scroll area (wheel / trackpad / touch). While the reader is at the bottom,
   // new content glides into view; scrolling up to reread pauses that until they return.
@@ -225,7 +245,7 @@ export function ChatScreen({
       ease: ["easeOut", "linear", isFinalStep ? easeOutQuint : "easeInOut"],
     });
     const lift = isFinalStep
-      ? animate(orbY, [null, 0, 0, ORB_FINAL_LIFT], { ...timing, ease: ["linear", "linear", easeOutQuint] })
+      ? animate(orbY, [null, 0, 0, menuOrbLift], { ...timing, ease: ["linear", "linear", easeOutQuint] })
       : null;
     const rest = setTimeout(() => setRestingLine(newestLine), hold * 1000);
     return () => {
@@ -233,7 +253,7 @@ export function ChatScreen({
       lift?.stop();
       clearTimeout(rest);
     };
-  }, [newestLine, isFinalStep, orbScale, orbY, reduceMotion, opensOnMenu]);
+  }, [newestLine, isFinalStep, orbScale, orbY, reduceMotion, opensOnMenu, menuOrbLift]);
 
   // Bring the menu in the moment the final line's last word ("nào?") is fully shown
   useEffect(() => {
@@ -299,6 +319,8 @@ export function ChatScreen({
     // `topicPicked` is stale in a menu still sliding out; the ref already knows a turn started
     if (topicPicked || startedRef.current > 0 || !threads[topic]) return;
     onPhaseChange?.("spending");
+    // The first bubble rises from where this sheet's top edge was (see "First bubble" below)
+    pickSheetRef.current = sheetRef.current?.offsetHeight ?? 0;
     startTurn(threads[topic][0], topic, 0);
     setShowMenu(false);
     animate(orbY, ORB_EXIT_Y, {
@@ -311,6 +333,10 @@ export function ChatScreen({
   const pickAnswer = (answer: string) => {
     // A sheet still sliding out keeps this handler from its own render: a second tap there is stale
     if (!sheetUp || startedRef.current !== turnCount) return;
+    if (current.sheet.kind === "greeting") {
+      setGreetingOpen(true);
+      return;
+    }
     if (current.sheet.kind === "topics") {
       // A topic whose conversation isn't built yet stays put
       if (current.sheet.topics.includes(answer) && threads[answer]) startTurn(threads[answer][0], answer, 0);
@@ -322,8 +348,9 @@ export function ChatScreen({
     }
     const following = current.topic ? threads[current.topic][current.step + 1] : undefined;
     if (!following || (following.trigger !== answer && following.trigger !== ANY_ANSWER)) return;
-    // An ANY_ANSWER turn shows the reader's pick as their bubble
-    startTurn({ ...following, userMessage: following.userMessage || answer }, current.topic, current.step + 1);
+    // An ANY_ANSWER turn shows the reader's pick as their bubble, or wraps it ("Tôi nhớ là khoảng {answer}")
+    const userMessage = following.userMessage ? following.userMessage.replace("{answer}", answer) : answer;
+    startTurn({ ...following, userMessage }, current.topic, current.step + 1);
   };
 
   // Chat layout: the tail spacer at the end of the column decides how far the chat can scroll.
@@ -410,6 +437,26 @@ export function ChatScreen({
     };
   }, [reduceMotion, tailSpace]);
 
+  // First bubble: later bubbles appear at the chat's end, just above the sheet, and the glide carries
+  // them to the top. The first one would appear mid-screen under the short intro history instead, so
+  // it starts pushed down to just above where the picked sheet was, and eases back to its place in
+  // step with the glide (same duration and ease): one rise from the bottom, like every other bubble.
+  const firstLift = useMotionValue(0);
+  const pickSheetRef = useRef(0);
+  const firstRiseRef = useRef(false);
+  useLayoutEffect(() => {
+    if (turnCount !== 1 || progress < 1 || firstRiseRef.current || reduceMotion) return;
+    const viewport = viewportRef.current;
+    const bubble = bubbleRef.current;
+    if (!viewport || !bubble) return;
+    firstRiseRef.current = true;
+    const bottom = bubble.offsetTop + bubble.offsetHeight - viewport.scrollTop;
+    const drop = viewport.clientHeight - pickSheetRef.current - BOTTOM_PAD - bottom;
+    if (drop <= 0) return;
+    firstLift.set(drop);
+    animate(firstLift, 0, { duration: SCROLL_DURATION, ease: easeInOutCubic });
+  }, [turnCount, progress, reduceMotion, firstLift]);
+
   // A turn anchors its bubble from the moment it appears until its answers are up
   useEffect(() => {
     anchoringRef.current = progress >= 1 && !sheetUp;
@@ -459,9 +506,11 @@ export function ChatScreen({
       >
         {/* Top padding clears the overlaid header (98px; 56px on phones, no status bar) + Figma's 16px */}
         <div ref={columnRef} className="relative flex flex-col items-start gap-4 px-4 pt-[72px] pb-4 sm:pt-[114px]">
-          {/* popLayout lifts the leaving intro out of the flow at once, so the thread starts at the top */}
+          {/* Picking a topic: the 24px intro lifts away (popLayout takes it out of the flow at once) and
+              the same lines stay behind as chat history at the thread's 16px, above the first bubble.
+              The chat still glides that bubble to the top, so the history is there on scrolling back up. */}
           <AnimatePresence mode="popLayout">
-            {!topicPicked && (
+            {!topicPicked ? (
               <motion.div
                 key="intro"
                 className="flex w-full flex-col items-start gap-4"
@@ -488,6 +537,24 @@ export function ChatScreen({
                   );
                 })}
               </motion.div>
+            ) : (
+              <motion.div
+                key="history"
+                className="flex w-full flex-col items-start gap-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: reduceMotion ? 0 : HISTORY_ENTER,
+                  delay: reduceMotion ? 0 : HISTORY_DELAY,
+                  ease: easeOutQuint,
+                }}
+              >
+                {lines.map((line, i) => (
+                  <p key={i} className="w-full text-base leading-6 font-medium whitespace-pre-line text-text-primary">
+                    {line}
+                  </p>
+                ))}
+              </motion.div>
             )}
           </AnimatePresence>
 
@@ -496,22 +563,29 @@ export function ChatScreen({
             return (
               <Fragment key={i}>
                 {shown >= 1 && (
+                  // The outer box keeps the bubble's place in the flow (and the glide's anchor); only the
+                  // first bubble uses its offset, to rise from the bottom (see "First bubble")
                   <motion.div
                     ref={i === latest ? bubbleRef : undefined}
-                    className="flex w-full flex-col items-end justify-center pl-14"
-                    initial={enter({ y: 16, scale: 0.96 })}
-                    animate={{ opacity: 1, filter: "blur(0px)", y: 0, scale: 1 }}
-                    transition={{ duration: BUBBLE_ENTER, ease: easeOutQuint }}
+                    className="w-full"
+                    style={i === 0 ? { y: firstLift } : undefined}
                   >
-                    {/* Hugs short messages; long ones wrap at the 305px the pl-14 leaves (Figma) */}
-                    <p className="rounded-card border border-brand-primary p-4 text-base leading-6 font-medium text-text-primary backdrop-blur-[50px]">
-                      {turn.userMessage}
-                    </p>
+                    <motion.div
+                      className="flex w-full flex-col items-end justify-center pl-14"
+                      initial={enter({ y: 16, scale: 0.96 })}
+                      animate={{ opacity: 1, filter: "blur(0px)", y: 0, scale: 1 }}
+                      transition={{ duration: BUBBLE_ENTER, ease: easeOutQuint }}
+                    >
+                      {/* Hugs short messages; long ones wrap at the 305px the pl-14 leaves (Figma) */}
+                      <p className="rounded-card border border-brand-primary p-4 text-base leading-6 font-medium text-text-primary backdrop-blur-[50px]">
+                        {turn.userMessage}
+                      </p>
+                    </motion.div>
                   </motion.div>
                 )}
                 {turn.beats.slice(0, Math.max(0, shown - 1)).map((beat, k) =>
                   "lines" in beat ? (
-                    <TypedLines key={k} lines={beat.lines} bold={beat.bold} />
+                    <TypedLines key={k} lines={beat.lines} bold={beat.bold} note={beat.note} />
                   ) : (
                     <motion.div
                       key={k}
@@ -614,16 +688,51 @@ export function ChatScreen({
         </AnimatePresence>
       </div>
 
-      {/* Header over the scrolling chat: solid cream for its top 75%, fading out below (Figma) */}
-      <div className="absolute inset-x-0 top-0 bg-linear-to-b from-cream from-75% to-cream/0">
-        <TopNavigation tone="light" onClose={onClose} />
-      </div>
-
       {reaction && <EmojiRain key={latest} emoji={reaction} />}
       {showConfetti && <Confetti />}
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0">
-        <HomeIndicator />
+      {/* Opening the ending's greeting: the chat dims and blurs while the card rises over it… */}
+      <AnimatePresence>
+        {greetingOpen && (
+          <motion.div
+            key="greeting-dim"
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-20 bg-brand-primary/40 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: reduceMotion ? 0 : GREETING_DIM, ease: "easeOut" }}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>{greetingOpen && <GreetingCard key="greeting" />}</AnimatePresence>
+
+      {/* …under the one header and home indicator every screen shares. They stay put (above the card
+          once it's open) and switch to their on-dark look as it arrives. */}
+      <div className={cn("absolute inset-x-0 top-0", greetingOpen && "z-40")}>
+        {/* Over the chat: solid cream for its top 75%, fading out below (Figma) */}
+        <motion.div
+          className="bg-linear-to-b from-cream from-75% to-cream/0"
+          initial={false}
+          animate={{ opacity: greetingOpen ? 0 : 1 }}
+          transition={greetingChrome}
+        >
+          <TopNavigation tone="light" onClose={onClose} />
+        </motion.div>
+        {greetingOpen && (
+          <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={greetingChrome}>
+            <TopNavigation tone="dark" onClose={onClose} />
+          </motion.div>
+        )}
+      </div>
+      <div className={cn("pointer-events-none absolute inset-x-0 bottom-0", greetingOpen && "z-40")}>
+        <motion.div initial={false} animate={{ opacity: greetingOpen ? 0 : 1 }} transition={greetingChrome}>
+          <HomeIndicator />
+        </motion.div>
+        {greetingOpen && (
+          <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={greetingChrome}>
+            <HomeIndicator tone="light" />
+          </motion.div>
+        )}
       </div>
     </div>
   );
@@ -632,6 +741,7 @@ export function ChatScreen({
 /** What a turn asks next, in the bottom sheet. Sending a prompt replies with the prompt itself. */
 function TurnSheet({ next, onAnswer }: { next: SheetNext; onAnswer: (answer: string) => void }) {
   if (next.kind === "end") return null;
+  if (next.kind === "greeting") return <GreetingButton label={next.action} onPress={() => onAnswer(next.action)} />;
   if (next.kind === "answers") return <AnswerPanel answers={next.answers} onSelect={onAnswer} />;
   if (next.kind === "prompt") {
     return (
@@ -648,8 +758,10 @@ function TurnSheet({ next, onAnswer }: { next: SheetNext; onAnswer: (answer: str
 
 /** A turn's beats in order: reply, card, any extra beats, then the line(s) typed before its sheet. */
 function beatsOf(turn: ThreadTurn, sheet: SheetNext): Beat[] {
-  const beat = (item: Lines | { card: CardKind }): Beat =>
-    typeof item === "object" && !Array.isArray(item) ? item : { lines: linesOf(item) };
+  const beat = (item: Lines | { card: CardKind } | { note: string }): Beat => {
+    if (typeof item !== "object" || Array.isArray(item)) return { lines: linesOf(item) };
+    return "note" in item ? { lines: [item.note], note: true } : item;
+  };
   const items = [
     ...(turn.reply ? [beat(turn.reply)] : []),
     ...(turn.card ? [beat({ card: turn.card })] : []),
@@ -690,9 +802,10 @@ function beatTimes(turn: PlayedTurn, from: number, at: number): [number, number]
 }
 
 /** Lines typed back to back, each starting once the one before has typed (plus LINE_GAP). */
-function TypedLines({ lines, bold = false }: { lines: string[]; bold?: boolean }) {
+function TypedLines({ lines, bold = false, note = false }: { lines: string[]; bold?: boolean; note?: boolean }) {
   const { starts } = typeLines(lines);
+  const variant = note ? "note" : bold ? "threadBold" : "thread";
   return lines.map((line, i) => (
-    <TypedLine key={i} text={line} age={0} stayVisible variant={bold ? "threadBold" : "thread"} delay={starts[i]} />
+    <TypedLine key={i} text={line} age={0} stayVisible variant={variant} delay={starts[i]} />
   ));
 }

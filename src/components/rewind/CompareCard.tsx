@@ -8,13 +8,13 @@ export function CompareCard() {
   const { label, amount, note } = COMPARE_CARD;
 
   return (
-    <div className="relative flex aspect-square max-h-[368px] w-full max-w-[368px] shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
+    <div className="relative flex aspect-square w-full shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
       <div className="absolute top-0 bottom-0 left-1/2 aspect-square -translate-x-1/2 bg-[linear-gradient(0deg,var(--color-compare-1)_0%,var(--color-compare-2)_33.65%,var(--color-compare-3)_66.81%,var(--color-compare-4)_99.98%)]" />
       <div className="absolute top-0 bottom-0 left-1/2 aspect-square -translate-x-1/2 overflow-clip">
         <img
           alt=""
           src={asset("/rewind/compare-gems.png")}
-          className="absolute top-1/2 left-[calc(50%-0.5px)] block size-[361px] max-w-none -translate-1/2 object-cover"
+          className="absolute top-1/2 left-[calc(50%-0.5px)] block size-[98.1%] max-w-none -translate-1/2 object-cover"
         />
       </div>
 

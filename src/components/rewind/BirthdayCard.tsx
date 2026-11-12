@@ -20,7 +20,7 @@ export function BirthdayCard({
   image = "/rewind/love/birthday-full.png",
 }: BirthdayCardProps) {
   return (
-    <div className="relative flex aspect-[4/3] max-h-[276px] w-full max-w-[368px] shrink-0 overflow-clip rounded-card bg-page-light">
+    <div className="relative flex aspect-[4/3] w-full shrink-0 overflow-clip rounded-card bg-page-light">
       <div className={cn("absolute inset-0", base)} />
       <img alt="" src={asset(image)} className="absolute inset-0 block size-full max-w-none object-cover" />
 

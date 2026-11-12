@@ -74,6 +74,7 @@
 
   --color-frost: rgb(255 255 255 / 0.35); /* alias-color/bg/alpha/bg-blur/md — pills on cards */
   --color-card-base: #5c5c5c; /* grey card base under full-card artwork (Priority cards) */
+  --color-indicator-light: #d9d9d9; /* 6 Primary Actions/3 Disabled — home indicator on dark art (Private greeting) */
   --color-on-brand: #ffffff; /* label on the brand-primary send button */
   --color-row-line: #ebedf0; /* miscellaneous/keyboard-accessory-bar---selection — summary card rows */
 

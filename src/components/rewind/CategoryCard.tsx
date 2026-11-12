@@ -8,7 +8,7 @@ export function CategoryCard() {
   const { title, caption } = FASHION_CARD;
 
   return (
-    <div className="relative flex aspect-[4/3] max-h-[276px] w-full max-w-[368px] shrink-0 items-start overflow-clip rounded-card bg-page-light">
+    <div className="relative flex aspect-[4/3] w-full shrink-0 items-start overflow-clip rounded-card bg-page-light">
       <div className="absolute inset-x-0 bottom-0 aspect-[400/300] bg-[linear-gradient(180deg,var(--color-fashion-1)_0.18%,var(--color-fashion-2)_40.46%,var(--color-fashion-3)_62.4%,var(--color-fashion-4)_80.88%,var(--color-fashion-5)_100%)]" />
       <img
         alt=""

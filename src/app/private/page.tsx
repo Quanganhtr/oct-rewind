@@ -8,14 +8,11 @@ export const metadata: Metadata = {
 };
 
 /**
- * Private borrows Priority's icons, year marks and some card art: preload those (not all of
- * Priority's art), its own art, and the stars and loader dots it shares with the base flow.
+ * Private borrows Priority's icons and year marks: preload those (not Priority's card art), its own
+ * card art, and the stars and loader dots it shares with the base flow.
  */
 const IMAGES = [
   ...listImages("priority").filter((path) => /^\/priority\/[^/]+\.svg$/.test(path)),
-  "/priority/satin-full.png",
-  "/priority/experience/haze-full.png",
-  "/priority/experience/brand-full.png",
   ...listImages("private"),
   ...listImages("rewind/stars"),
   "/rewind/track-dot.svg",

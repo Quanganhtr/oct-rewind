@@ -264,13 +264,16 @@ export type CardKind =
 export type ThreadTurn = {
   /** Answer, topic or sent prompt that starts this turn — ANY_ANSWER takes whichever answer was picked. */
   trigger: string;
-  /** The reader's bubble; empty for an ANY_ANSWER turn, which shows the answer itself. */
+  /**
+   * The reader's bubble. An ANY_ANSWER turn leaves it empty to show the answer itself, or wraps the
+   * answer with "{answer}" ("Tôi nhớ là khoảng {answer}").
+   */
   userMessage: string;
   reply?: Lines;
   /** A gift ("gift", "priorityGift") waits for the reader to open it before the turn carries on. */
   card?: CardKind;
-  /** More beats after the card, before `next`: line(s) to type, or another card. */
-  after?: (Lines | { card: CardKind })[];
+  /** More beats after the card, before `next`: line(s) to type, another card, or a small faded footnote. */
+  after?: (Lines | { card: CardKind } | { note: string })[];
   /** Emoji that rains down the screen as the reply starts typing. */
   reaction?: string;
   next:
@@ -278,6 +281,8 @@ export type ThreadTurn = {
     | { kind: "prompt"; question?: Lines; boldQuestion?: boolean; prompt: string; action: string; typed?: boolean }
     /** `ask` is added to the closing line only while there are topics left to offer. */
     | { kind: "continue"; question?: Lines; ask?: string }
+    /** One wide button that opens the tier's full-screen greeting card (Private's ending). */
+    | { kind: "greeting"; question?: Lines; action: string }
     | { kind: "end" };
 };
 

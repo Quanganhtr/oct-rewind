@@ -8,6 +8,14 @@ export interface CardRow {
   value: string;
 }
 
+type TextTone = "light" | "dark" | "cream";
+
+const TEXT_TONE: Record<TextTone, string> = {
+  light: "text-on-accent",
+  dark: "text-text-primary",
+  cream: "text-cream",
+};
+
 interface PillCardProps {
   /** Small line above the title. */
   label?: string;
@@ -24,11 +32,11 @@ interface PillCardProps {
   art?: ReactNode;
   /** …or artwork that fills the whole card. */
   fullArt?: boolean;
-  shareTone: "light" | "dark" | "cream";
-  /** Title and pill text: white (default) or dark, for light gradients (Figma "Quang vun vén"). */
-  textTone?: "light" | "dark";
+  shareTone: "light" | "dark" | "cream" | "ink";
+  /** Title and pill text: white (default), dark for light gradients (Figma "Quang vun vén"), or cream (Private). */
+  textTone?: TextTone;
   /** Heading colour when it differs from the pills (Figma "12 brand": dark heading, white pills). */
-  headingTone?: "light" | "dark";
+  headingTone?: TextTone;
   /** Count up the numbers in the pills/rows too (amounts, not "Top 1"-style ranks). */
   countPills?: boolean;
   /** Count up the number in the title (off for "Top 3"-style ranks). */
@@ -51,8 +59,7 @@ export function PillCard({
   countPills = false,
   countTitle = true,
 }: PillCardProps) {
-  const toneClass = (tone: "light" | "dark") => (tone === "dark" ? "text-text-primary" : "text-on-accent");
-  const text = toneClass(textTone);
+  const text = TEXT_TONE[textTone];
   return (
     <div className="relative flex aspect-[3/4] w-full shrink-0 flex-col items-center overflow-clip rounded-card bg-page-light">
       <div className={cn("absolute inset-x-0 top-0 aspect-[3/4]", gradient)} />
@@ -64,7 +71,7 @@ export function PillCard({
 
       <div className="relative flex w-full shrink-0 flex-col items-start gap-4 px-4 pt-6 pb-4">
         <div
-          className={cn("flex w-full flex-col items-center justify-center gap-1 text-center", toneClass(headingTone))}
+          className={cn("flex w-full flex-col items-center justify-center gap-1 text-center", TEXT_TONE[headingTone])}
         >
           {label && <p className={cn("w-full text-sm leading-5 font-medium", !compactTitle && "h-6")}>{label}</p>}
           {/* Figma sets the title at 40px line height over pills, 44px over the summary's rows */}

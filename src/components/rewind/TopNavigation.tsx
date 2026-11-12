@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { asset } from "@/lib/asset";
+import { useMusic } from "./MusicContext";
 import { useTier } from "./TierContext";
 
 interface TopNavigationProps {
@@ -11,6 +12,8 @@ interface TopNavigationProps {
 
 export function TopNavigation({ tone, onClose, className }: TopNavigationProps) {
   const { assetDir } = useTier();
+  const music = useMusic();
+  const muted = music ? !music.on : false;
   const icon = (name: string) => asset(`${assetDir}/${name}-${tone}-bg.svg`);
   const label = tone === "dark" ? "text-on-accent" : "text-text-primary";
 
@@ -49,8 +52,19 @@ export function TopNavigation({ tone, onClose, className }: TopNavigationProps) 
           </div>
         </div>
         <div className="flex min-w-px flex-1 items-center justify-end gap-4 px-4 py-2.5">
-          <button type="button" aria-label="Âm thanh" className="size-7">
-            <img alt="" src={icon("sound")} className="block size-7" />
+          <button
+            type="button"
+            aria-label={muted ? "Bật âm thanh" : "Tắt âm thanh"}
+            aria-pressed={music ? !muted : undefined}
+            onClick={(e) => {
+              // Don't let the chat read the tap as "next line"
+              e.stopPropagation();
+              music?.toggle();
+            }}
+            className="size-7"
+          >
+            {/* Muted: the same speaker struck through (no muted icon in the design system yet) */}
+            <img alt="" src={icon(muted ? "sound-muted" : "sound")} className="block size-7" />
           </button>
           <button type="button" aria-label="Đóng" onClick={onClose} className="size-7">
             <img alt="" src={icon("close")} className="block size-7" />

@@ -10,13 +10,13 @@ import { LINE_OPACITY } from "@/data/rewind";
  */
 
 /** A new word starts every WORD_INTERVAL seconds, whatever the line length… */
-export const WORD_INTERVAL = 0.15;
+export const WORD_INTERVAL = 0.1;
 /** …and faster once the conversation proper starts (Step 5's 14px thread text). */
-export const THREAD_WORD_INTERVAL = 0.07;
+export const THREAD_WORD_INTERVAL = 0.045;
 /** A word un-blurs over this long. */
-export const WORD_REVEAL = 0.5;
+export const WORD_REVEAL = 0.35;
 /** A word's color runs peach → red → its resting color over this long as it appears. */
-export const WORD_COLOR = 1;
+export const WORD_COLOR = 0.7;
 const WORD_GLOW = ["var(--color-glow-1)", "var(--color-glow-2)"];
 /** Words dim this long after they appear… */
 export const DIM_DELAY = 1;
@@ -33,8 +33,11 @@ interface TypedLineProps {
   /** 0 = newest line. */
   age: number;
   stayVisible: boolean;
-  /** "intro": 24px chat line, dims with age. "thread": Step 5's 14px body. "greeting": Start's centred lines. */
-  variant: "intro" | "thread" | "threadBold" | "greeting" | "prompt";
+  /**
+   * "intro": 24px chat line, dims with age. "thread": Step 5's 14px body. "greeting": Start's centred
+   * lines. "card"/"cardBold": 24px centred cream lines over dark art (Private's greeting card).
+   */
+  variant: "intro" | "thread" | "threadBold" | "note" | "greeting" | "prompt" | "card" | "cardBold";
   /** Show already settled, no typing (opening straight on a later step). */
   instant?: boolean;
   /** Seconds before the first word starts. */
@@ -45,8 +48,12 @@ const VARIANT_CLASS = {
   intro: "w-full text-2xl leading-8 font-medium text-brand-primary",
   thread: "w-full text-base leading-6 font-medium text-text-primary",
   threadBold: "w-full text-base leading-6 font-bold text-text-primary",
+  /** A footnote under a card: 12px on a 20px line, at half strength. */
+  note: "w-full text-xs leading-5 font-medium text-text-primary opacity-50",
   greeting: "text-2xl leading-8 font-medium whitespace-nowrap text-brand-primary",
   prompt: "w-full text-base leading-6 font-normal text-text-primary",
+  card: "w-full text-center text-2xl leading-8 font-medium text-cream",
+  cardBold: "w-full text-center text-2xl leading-8 font-bold text-cream",
 };
 
 export function TypedLine({ text, age, stayVisible, variant, instant = false, delay = 0 }: TypedLineProps) {
@@ -56,10 +63,12 @@ export function TypedLine({ text, age, stayVisible, variant, instant = false, de
   // Position of each word among words only (whitespace tokens get -1)
   const wordIndexes = tokens.map((t, i) => (t.trim() ? tokens.slice(0, i).filter((w) => w.trim()).length : -1));
   const restingOpacity = stayVisible ? 1 : LINE_OPACITY[1];
-  const isBody = variant === "thread" || variant === "threadBold" || variant === "prompt";
+  const isBody = variant === "thread" || variant === "threadBold" || variant === "note" || variant === "prompt";
   const interval = isBody ? THREAD_WORD_INTERVAL : WORD_INTERVAL;
-  const restColor = isBody ? "var(--color-text-primary)" : "var(--color-brand-primary)";
-  const colors = [...WORD_GLOW, restColor];
+  const onDark = variant === "card" || variant === "cardBold";
+  const restColor = onDark ? "var(--color-cream)" : isBody ? "var(--color-text-primary)" : "var(--color-brand-primary)";
+  // Over dark art the umber step would vanish into the background: sand straight to cream
+  const colors = onDark ? [WORD_GLOW[0], restColor] : [...WORD_GLOW, restColor];
 
   return (
     <p className={cn("whitespace-pre-line", VARIANT_CLASS[variant])}>

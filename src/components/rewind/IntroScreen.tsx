@@ -42,6 +42,8 @@ export const DOME_EXIT_DURATION = 1.2;
 export const LOADING_FADE = 0.3;
 /** The 2026 mark and greeting vanish this fast once the dome's top reaches the top of the screen. */
 export const START_CONTENT_EXIT = 0.15;
+/** If nobody taps "Bắt đầu" this long after the key is ready, Start moves on by itself. */
+export const AUTO_START = 5;
 
 /** Word offset where each greeting line starts, so line 2 picks up right after line 1. */
 const lineStarts = (lines: string[]) =>
@@ -49,7 +51,7 @@ const lineStarts = (lines: string[]) =>
 
 export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClose }: IntroScreenProps) {
   const reduceMotion = useReducedMotion();
-  const { eyebrowClass, yearMark, greeting } = useTier();
+  const { eyebrowClass, yearMark, greeting, startKey } = useTier();
   const greetingLineStarts = lineStarts(greeting);
   const isLoading = phase === "loading";
   // Loading → Start: one long, soft ease shared by everything that moves
@@ -87,6 +89,16 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
     });
     onStart();
   };
+
+  // No tap? Carry on to the chat anyway, the same way a tap would (dome slides up and away).
+  // Counted from when the key is ready: the 2026 has landed and the greeting starts typing.
+  useEffect(() => {
+    if (isLoading || isLeaving) return;
+    const t = setTimeout(handleStart, (greetingDelay + AUTO_START) * 1000);
+    return () => clearTimeout(t);
+    // handleStart is fresh each render; a tap (isLeaving) or leaving Start cancels the timer
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isLeaving, greetingDelay]);
 
   return (
     <div
@@ -187,6 +199,9 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
         <motion.div style={{ y: domeY }}>
           <KeyGradient
             label={isLoading ? "Đang tải" : "Bắt đầu"}
+            labelClass={startKey?.labelClass}
+            // The icon belongs to "Bắt đầu" only, not the Loading label
+            icon={isLoading ? undefined : startKey?.icon}
             onPress={isLoading || isLeaving ? undefined : handleStart}
             // Ready once the key has risen into place (the same moment the greeting starts typing)
             readyDelay={isLoading || isLeaving ? undefined : greetingDelay}

@@ -76,7 +76,7 @@ export function GiftCard({ open, onOpen, skin = STANDARD_GIFT }: GiftCardProps) 
 
   return (
     // Not clipped: the wrapping falls out past the card's edges
-    <div className="relative aspect-[4/3] w-full max-w-[368px] shrink-0">
+    <div className="relative aspect-[4/3] w-full shrink-0">
       {/* Underneath: the person's card. Its art is always there so the reveal never waits on the image;
           its text goes in as the gift is opened, so the numbers count as it shows */}
       <div className="absolute inset-0 flex overflow-clip rounded-card bg-page-light">

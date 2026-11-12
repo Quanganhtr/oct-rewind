@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { asset } from "@/lib/asset";
 import { cn } from "@/lib/cn";
 import { easeInOutSine } from "@/lib/motion";
 import { BlobGradient } from "./BlobGradient";
@@ -9,6 +10,10 @@ import { TrackDots } from "./TrackDots";
 
 interface KeyGradientProps {
   label: string;
+  /** Label size, replacing the default 20px (Priority uses 16px). */
+  labelClass?: string;
+  /** 20px icon after the label, 4px away (Priority's "Bắt đầu ⌃"). */
+  icon?: string;
   /** When set, the centre label becomes the tap target. */
   onPress?: () => void;
   /**
@@ -45,7 +50,7 @@ const HINT_TILT_TRACK = {
 };
 
 /** Figma "Key gradient": the glowing pill-topped orb with loader ring, stars and light sweep. */
-export function KeyGradient({ label, onPress, readyDelay, className }: KeyGradientProps) {
+export function KeyGradient({ label, labelClass, icon, onPress, readyDelay, className }: KeyGradientProps) {
   const reduceMotion = useReducedMotion();
   const hinting = readyDelay !== undefined && !reduceMotion;
   const nudge = {
@@ -91,13 +96,17 @@ export function KeyGradient({ label, onPress, readyDelay, className }: KeyGradie
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
                 key={label}
-                className="font-sf text-xl leading-7 font-semibold whitespace-nowrap text-text-primary"
+                className={cn(
+                  "flex items-center gap-1 font-sf text-xl leading-7 font-semibold whitespace-nowrap text-text-primary",
+                  labelClass,
+                )}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
                 {label}
+                {icon && <img alt="" src={asset(icon)} className="block size-5 shrink-0" />}
               </motion.span>
             </AnimatePresence>
           </button>

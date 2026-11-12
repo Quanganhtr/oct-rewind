@@ -13,7 +13,7 @@ interface StatPairCardProps {
 /** Figma square card with two figures side by side, low down, under full-card artwork. */
 export function StatPairCard({ stats, gradient, image }: StatPairCardProps) {
   return (
-    <div className="relative flex aspect-square max-h-[368px] w-full max-w-[368px] shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
+    <div className="relative flex aspect-square w-full shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
       <div className={cn("absolute inset-x-0 bottom-0", gradient)} />
       <img alt="" src={image} className="absolute inset-0 block size-full max-w-none object-cover" />
 
