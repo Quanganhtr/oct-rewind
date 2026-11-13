@@ -40,8 +40,11 @@ export const FINANCE_RETURNS_CARD = {
 /** Top to bottom, as Figma "Tài chính an vững - 1" stacks them. */
 const FINANCE_ANSWERS = ["🎢 Tàu lượn", "🚀 Tên lửa", "🐢 Chú rùa"];
 
-// Figma "Tài chính an vững - Priority thường" (section 533:20624). Each send button's label is
-// short; the bubble it sends is the reader's fuller reply.
+/** Figma "Tài chính an vững - 4": the longest saving streak, top to bottom. */
+const FINANCE_SAVING_ANSWERS = ["3 tháng", "9 tháng", "12 tháng"];
+
+// Figma "Tài chính an vững - Priority thường" (section 533:20624). Prompts send themselves as the
+// bubble, except "Còn chuyện gì nữa?", which sends the fuller "Còn chuyện gì nữa thế?".
 const FINANCE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[0],
@@ -77,34 +80,35 @@ const FINANCE_THREAD: ThreadTurn[] = [
     reply: "Chúc mừng Quý khách năm Ngọ chinh phục thành tựu lớn.",
     card: "priorityNewAssets",
     next: {
-      kind: "prompt",
+      kind: "answers",
       question: "Quý khách có nhớ thời gian dài nhất mình kiên trì tích luỹ?",
       boldQuestion: true,
-      prompt: "Chắc là 9 tháng",
-      action: "Gửi",
+      answers: FINANCE_SAVING_ANSWERS,
     },
   },
   {
-    trigger: "Chắc là 9 tháng",
-    userMessage: "Chắc là 9 tháng",
+    // Figma "Tài chính an vững - 4/5": the "9 tháng" bubble reads "Chắc là 9 tháng"; every guess
+    // gets the real answer, in its own words
+    trigger: ANY_ANSWER,
+    userMessage: "Chắc là {answer}",
     reply: "Gần 12 tháng bên bỉ, tích tiểu thành đại.",
     card: "prioritySavings",
     next: {
       kind: "prompt",
       question: "Tất cả vì tương lai gia sản vững bền. Techcombank biết Quý khách sẽ làm được.",
-      prompt: "Chắc chắn rồi",
+      prompt: "Có công mài sắt, có ngày nên kim",
       action: "Gửi",
     },
   },
   {
-    trigger: "Chắc chắn rồi",
+    trigger: "Có công mài sắt, có ngày nên kim",
     userMessage: "Có công mài sắt, có ngày nên kim",
     reply: "Góp chút sức nhỏ, Sinh lời tự động sẽ cùng Quý khách đi tới tương lai đó.",
     card: "priorityReturns",
-    next: { kind: "prompt", prompt: "Hứa nhé", action: "Gửi" },
+    next: { kind: "prompt", prompt: "Vậy cùng nhau đi tiếp thôi", action: "Gửi" },
   },
   {
-    trigger: "Hứa nhé",
+    trigger: "Vậy cùng nhau đi tiếp thôi",
     userMessage: "Vậy cùng nhau đi tiếp thôi",
     reply: [
       "Kiên trì nuôi dưỡng tài chính, không vội vàng, cũng không lùi bước.",
