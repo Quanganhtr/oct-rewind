@@ -14,16 +14,31 @@ interface CenterStatCardProps {
   gradient: string;
   /** Artwork that fills the whole card. */
   image: string;
+  /** "light": white text. "cream": Priority's cream text. */
+  tone?: "light" | "cream";
 }
 
 /** Figma square card with one centred figure low down, under full-card artwork ("Chuyện tiền tài"). */
-export function CenterStatCard({ label, value, note, large = false, gradient, image }: CenterStatCardProps) {
+export function CenterStatCard({
+  label,
+  value,
+  note,
+  large = false,
+  gradient,
+  image,
+  tone = "light",
+}: CenterStatCardProps) {
   return (
     <div className="relative flex aspect-square w-full shrink-0 flex-col items-center justify-center overflow-clip rounded-card bg-page-light">
       <div className={cn("absolute inset-0", gradient)} />
       <img alt="" src={image} className="absolute inset-0 block size-full max-w-none object-cover" />
 
-      <div className="relative flex min-h-px w-full flex-1 items-end px-4 pt-4 text-center text-on-accent">
+      <div
+        className={cn(
+          "relative flex min-h-px w-full flex-1 items-end px-4 pt-4 text-center",
+          tone === "cream" ? "text-cream" : "text-on-accent",
+        )}
+      >
         <div className="flex min-w-px flex-1 flex-col items-center gap-1">
           <p className={cn("w-full text-sm leading-5 font-medium", large && "h-6")}>{label}</p>
           <p className={cn("w-full font-bold", large ? "text-[32px] leading-10" : "text-xl leading-7")}>

@@ -20,6 +20,8 @@ interface TrendCardProps {
   tone?: "light" | "cream";
   /** The ▲ in front of the value, in the text's color. */
   caret?: string;
+  /** "Chia sẻ ngay": cream by default; "dark" over light art (Priority's growth card). */
+  shareTone?: "cream" | "dark";
 }
 
 /** Figma 4:3 card with a big rising number: ▲ value, and how it compares. */
@@ -33,6 +35,7 @@ export function TrendCard({
   mirrorImage = false,
   tone = "light",
   caret = "/rewind/caret-up.svg",
+  shareTone = "cream",
 }: TrendCardProps) {
   return (
     <div className="relative flex aspect-[4/3] w-full shrink-0 overflow-clip rounded-card bg-page-light">
@@ -61,7 +64,7 @@ export function TrendCard({
             <span className="font-bold">{rank}</span> {rankNote}
           </p>
         </div>
-        <ShareButton tone="cream" className="px-4 pt-4 pb-6" />
+        <ShareButton tone={shareTone} className="px-4 pt-4 pb-6" />
       </div>
     </div>
   );

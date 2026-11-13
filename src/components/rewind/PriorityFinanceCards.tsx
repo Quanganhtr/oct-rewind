@@ -10,7 +10,7 @@ import { PillCard } from "./PillCard";
 import { TrendCard } from "./TrendCard";
 
 /*
- * Priority "Tài chính an vững" cards (Figma section 499:6522). Each is full-card artwork over
+ * Priority "Tài chính an vững" cards (Figma section 533:20624). Each is full-card artwork over
  * Figma's grey card base, built on the base tier's card layouts.
  */
 
@@ -25,6 +25,8 @@ export function PriorityGrowthCard() {
       caret={CARET}
       gradient="bg-card-base"
       image={asset("/priority/finance/growth-full.png")}
+      // The art is light at the bottom left
+      shareTone="dark"
     />
   );
 }
@@ -70,16 +72,19 @@ export function PrioritySavingsCard() {
   );
 }
 
-/** "Sinh lời mang tới ▲22 Tr": what Sinh lời tự động earned, and its best month. */
+/** "VND 1,200,520": what Sinh lời tự động earned in 256 days, and its best month. */
 export function PriorityReturnsCard() {
+  const { label, value, note } = FINANCE_RETURNS_CARD;
   return (
-    <TrendCard
-      {...FINANCE_RETURNS_CARD}
+    <CenterStatCard
+      label={label}
+      value={value}
+      large
+      note={<span className="font-bold">{note}</span>}
       tone="cream"
-      caret={CARET}
-      gradient="bg-card-base"
-      image={asset("/priority/satin-full.png")}
-      mirrorImage
+      // Figma: white 50% over the grey card base, under art that's see-through in places
+      gradient="bg-card-base/50"
+      image={asset("/priority/finance/returns-full.png")}
     />
   );
 }

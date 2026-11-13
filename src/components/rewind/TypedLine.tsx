@@ -42,6 +42,8 @@ interface TypedLineProps {
   instant?: boolean;
   /** Seconds before the first word starts. */
   delay?: number;
+  /** Overrides the variant's size or alignment (a tier's greeting card). */
+  className?: string;
 }
 
 const VARIANT_CLASS = {
@@ -56,7 +58,15 @@ const VARIANT_CLASS = {
   cardBold: "w-full text-center text-2xl leading-8 font-bold text-cream",
 };
 
-export function TypedLine({ text, age, stayVisible, variant, instant = false, delay = 0 }: TypedLineProps) {
+export function TypedLine({
+  text,
+  age,
+  stayVisible,
+  variant,
+  instant = false,
+  delay = 0,
+  className,
+}: TypedLineProps) {
   const reduceMotion = useReducedMotion();
   // Keep whitespace (incl. the "\n" line break) as plain text between word spans
   const tokens = text.split(/(\s+)/);
@@ -71,7 +81,7 @@ export function TypedLine({ text, age, stayVisible, variant, instant = false, de
   const colors = onDark ? [WORD_GLOW[0], restColor] : [...WORD_GLOW, restColor];
 
   return (
-    <p className={cn("whitespace-pre-line", VARIANT_CLASS[variant])}>
+    <p className={cn("whitespace-pre-line", VARIANT_CLASS[variant], className)}>
       {tokens.map((token, t) => {
         const wordIndex = wordIndexes[t];
         if (wordIndex < 0) return token;

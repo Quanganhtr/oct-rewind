@@ -8,7 +8,14 @@ import {
   TOPICS_PROMPT,
   type TopicSet,
 } from "./rewind";
-import { PRIORITY_THREADS, PRIORITY_TOPICS, PRIORITY_TOPICS_PROMPT, PRIORITY_USER_NAME } from "./priority";
+import {
+  PRIORITY_ENDING,
+  PRIORITY_GREETING_CARD,
+  PRIORITY_THREADS,
+  PRIORITY_TOPICS,
+  PRIORITY_TOPICS_PROMPT,
+  PRIORITY_USER_NAME,
+} from "./priority";
 import {
   PRIVATE_GREETING_CARD,
   PRIVATE_INTRO_LINES,
@@ -27,7 +34,8 @@ export interface Tier {
   themeClass?: string;
   /** Folder under /public for the tier's icons: nav, arrow, caret, send. */
   assetDir: string;
-  /** "Nhìn lại" over the Loading 2026. */
+  /** The line over the Loading 2026 ("Nhìn lại"), and its weight. */
+  eyebrow: string;
   eyebrowClass: string;
   /** The 2026 mark: cream on Loading, then grown and cross-faded to the Start version. */
   yearMark: {
@@ -71,13 +79,21 @@ export interface Tier {
    */
   menuOrbLift?: number;
   /** The full-screen card a "greeting" sheet opens at the end: greeting lines, the wish, the art. */
-  greetingCard?: { lines: string[]; wish: string; image: string };
+  greetingCard?: {
+    lines: string[];
+    wish: string;
+    image: string;
+    /** Size overrides for the greeting lines and the wish (Private's 24px both by default). */
+    linesClass?: string;
+    wishClass?: string;
+  };
 }
 
 export type TierId = "standard" | "priority" | "private";
 
 const STANDARD: Tier = {
   assetDir: "/rewind",
+  eyebrow: "Nhìn lại",
   eyebrowClass: "font-light",
   yearMark: {
     loading: "/rewind/year-2026-cream.svg",
@@ -107,6 +123,8 @@ const STANDARD: Tier = {
 const PRIORITY: Tier = {
   themeClass: "tier-priority",
   assetDir: "/priority",
+  // Figma "Loading" (section 538:25421)
+  eyebrow: "Câu chuyện kết năm",
   eyebrowClass: "font-medium",
   yearMark: {
     loading: "/priority/year-2026-cream.svg",
@@ -117,8 +135,9 @@ const PRIORITY: Tier = {
   },
   greeting: [PRIORITY_USER_NAME, "Một năm gói lại đôi lời"],
   introLines: [
-    `Thân gửi anh ${PRIORITY_USER_NAME},`,
-    "Cảm ơn anh vì 1,534 ngày cùng nhau vững bước.",
+    // Figma "Step 1–3" (section 538:25421)
+    `Thân gửi Quý khách ${PRIORITY_USER_NAME},`,
+    "Cảm ơn Quý khách vì 1,534 ngày cùng nhau vững bước.",
     "2027 sắp tới, nghỉ tay nghe Techcombank kể chuyện năm nay...",
   ],
   topicsPrompt: PRIORITY_TOPICS_PROMPT,
@@ -130,7 +149,9 @@ const PRIORITY: Tier = {
     [PRIORITY_TOPICS[2]]: "/priority/topic-experience.svg",
   },
   threads: PRIORITY_THREADS,
-  topicSet: { topics: PRIORITY_TOPICS, moreTopicsPrompt: PRIORITY_TOPICS_PROMPT },
+  // Figma "Ending" (section 537:25337): once all three topics are told, the New Year card
+  topicSet: { topics: PRIORITY_TOPICS, moreTopicsPrompt: PRIORITY_TOPICS_PROMPT, ending: PRIORITY_ENDING },
+  greetingCard: PRIORITY_GREETING_CARD,
   radioIcon: "/priority/radio.svg",
   sendButtonClass: "min-w-24 px-5 py-3",
   // Figma "Start" (node 526:20372): 16px label + 16px arrow-up
@@ -141,6 +162,7 @@ const PRIORITY: Tier = {
 /** Figma "Opening" (Private, node 512:13542): Priority's palette, marks and icons, with its own copy. */
 const PRIVATE: Tier = {
   ...PRIORITY,
+  eyebrow: "Nhìn lại",
   greeting: [PRIVATE_USER_NAME, "Một năm gói lại đôi lời"],
   introLines: PRIVATE_INTRO_LINES,
   topicsPrompt: PRIVATE_TOPICS_PROMPT,

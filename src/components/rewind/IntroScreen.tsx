@@ -38,7 +38,7 @@ interface IntroScreenProps {
 export const LOADING_DURATION = 2.2;
 export const SETTLE_DURATION = 1.4;
 export const DOME_EXIT_DURATION = 1.2;
-/** "Nhìn lại" fades out as Start takes over. */
+/** The eyebrow ("Nhìn lại") fades out as Start takes over. */
 export const LOADING_FADE = 0.3;
 /** The 2026 mark and greeting vanish this fast once the dome's top reaches the top of the screen. */
 export const START_CONTENT_EXIT = 0.15;
@@ -51,7 +51,7 @@ const lineStarts = (lines: string[]) =>
 
 export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClose }: IntroScreenProps) {
   const reduceMotion = useReducedMotion();
-  const { eyebrowClass, yearMark, greeting, startKey } = useTier();
+  const { eyebrow, eyebrowClass, yearMark, greeting, startKey } = useTier();
   const greetingLineStarts = lineStarts(greeting);
   const isLoading = phase === "loading";
   // Loading → Start: one long, soft ease shared by everything that moves
@@ -147,7 +147,7 @@ export function IntroScreen({ phase, loadProgress = 1, onLoaded, onStart, onClos
               transition={{ duration: reduceMotion ? 0 : LOADING_FADE }}
               className={cn("text-2xl leading-8 whitespace-nowrap text-cream", eyebrowClass)}
             >
-              Nhìn lại
+              {eyebrow}
             </motion.p>
           )}
         </AnimatePresence>

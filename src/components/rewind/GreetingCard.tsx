@@ -36,8 +36,8 @@ export function GreetingButton({ label, onPress }: { label: string; onPress: () 
 }
 
 /**
- * Figma "Dashboard" (Private, node 525:19417): a full-screen New Year card over the bamboo art,
- * the greeting and wish in cream, and a share button at the foot. (Figma also has a red "2026"
+ * Figma "Dashboard" (Private, node 525:19417; Priority, node 537:25338): a full-screen New Year
+ * card over the tier's art, the greeting and wish in cream, and a share button at the foot. (Figma also has a red "2026"
  * layer under the bamboo, fully covered by it, so only the bamboo is shipped.)
  *
  * It has no header or home indicator of its own: it slides up under the chat's, which every
@@ -47,7 +47,7 @@ export function GreetingCard() {
   const { greetingCard } = useTier();
   const reduceMotion = useReducedMotion();
   if (!greetingCard) return null;
-  const { lines, wish, image } = greetingCard;
+  const { lines, wish, image, linesClass, wishClass } = greetingCard;
   const greeting = lines.join("\n");
 
   return (
@@ -65,13 +65,14 @@ export function GreetingCard() {
 
       {/* Typed word by word, like the Start greeting: the two greeting lines, then the wish */}
       <div className="relative flex min-h-px w-full flex-1 flex-col items-start gap-4 px-4 pt-14 pb-4">
-        <TypedLine text={greeting} age={0} stayVisible variant="card" delay={TYPE_START} />
+        <TypedLine text={greeting} age={0} stayVisible variant="card" delay={TYPE_START} className={linesClass} />
         <TypedLine
           text={wish}
           age={0}
           stayVisible
           variant="cardBold"
           delay={TYPE_START + typeDuration(greeting) + LINE_GAP}
+          className={wishClass}
         />
       </div>
 

@@ -18,29 +18,30 @@ export const FINANCE_GROWTH_CARD = {
 /** Figma "Tài chính an vững - 3": the big purchases this year. */
 export const FINANCE_NEW_ASSETS_CARD = {
   label: "Mã đáo thành công",
-  title: "Mừng anh tậu thêm",
+  title: "Năm nay tậu thêm",
   pills: ["Nhà mới", "Xe mới"],
 };
 
 /** Figma "Tài chính an vững - 5": savings accounts opened this year. */
 export const FINANCE_SAVINGS_CARD = {
-  label: "2026, anh có thêm",
+  label: "2026, Quý khách giữ nhịp",
   value: "3 khoản tiết kiệm",
   total: "VND 234,000,000",
   goals: "5 mục tiêu",
 };
 
-/** Figma "Tài chính an vững - 7": what Sinh lời tự động earned. */
+/** Figma "Tài chính an vững - 7": what Sinh lời tự động earned, and its best month. */
 export const FINANCE_RETURNS_CARD = {
-  label: "256 ngày nắng mưa\nSinh lời mang tới",
-  value: "22 Tr",
-  rank: "Tháng 7 lợi suất kịch nóc 8,9%",
-  rankNote: "",
+  label: "256 ngày, Sinh lời mang tới",
+  value: "VND 1,200,520",
+  note: "Tháng 7 lợi suất kịch nóc 8,9%",
 };
 
-const FINANCE_ANSWERS = ["Tôi nghĩ là 🐢 chú rùa", "Tôi nghĩ là 🚀 tên lửa", "Tôi nghĩ là 🎢 tàu lượn"];
+/** Top to bottom, as Figma "Tài chính an vững - 1" stacks them. */
+const FINANCE_ANSWERS = ["🎢 Tàu lượn", "🚀 Tên lửa", "🐢 Chú rùa"];
 
-// Figma "Tài chính an vững - Priority thường" (section 499:6522)
+// Figma "Tài chính an vững - Priority thường" (section 533:20624). Each send button's label is
+// short; the bubble it sends is the reader's fuller reply.
 const FINANCE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[0],
@@ -51,7 +52,7 @@ const FINANCE_THREAD: ThreadTurn[] = [
     ],
     next: {
       kind: "answers",
-      question: "Với anh, năm tài chính 2026 gói gọn trong biểu tượng nào?",
+      question: "Với Quý khách, năm tài chính 2026 gói gọn trong biểu tượng nào?",
       boldQuestion: true,
       answers: FINANCE_ANSWERS,
     },
@@ -59,10 +60,10 @@ const FINANCE_THREAD: ThreadTurn[] = [
   {
     // Only the turtle's follow-up is designed; the other answers play it too, with their own bubble
     trigger: ANY_ANSWER,
-    userMessage: "",
+    userMessage: "Tôi nghĩ là {answer}",
     reply: "Kiên trì đều bước, đúng gu người vững vàng.",
     card: "priorityGrowth",
-    after: ["Tài chính an vững là nhờ anh chăm chỉ nỗ lực mỗi ngày."],
+    after: ["Tài chính an vững là nhờ Quý khách chăm chỉ nỗ lực mỗi ngày."],
     next: {
       kind: "prompt",
       question: "Xin vía phát tài, chuyện vui chưa dừng lại...",
@@ -72,42 +73,42 @@ const FINANCE_THREAD: ThreadTurn[] = [
   },
   {
     trigger: "Còn chuyện gì nữa?",
-    userMessage: "Còn chuyện gì nữa?",
-    reply: "Chúc mừng anh năm Ngọ chinh phục thành tựu lớn.",
+    userMessage: "Còn chuyện gì nữa thế?",
+    reply: "Chúc mừng Quý khách năm Ngọ chinh phục thành tựu lớn.",
     card: "priorityNewAssets",
     next: {
-      kind: "answers",
-      question: "Anh có nhớ thời gian dài nhất mình kiên trì tích luỹ?",
+      kind: "prompt",
+      question: "Quý khách có nhớ thời gian dài nhất mình kiên trì tích luỹ?",
       boldQuestion: true,
-      answers: ["3 tháng", "9 tháng", "12 tháng"],
+      prompt: "Chắc là 9 tháng",
+      action: "Gửi",
     },
   },
   {
-    // Figma "Tài chính an vững - 14" shows "9 tháng"; every guess gets the real answer, with its own bubble
-    trigger: ANY_ANSWER,
-    userMessage: "",
+    trigger: "Chắc là 9 tháng",
+    userMessage: "Chắc là 9 tháng",
     reply: "Gần 12 tháng bên bỉ, tích tiểu thành đại.",
     card: "prioritySavings",
     next: {
       kind: "prompt",
-      question: "Tất cả vì tương lai gia sản vững bền. Techcombank biết anh sẽ làm được.",
+      question: "Tất cả vì tương lai gia sản vững bền. Techcombank biết Quý khách sẽ làm được.",
       prompt: "Chắc chắn rồi",
       action: "Gửi",
     },
   },
   {
     trigger: "Chắc chắn rồi",
-    userMessage: "Chắc chắn rồi",
-    reply: "Góp chút sức nhỏ, Sinh lời tự động sẽ cùng anh đi tới tương lai đó.",
+    userMessage: "Có công mài sắt, có ngày nên kim",
+    reply: "Góp chút sức nhỏ, Sinh lời tự động sẽ cùng Quý khách đi tới tương lai đó.",
     card: "priorityReturns",
     next: { kind: "prompt", prompt: "Hứa nhé", action: "Gửi" },
   },
   {
     trigger: "Hứa nhé",
-    userMessage: "Hứa nhé",
+    userMessage: "Vậy cùng nhau đi tiếp thôi",
     reply: [
       "Kiên trì nuôi dưỡng tài chính, không vội vàng, cũng không lùi bước.",
-      "Giữ vững tinh thần đó, 2027 của anh sẽ là một năm phú quý cát tường 😉",
+      "Giữ vững tinh thần ấy, 2027 sẽ là một năm phú quý cát tường 😉",
     ],
     next: { kind: "continue" },
   },
@@ -115,8 +116,8 @@ const FINANCE_THREAD: ThreadTurn[] = [
 
 /** Figma "Yêu thương trọn tâm - 03": what the reader looks after in their own name. */
 export const LOVE_FAMILY_CARD = {
-  label: "Năm 2026,",
-  title: "Anh vun vén",
+  label: "Năm 2026, Quý khách",
+  title: "Trọn tâm vun vén",
   pills: ["1 nhóm gia đình", "3 quỹ nhóm", "4 gói bảo hiểm"],
 };
 
@@ -128,21 +129,19 @@ export const LOVE_DONATION_CARD = {
   ],
 };
 
-/** Figma "Yêu thương trọn tâm - 07/08": a wrapped gift that opens onto the person paid most often. */
-export const LOVE_GIFT_CARD = {
-  teaser: "Người ấy là ai?",
-  action: "Coi nào",
-  name: "Do Mai Linh",
-  lines: ["Người anh ưu ái nhất", "Chuyển tiền 124 lần", "Trong 120 ngày"],
+/** Figma "Yêu thương trọn tâm" (533:23609): the person paid most often, shown straight away (no gift). */
+export const LOVE_PERSON_CARD = {
+  title: "Do Mai Linh",
+  subtitle: "Người Quý khách ưu ái nhất\nChuyển tiền 124 lần\nTrong 120 ngày",
 };
 
 /** Figma "Yêu thương trọn tâm - 09": birthday wishes received through Techcombank. */
 export const LOVE_BIRTHDAY_CARD = {
   title: "7 lời chúc\nsinh nhật",
-  subtitle: "Anh nhận riêng qua\nTechcombank thôi",
+  subtitle: "Quý khách nhận riêng qua\nTechcombank thôi",
 };
 
-// Figma "Yêu thương trọn tâm" (section 504:8568)
+// Figma "Yêu thương trọn tâm" (section 533:23609)
 const LOVE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[1],
@@ -155,39 +154,39 @@ const LOVE_THREAD: ThreadTurn[] = [
   },
   {
     trigger: "Ý là thế nào?",
-    userMessage: "Ý là thế nào?",
-    reply: "Ý là anh đó, không nói thương nhưng đâu đâu cũng là thương.",
+    userMessage: "Ý là sao đó?",
+    reply: "Không nói thương nhưng đâu đâu cũng là thương.",
     card: "priorityFamily",
     next: {
       kind: "prompt",
-      question: "Chu toàn đến vậy, 2027 chừa thêm thật nhiều yêu thương cho bản thân nữa nha.",
+      question: "Chu toàn đến vậy, 2027 nhất định phải yêu bản thân nhiều thật nhiều.",
       prompt: "Dĩ nhiên rồi",
       action: "Gửi",
     },
   },
   {
     trigger: "Dĩ nhiên rồi",
-    userMessage: "Dĩ nhiên rồi",
-    reply: "Nhắc tới yêu thương... Chạm Yêu Thương cảm ơn anh thật nhiều.",
+    userMessage: "Chắc chắn sẽ như vậy",
+    reply: "Nhắc tới yêu thương... Chạm Yêu Thương cảm ơn Quý khách thật nhiều.",
     card: "priorityDonation",
-    after: ["Rung động lắm khi biết anh luôn chọn cách cho đi."],
+    after: ["Trân quý lắm khi Quý khách luôn chọn cách cho đi."],
     next: {
       kind: "prompt",
-      question: "2026, anh có thấy 1 người đặc biệt?",
+      question: "2026, Quý khách có thấy 1 người đặc biệt?",
       boldQuestion: true,
       prompt: "Người nào cơ?",
       action: "Gửi",
     },
   },
-  // Straight to the gift: tapping it uncovers the person card, then the turn carries on
+  // Straight to the person's card
   {
     trigger: "Người nào cơ?",
     userMessage: "Người nào cơ?",
-    card: "priorityGift",
+    card: "priorityPerson",
     after: ["Người ấy chắc hẳn là ngoại lệ có một không hai."],
     next: {
       kind: "answers",
-      question: "Yêu thương như thế, anh có nhớ đã nhận bao nhiêu lời chúc sinh nhật qua Techcombank?",
+      question: "Yêu thương như thế, Quý khách có nhớ đã nhận bao nhiêu lời chúc sinh nhật qua Techcombank?",
       boldQuestion: true,
       answers: ["1–3 thôi", "4–7 chăng", "Trên 7", "Ai mà nhớ..."],
     },
@@ -209,7 +208,7 @@ const LOVE_THREAD: ThreadTurn[] = [
     trigger: "🥹🥹🥹",
     userMessage: "🥹🥹🥹",
     reply:
-      "Năm sau và nhiều năm sau nữa, hy vọng anh sẽ luôn được bao bọc trong tình yêu và sự quan tâm của mọi người 🩷",
+      "Năm sau và nhiều năm sau nữa, hy vọng Quý khách sẽ luôn được bao bọc trong tình yêu và sự quan tâm của mọi người 🩷",
     next: { kind: "continue" },
   },
 ];
@@ -222,23 +221,23 @@ export const EXPERIENCE_PERKS_CARD = {
 };
 
 /** Figma "Trải nghiệm xứng tầm - 05": the category the reader spent most on. */
-export const EXPERIENCE_DINING_CARD = {
-  label: "2026, anh yêu nhất",
-  title: "Ẩm thực",
+export const EXPERIENCE_CATEGORY_CARD = {
+  label: "2026, Quý khách yêu nhất",
+  title: "Siêu thị",
   notes: ["Chi VND 2,503,456,000", "34% tổng chi tiêu"],
 };
 
 /** Figma "Trải nghiệm xứng tầm - 07": the luxury brand the reader kept going back to. */
 export const EXPERIENCE_BRAND_CARD = {
   rows: [
-    { label: "Anh là khách sộp nhà", value: "Hermes", fixed: true },
+    { label: "Quý khách là VIP nhà", value: "Hermes", fixed: true },
     { label: "8 lần ghé", value: "VND 1,890,430,000" },
   ],
 };
 
 /** Figma "Trải nghiệm xứng tầm - 09": countries visited this year. */
 export const EXPERIENCE_COUNTRIES_CARD = {
-  label: "Những chuyến đi quý giá, anh vi vu qua",
+  label: "Những chuyến đi quý giá, vi vu qua",
   title: "5 quốc gia",
   pills: ["Nhật Bản", "Hàn Quốc", "Pháp"],
 };
@@ -246,52 +245,50 @@ export const EXPERIENCE_COUNTRIES_CARD = {
 /** Figma "Trải nghiệm xứng tầm - 11": U-Point earned and cashback (the heading rides on the first label). */
 export const EXPERIENCE_REWARDS_CARD = {
   rows: [
-    { label: "2026, anh tích luỹ\n\nTổng U-Point", value: "54,200,000" },
+    { label: "2026, Quý khách tích luỹ\n\nTổng U-Point", value: "54,200,000" },
     { label: "Tổng tiền hoàn", value: "VND 37,450,000" },
   ],
 };
 
-// Figma "Trải nghiệm xứng tầm" (section 504:10351)
+// Figma "Trải nghiệm xứng tầm - Priority" (section 535:23610)
 const EXPERIENCE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[2],
     userMessage: `Kể tôi nghe “${PRIORITY_TOPICS[2]}” đi`,
-    reply: "Miêu tả trải nghiệm 2026 của anh bằng một từ, Techcombank sẽ chọn từ “cao”.",
+    // Frames 1–2 still say "anh … cao"; every later frame says "Quý khách … đẳng cấp"
+    reply: "Miêu tả trải nghiệm 2026 của Quý khách bằng một từ, Techcombank sẽ chọn từ “đẳng cấp”.",
     next: { kind: "prompt", prompt: "Vì sao?", action: "Gửi" },
   },
   {
     trigger: "Vì sao?",
     userMessage: "Vì sao?",
-    reply: "Vì năm nay anh ưu tiên khám phá những trải nghiệm xứng tầm",
+    reply: "Vì năm nay Quý khách ưu tiên khám phá những trải nghiệm xứng tầm",
     card: "priorityPerks",
-    // "<tên sự kiện>" is Figma's own placeholder for the event's name
-    after: ["Techcombank cảm ơn anh đến với <tên sự kiện>. Có anh góp mặt là niềm vui thêm tròn."],
     next: {
       kind: "answers",
-      question: "Ngoài những khoảnh khắc này, đâu là lĩnh vực anh đầu tư trải nghiệm nhất 2026?",
+      question: "Một năm trọn vẹn, đâu là lĩnh vực Quý khách đầu tư trải nghiệm nhất 2026?",
       boldQuestion: true,
-      // Figma names only the first answer ("---" for the rest); the other two are stand-ins
-      answers: ["Ẩm thực", "Du lịch", "Mua sắm"],
+      answers: ["Ẩm thực", "Siêu thị", "Thời Trang"],
     },
   },
   {
-    // Only "Ẩm thực" is designed; the other answers play it too, with their own bubble
+    // Figma plays "Siêu thị"; every pick gets the same reply and the real category, with its own bubble
     trigger: ANY_ANSWER,
     userMessage: "",
     reply: "Hiểu mình tường tận, chọn gì cũng chuẩn.",
-    card: "priorityDining",
+    card: "priorityCategory",
     after: ["Chung thuỷ mà chịu chi hơn năm ngoái VND 131,000,000."],
     next: {
       kind: "answers",
-      question: "Anh có để ý thương hiệu cao cấp nào mình đặt trọn niềm yêu năm nay?",
+      question: "Quý khách có để ý thương hiệu cao cấp mình đặt trọn niềm yêu năm nay?",
       boldQuestion: true,
-      // Figma names only "Hermes"; the other two are stand-ins
-      answers: ["Hermes", "Chanel", "Louis Vuitton"],
+      answers: ["Hermes", "Dior", "Chanel"],
     },
   },
   {
+    // Figma plays "Hermes"; every pick gets the real brand, with its own bubble
     trigger: ANY_ANSWER,
-    userMessage: "",
+    userMessage: "{answer} đó",
     reply: "Đúng gu người sành điệu lại biết chiều bản thân.",
     card: "priorityBrand",
     next: {
@@ -310,7 +307,8 @@ const EXPERIENCE_THREAD: ThreadTurn[] = [
     next: {
       kind: "prompt",
       // Figma counts "1, 2, 3" before answering its own question
-      question: "Còn nhớ quốc gia nào khiến anh xiêu lòng, xiêu cả hầu bao?\n\n1\n2\n3\nChắc chắn là Hàn Quốc rồi.",
+      question:
+        "Còn nhớ quốc gia nào khiến Quý khách xiêu lòng, xiêu cả hầu bao?\n\n1\n2\n3\nChắc chắn là Hàn Quốc rồi.",
       prompt: "🤭🤭🤭",
       action: "Gửi",
     },
@@ -321,7 +319,7 @@ const EXPERIENCE_THREAD: ThreadTurn[] = [
     reply: "Rộng tay chi tiêu, khéo tay giữ lộc.",
     card: "priorityRewards",
     after: [
-      "Năm Ngọ qua, năm Mùi tới. Techcombank chúc anh sẽ đi thật xa, chạm thật cao và trải nghiệm thật tròn 🥂",
+      "Tương lai phía trước, Techcombank vẫn sẽ cùng Quý khách đi thật xa, chạm thật cao và trải nghiệm thật tròn 🥂",
     ],
     next: { kind: "continue" },
   },
@@ -332,4 +330,25 @@ export const PRIORITY_THREADS: Record<string, ThreadTurn[]> = {
   [PRIORITY_TOPICS[0]]: FINANCE_THREAD,
   [PRIORITY_TOPICS[1]]: LOVE_THREAD,
   [PRIORITY_TOPICS[2]]: EXPERIENCE_THREAD,
+};
+
+/** Figma "End" (node 538:31044): the closing lines once every topic is told, and the button. */
+export const PRIORITY_ENDING = {
+  lines: [
+    "Mai nở báo xuân về, lộc non vươn mình trên cành cũ.",
+    "Techcombank kính gửi Quý khách tấm thiệp mừng năm mới cát tường…",
+  ],
+  action: "Mở thiệp ngay",
+};
+
+/**
+ * Figma "Dashboard" (node 538:31028): the New Year card, a 16px greeting over a 28px wish. (Figma
+ * also has a red "2026" layer under the art, fully covered by it, so only the art is shipped.)
+ */
+export const PRIORITY_GREETING_CARD = {
+  lines: ["Xuân Đinh Mùi gõ cửa, kính chúc", `Quý khách ${PRIORITY_USER_NAME}`],
+  wish: "“Mã kết vinh quang\nDương khai phú quý”",
+  image: "/priority/ending/greeting-full.png",
+  linesClass: "text-base leading-6",
+  wishClass: "text-[28px] leading-9",
 };

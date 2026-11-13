@@ -211,6 +211,7 @@ export const linesOf = (lines?: Lines): string[] => (lines === undefined ? [] : 
  *  • answers  — answer options
  *  • prompt   — the next question sits in the sheet with a send button (sending it starts the next turn)
  *  • continue — the topic is over: the topics not yet visited, or (once all are done) the summary prompt
+ *    or the tier's ending
  *  • end      — the end of the flow: nothing more in the sheet
  */
 export type CardKind =
@@ -245,11 +246,11 @@ export type CardKind =
   // Priority tier, "Yêu thương trọn tâm"
   | "priorityFamily"
   | "priorityDonation"
-  | "priorityGift"
+  | "priorityPerson"
   | "priorityBirthday"
   // Priority tier, "Trải nghiệm xứng tầm"
   | "priorityPerks"
-  | "priorityDining"
+  | "priorityCategory"
   | "priorityBrand"
   | "priorityCountries"
   | "priorityRewards"
@@ -270,7 +271,7 @@ export type ThreadTurn = {
    */
   userMessage: string;
   reply?: Lines;
-  /** A gift ("gift", "priorityGift") waits for the reader to open it before the turn carries on. */
+  /** A gift ("gift") waits for the reader to open it before the turn carries on. */
   card?: CardKind;
   /** More beats after the card, before `next`: line(s) to type, another card, or a small faded footnote. */
   after?: (Lines | { card: CardKind } | { note: string })[];
@@ -292,7 +293,7 @@ export type SheetNext =
   | { kind: "topics"; question?: Lines; prompt: string; topics: string[] };
 
 /** Cards the reader has to tap open before the turn goes on. */
-export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift", "priorityGift"]);
+export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift"]);
 
 /** A turn `trigger` that any of the previous turn's answers starts (for answers whose follow-ups aren't designed). */
 export const ANY_ANSWER = "*";
@@ -619,6 +620,11 @@ export interface TopicSet {
   moreTopicsPrompt: string;
   /** Played once every topic is done; without one, the flow just ends there. */
   summary?: ThreadTurn;
+  /**
+   * Or, once every topic is done: closing lines, then one wide button that opens the tier's
+   * full-screen greeting card (Priority's ending).
+   */
+  ending?: { lines: string[]; action: string };
 }
 
 /** The base tier's topics, closing on the summary. */
@@ -635,9 +641,11 @@ export function resolveNext(turn: ThreadTurn, visited: readonly string[], set = 
   const closing = linesOf(next.question);
   const left = set.topics.filter((topic) => !visited.includes(topic));
   if (!left.length) {
-    return set.summary
-      ? { kind: "prompt", question: closing, prompt: set.summary.trigger, action: "Gửi", typed: true }
-      : { kind: "end" };
+    if (set.summary) {
+      return { kind: "prompt", question: closing, prompt: set.summary.trigger, action: "Gửi", typed: true };
+    }
+    if (set.ending) return { kind: "greeting", question: [...closing, ...set.ending.lines], action: set.ending.action };
+    return { kind: "end" };
   }
   const question = next.ask
     ? [...closing.slice(0, -1), [closing.at(-1), next.ask].filter(Boolean).join("\n")]

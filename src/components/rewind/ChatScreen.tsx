@@ -44,12 +44,12 @@ import {
   PriorityBirthdayCard,
   PriorityDonationCard,
   PriorityFamilyCard,
-  PriorityGiftCard,
+  PriorityPersonCard,
 } from "./PriorityLoveCards";
 import {
   PriorityBrandCard,
   PriorityCountriesCard,
-  PriorityDiningCard,
+  PriorityCategoryCard,
   PriorityPerksCard,
   PriorityRewardsCard,
 } from "./PriorityExperienceCards";
@@ -600,7 +600,7 @@ export function ChatScreen({
                       {beat.card === "brands" && <BrandsCard />}
                       {beat.card === "supermarket" && <SupermarketCard />}
                       {beat.card === "gift" && <GiftCard {...giftProps(i)} />}
-                      {beat.card === "priorityGift" && <PriorityGiftCard {...giftProps(i)} />}
+                      {beat.card === "priorityPerson" && <PriorityPersonCard />}
                       {beat.card === "topPeople" && <TopPeopleCard />}
                       {beat.card === "birthday" && <BirthdayCard />}
                       {beat.card === "family" && <FamilyCard />}
@@ -626,7 +626,7 @@ export function ChatScreen({
                       {beat.card === "priorityDonation" && <PriorityDonationCard />}
                       {beat.card === "priorityBirthday" && <PriorityBirthdayCard />}
                       {beat.card === "priorityPerks" && <PriorityPerksCard />}
-                      {beat.card === "priorityDining" && <PriorityDiningCard />}
+                      {beat.card === "priorityCategory" && <PriorityCategoryCard />}
                       {beat.card === "priorityBrand" && <PriorityBrandCard />}
                       {beat.card === "priorityCountries" && <PriorityCountriesCard />}
                       {beat.card === "priorityRewards" && <PriorityRewardsCard />}
@@ -719,7 +719,12 @@ export function ChatScreen({
           <TopNavigation tone="light" onClose={onClose} />
         </motion.div>
         {greetingOpen && (
-          <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={greetingChrome}>
+          <motion.div
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={greetingChrome}
+          >
             <TopNavigation tone="dark" onClose={onClose} />
           </motion.div>
         )}
@@ -729,7 +734,12 @@ export function ChatScreen({
           <HomeIndicator />
         </motion.div>
         {greetingOpen && (
-          <motion.div className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={greetingChrome}>
+          <motion.div
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={greetingChrome}
+          >
             <HomeIndicator tone="light" />
           </motion.div>
         )}
