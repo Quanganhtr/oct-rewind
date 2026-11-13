@@ -1,7 +1,14 @@
 import { asset } from "@/lib/asset";
-import { LOVE_BIRTHDAY_CARD, LOVE_DONATION_CARD, LOVE_FAMILY_CARD, LOVE_PERSON_CARD } from "@/data/priority";
+import {
+  LOVE_BIRTHDAY_CARD,
+  LOVE_DONATION_CARD,
+  LOVE_FAMILY_CARD,
+  LOVE_GIFT_CARD,
+  LOVE_PERSON_CARD,
+} from "@/data/priority";
 import { BirthdayCard } from "./BirthdayCard";
 import { DonationCard } from "./DonationCard";
+import { GiftCard, type GiftSkin } from "./GiftCard";
 import { PillCard } from "./PillCard";
 
 /*
@@ -42,9 +49,29 @@ export function PriorityDonationCard() {
   );
 }
 
+const PERSON_IMAGE = "/priority/love/person-full.png";
+
 /** "Do Mai Linh": the person paid most often, over glass coins (4:3, the birthday card's layout). */
-export function PriorityPersonCard() {
-  return <BirthdayCard {...LOVE_PERSON_CARD} base="bg-card-base" image="/priority/love/person-full.png" />;
+function PriorityPersonCard() {
+  return <BirthdayCard {...LOVE_PERSON_CARD} base="bg-card-base" image={PERSON_IMAGE} />;
+}
+
+/** Figma "Người ấy là ai?" (542:33589): sand satin wrapping, textured ribbon, over the person card. */
+const PRIORITY_GIFT: GiftSkin = {
+  ...LOVE_GIFT_CARD,
+  name: LOVE_PERSON_CARD.title,
+  lines: LOVE_PERSON_CARD.subtitle.split("\n"),
+  personBase: "bg-card-base",
+  personImage: PERSON_IMAGE,
+  wrapBase: "bg-page-light",
+  wrapImage: "/priority/love/gift-wrap-full.png",
+  ribbon: { horizontal: "/priority/love/ribbon-horizontal.png", vertical: "/priority/love/ribbon-vertical.png" },
+  edge: "shadow-[inset_4px_-4px_0px_0px_rgb(139_115_98/0.5)]",
+};
+
+/** The gift: tapping "Coi nào" lifts the wrapping off the person card. */
+export function PriorityGiftCard(props: { open: boolean; onOpen?: () => void }) {
+  return <GiftCard {...props} skin={PRIORITY_GIFT} person={<PriorityPersonCard />} />;
 }
 
 /** Birthday wishes received through Techcombank. */

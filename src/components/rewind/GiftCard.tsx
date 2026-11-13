@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion, type TargetAndTransition } from "framer-motion";
 import { asset } from "@/lib/asset";
 import { cn } from "@/lib/cn";
@@ -58,13 +59,15 @@ interface GiftCardProps {
   /** Tapping the gift; omitted once it's open. */
   onOpen?: () => void;
   skin?: GiftSkin;
+  /** A tier's own person card, shown once opened in place of the built-in one (over the same art). */
+  person?: ReactNode;
 }
 
 /**
  * Figma "Chuyện thương ai" card: a wrapped gift ("Người ấy là ai?" + ribbon) over the person the
  * reader sends money to most. Tapping it lifts the wrapping off (see GIFT_DROP) to show the card.
  */
-export function GiftCard({ open, onOpen, skin = STANDARD_GIFT }: GiftCardProps) {
+export function GiftCard({ open, onOpen, skin = STANDARD_GIFT, person }: GiftCardProps) {
   const reduceMotion = useReducedMotion();
   const drop: TargetAndTransition = reduceMotion
     ? { opacity: 0, transition: { duration: 0 } }
@@ -86,7 +89,8 @@ export function GiftCard({ open, onOpen, skin = STANDARD_GIFT }: GiftCardProps) 
           src={asset(skin.personImage)}
           className={cn("absolute inset-0 block size-full max-w-none object-cover", skin.mirrorPerson && "-scale-x-100")}
         />
-        {open && (
+        {open && person && <div className="absolute inset-0">{person}</div>}
+        {open && !person && (
           <div className="relative flex min-w-px flex-1 flex-col">
             <div className="flex min-h-px w-full flex-1 flex-col gap-1 px-4 pt-6 pb-4 text-on-accent">
               <p className="w-full text-[32px] leading-10 font-bold">{skin.name}</p>

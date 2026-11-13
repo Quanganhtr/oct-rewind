@@ -44,7 +44,7 @@ import {
   PriorityBirthdayCard,
   PriorityDonationCard,
   PriorityFamilyCard,
-  PriorityPersonCard,
+  PriorityGiftCard,
 } from "./PriorityLoveCards";
 import {
   PriorityBrandCard,
@@ -600,7 +600,7 @@ export function ChatScreen({
                       {beat.card === "brands" && <BrandsCard />}
                       {beat.card === "supermarket" && <SupermarketCard />}
                       {beat.card === "gift" && <GiftCard {...giftProps(i)} />}
-                      {beat.card === "priorityPerson" && <PriorityPersonCard />}
+                      {beat.card === "priorityGift" && <PriorityGiftCard {...giftProps(i)} />}
                       {beat.card === "topPeople" && <TopPeopleCard />}
                       {beat.card === "birthday" && <BirthdayCard />}
                       {beat.card === "family" && <FamilyCard />}

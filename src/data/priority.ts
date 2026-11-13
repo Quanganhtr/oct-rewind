@@ -133,7 +133,10 @@ export const LOVE_DONATION_CARD = {
   ],
 };
 
-/** Figma "Yêu thương trọn tâm" (533:23609): the person paid most often, shown straight away (no gift). */
+/** Figma "Người ấy là ai?" (542:33589): the wrapped gift that opens onto the person card. */
+export const LOVE_GIFT_CARD = { teaser: "Người ấy là ai?", action: "Coi nào" };
+
+/** Figma "Yêu thương trọn tâm" (542:33594): the person paid most often, under the gift. */
 export const LOVE_PERSON_CARD = {
   title: "Do Mai Linh",
   subtitle: "Người Quý khách ưu ái nhất\nChuyển tiền 124 lần\nTrong 120 ngày",
@@ -154,22 +157,22 @@ const LOVE_THREAD: ThreadTurn[] = [
       "Yêu thương trọn tâm, chở che âm thầm.",
       "Có những tình cảm không cần nói thành lời, chỉ cần nhìn và cảm nhận thôi.",
     ],
-    next: { kind: "prompt", prompt: "Ý là thế nào?", action: "Gửi" },
+    next: { kind: "prompt", prompt: "Ý là sao đó?", action: "Gửi" },
   },
   {
-    trigger: "Ý là thế nào?",
+    trigger: "Ý là sao đó?",
     userMessage: "Ý là sao đó?",
     reply: "Không nói thương nhưng đâu đâu cũng là thương.",
     card: "priorityFamily",
     next: {
       kind: "prompt",
       question: "Chu toàn đến vậy, 2027 nhất định phải yêu bản thân nhiều thật nhiều.",
-      prompt: "Dĩ nhiên rồi",
+      prompt: "Chắc chắn sẽ như vậy",
       action: "Gửi",
     },
   },
   {
-    trigger: "Dĩ nhiên rồi",
+    trigger: "Chắc chắn sẽ như vậy",
     userMessage: "Chắc chắn sẽ như vậy",
     reply: "Nhắc tới yêu thương... Chạm Yêu Thương cảm ơn Quý khách thật nhiều.",
     card: "priorityDonation",
@@ -182,11 +185,11 @@ const LOVE_THREAD: ThreadTurn[] = [
       action: "Gửi",
     },
   },
-  // Straight to the person's card
+  // Straight to the gift: tapping it uncovers the person card, then the turn carries on
   {
     trigger: "Người nào cơ?",
     userMessage: "Người nào cơ?",
-    card: "priorityPerson",
+    card: "priorityGift",
     after: ["Người ấy chắc hẳn là ngoại lệ có một không hai."],
     next: {
       kind: "answers",

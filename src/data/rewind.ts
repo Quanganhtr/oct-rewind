@@ -246,7 +246,7 @@ export type CardKind =
   // Priority tier, "Yêu thương trọn tâm"
   | "priorityFamily"
   | "priorityDonation"
-  | "priorityPerson"
+  | "priorityGift"
   | "priorityBirthday"
   // Priority tier, "Trải nghiệm xứng tầm"
   | "priorityPerks"
@@ -293,7 +293,7 @@ export type SheetNext =
   | { kind: "topics"; question?: Lines; prompt: string; topics: string[] };
 
 /** Cards the reader has to tap open before the turn goes on. */
-export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift"]);
+export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift", "priorityGift"]);
 
 /** A turn `trigger` that any of the previous turn's answers starts (for answers whose follow-ups aren't designed). */
 export const ANY_ANSWER = "*";
