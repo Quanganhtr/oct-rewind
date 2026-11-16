@@ -264,18 +264,19 @@ const EXPERIENCE_THREAD: ThreadTurn[] = [
     userMessage: `Kể tôi nghe “${PRIORITY_TOPICS[2]}” đi`,
     // Frames 1–2 still say "anh … cao"; every later frame says "Quý khách … đẳng cấp"
     reply: "Miêu tả trải nghiệm 2026 của Quý khách bằng một từ, Techcombank sẽ chọn từ “đẳng cấp”.",
-    next: { kind: "prompt", prompt: "Vì sao?", action: "Gửi" },
+    next: { kind: "prompt", prompt: "Vì sao thế?", action: "Gửi" },
   },
   {
-    trigger: "Vì sao?",
-    userMessage: "Vì sao?",
+    trigger: "Vì sao thế?",
+    userMessage: "Vì sao thế?",
     reply: "Vì năm nay Quý khách ưu tiên khám phá những trải nghiệm xứng tầm",
     card: "priorityPerks",
     next: {
       kind: "answers",
       question: "Một năm trọn vẹn, đâu là lĩnh vực Quý khách đầu tư trải nghiệm nhất 2026?",
       boldQuestion: true,
-      answers: ["Ẩm thực", "Siêu thị", "Thời Trang"],
+      // Figma 546:36497 adds the opt-out last
+      answers: ["Ẩm thực", "Siêu thị", "Thời Trang", "Tôi không để ý lắm"],
     },
   },
   {
@@ -289,13 +290,15 @@ const EXPERIENCE_THREAD: ThreadTurn[] = [
       kind: "answers",
       question: "Quý khách có để ý thương hiệu cao cấp mình đặt trọn niềm yêu năm nay?",
       boldQuestion: true,
-      answers: ["Hermes", "Dior", "Chanel"],
+      // Figma 546:36625 adds the opt-out last
+      answers: ["Hermes", "Dior", "Chanel", "Nói tôi nghe đi"],
     },
   },
   {
     // Figma plays "Hermes"; every pick gets the real brand, with its own bubble
     trigger: ANY_ANSWER,
     userMessage: "{answer} đó",
+    answerBubbles: { "Nói tôi nghe đi": "Nói tôi nghe đi" },
     reply: "Đúng gu người sành điệu lại biết chiều bản thân.",
     card: "priorityBrand",
     next: {

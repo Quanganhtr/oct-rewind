@@ -270,6 +270,11 @@ export type ThreadTurn = {
    * answer with "{answer}" ("Tôi nhớ là khoảng {answer}").
    */
   userMessage: string;
+  /**
+   * An ANY_ANSWER turn's bubble for particular answers, used as-is instead of `userMessage` (an
+   * opt-out like "Nói tôi nghe đi" shouldn't become "Nói tôi nghe đi đó").
+   */
+  answerBubbles?: Record<string, string>;
   reply?: Lines;
   /** A gift ("gift") waits for the reader to open it before the turn carries on. */
   card?: CardKind;

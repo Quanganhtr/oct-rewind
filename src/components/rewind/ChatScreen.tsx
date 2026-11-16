@@ -348,8 +348,11 @@ export function ChatScreen({
     }
     const following = current.topic ? threads[current.topic][current.step + 1] : undefined;
     if (!following || (following.trigger !== answer && following.trigger !== ANY_ANSWER)) return;
-    // An ANY_ANSWER turn shows the reader's pick as their bubble, or wraps it ("Tôi nhớ là khoảng {answer}")
-    const userMessage = following.userMessage ? following.userMessage.replace("{answer}", answer) : answer;
+    // An ANY_ANSWER turn shows the reader's pick as their bubble, or wraps it ("Tôi nhớ là khoảng {answer}"),
+    // unless that answer has its own bubble
+    const userMessage =
+      following.answerBubbles?.[answer] ??
+      (following.userMessage ? following.userMessage.replace("{answer}", answer) : answer);
     startTurn({ ...following, userMessage }, current.topic, current.step + 1);
   };
 
