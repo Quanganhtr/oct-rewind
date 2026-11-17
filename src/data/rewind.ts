@@ -275,6 +275,8 @@ export type ThreadTurn = {
    * opt-out like "Nói tôi nghe đi" shouldn't become "Nói tôi nghe đi đó").
    */
   answerBubbles?: Record<string, string>;
+  /** An ANY_ANSWER turn's reply for particular answers, in place of `reply` (Priority's 🐢 / 🚀 / 🎢). */
+  answerReplies?: Record<string, Lines>;
   reply?: Lines;
   /** A gift ("gift") waits for the reader to open it before the turn carries on. */
   card?: CardKind;

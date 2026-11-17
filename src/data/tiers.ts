@@ -22,7 +22,6 @@ import {
   PRIVATE_THREADS,
   PRIVATE_TOPICS,
   PRIVATE_TOPICS_PROMPT,
-  PRIVATE_USER_NAME,
 } from "./private";
 
 /**
@@ -123,17 +122,18 @@ const STANDARD: Tier = {
 const PRIORITY: Tier = {
   themeClass: "tier-priority",
   assetDir: "/priority",
-  // Figma "Loading" (section 538:25421)
+  // Figma "Loading" / "Start" (section 573:11796): the base tier's 2026 letterforms, cream on
+  // Loading and in Priority's gradient on Start; no name in the greeting
   eyebrow: "Câu chuyện kết năm",
   eyebrowClass: "font-medium",
   yearMark: {
     loading: "/priority/year-2026-cream.svg",
     start: "/priority/year-2026-gradient.svg",
-    loadingSize: "h-16 w-[199.245px]",
-    startSize: "h-[99.897px] w-[311px]",
-    startInset: "inset-0",
+    loadingSize: "h-[55px] w-[186.825px]",
+    startSize: "h-[90.74px] w-[311px]",
+    startInset: "inset-[0_0_0_0.71%]",
   },
-  greeting: [PRIORITY_USER_NAME, "Một năm gói lại đôi lời"],
+  greeting: ["Một năm gói lại đôi lời"],
   introLines: [
     // Figma "Step 1–3" (section 538:25421)
     `Thân gửi Quý khách ${PRIORITY_USER_NAME},`,
@@ -162,8 +162,7 @@ const PRIORITY: Tier = {
 /** Figma "Opening" (Private, node 512:13542): Priority's palette, marks and icons, with its own copy. */
 const PRIVATE: Tier = {
   ...PRIORITY,
-  eyebrow: "Nhìn lại",
-  greeting: [PRIVATE_USER_NAME, "Một năm gói lại đôi lời"],
+  // Loading and Start are Priority's (Figma 573:11796): "Câu chuyện kết năm", no name in the greeting
   introLines: PRIVATE_INTRO_LINES,
   topicsPrompt: PRIVATE_TOPICS_PROMPT,
   topics: PRIVATE_TOPICS,

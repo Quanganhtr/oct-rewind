@@ -147,9 +147,10 @@ body {
   --color-text-primary: #0f0f0f;
   --color-cream: #fff5eb; /* rewind-2026/Priority/primary */
 
-  --color-loading-from: #0f0f0f;
-  --color-loading-via: #5b453e;
-  --color-loading-to: #f1d5ad;
+  /* Figma "Loading" (573:12335): plain black, the base tier's Loading */
+  --color-loading-from: #000000;
+  --color-loading-via: #000000;
+  --color-loading-to: #000000;
 
   --color-key-from: #5b453e;
   --color-key-to: #f1d5ad;

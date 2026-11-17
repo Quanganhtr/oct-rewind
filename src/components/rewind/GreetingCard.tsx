@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { asset } from "@/lib/asset";
 import { easeOutQuint } from "@/lib/motion";
-import { ShareButton } from "./ShareButton";
 import { useTier } from "./TierContext";
 import { TypedLine, typeDuration } from "./TypedLine";
 
@@ -36,9 +35,8 @@ export function GreetingButton({ label, onPress }: { label: string; onPress: () 
 }
 
 /**
- * Figma "Dashboard" (Private, node 525:19417; Priority, node 537:25338): a full-screen New Year
- * card over the tier's art, the greeting and wish in cream, and a share button at the foot. (Figma also has a red "2026"
- * layer under the bamboo, fully covered by it, so only the bamboo is shipped.)
+ * Figma "Dashboard" (section 561:37590: Private 561:37518, Priority 561:37554): a full-screen New
+ * Year card over the tier's art, the greeting and wish in cream. No share button.
  *
  * It has no header or home indicator of its own: it slides up under the chat's, which every
  * screen shares (ChatScreen switches them to their on-dark look). It only leaves room for them.
@@ -76,11 +74,8 @@ export function GreetingCard() {
         />
       </div>
 
-      <div className="relative flex w-full flex-col items-start">
-        <ShareButton tone="ink" className="justify-center p-4" />
-        {/* Room for the shared home indicator */}
-        <div className="h-[34px] w-full shrink-0" />
-      </div>
+      {/* Room for the shared home indicator (no share button: Figma 561:37590) */}
+      <div className="relative h-[34px] w-full shrink-0" />
     </motion.div>
   );
 }

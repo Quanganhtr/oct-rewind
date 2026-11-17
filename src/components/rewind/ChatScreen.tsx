@@ -353,7 +353,9 @@ export function ChatScreen({
     const userMessage =
       following.answerBubbles?.[answer] ??
       (following.userMessage ? following.userMessage.replace("{answer}", answer) : answer);
-    startTurn({ ...following, userMessage }, current.topic, current.step + 1);
+    // …and the reply that answer gets, when it has its own
+    const reply = following.answerReplies?.[answer] ?? following.reply;
+    startTurn({ ...following, userMessage, reply }, current.topic, current.step + 1);
   };
 
   // Chat layout: the tail spacer at the end of the column decides how far the chat can scroll.

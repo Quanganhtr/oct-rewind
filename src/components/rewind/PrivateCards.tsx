@@ -12,7 +12,7 @@ import { PillCard } from "./PillCard";
 import { TitleNoteCard } from "./TitleNoteCard";
 
 /*
- * Private "Rất sẵn lòng" cards (Figma section 519:16350): each over its own full-card art on the
+ * Private "Rất sẵn lòng" cards (Figma section 579:15297): each over its own full-card art on the
  * grey card base, in cream text. The share circle is cream for the whole tier (tiers.ts).
  */
 
@@ -27,7 +27,7 @@ export function PrivateRevenueCard() {
   );
 }
 
-/** "Kết nối cùng 8 sự kiện Private": the Private events attended (4:3, dark share label on light art). */
+/** "Tiếp mạch tinh hoa cùng 3+ sự kiện Private": the Private events attended (4:3, dark share label on light art). */
 export function PrivateEventsCard() {
   return (
     <TitleNoteCard
@@ -40,7 +40,7 @@ export function PrivateEventsCard() {
   );
 }
 
-/** "18 khoảnh khắc thư thái": golf, luxury shopping and lounges. */
+/** "18 trải nghiệm ý vị": golf, luxury shopping and lounges. */
 export function PrivateMomentsCard() {
   return (
     <PillCard

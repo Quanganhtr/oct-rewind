@@ -6,7 +6,8 @@ import { ShareButton } from "./ShareButton";
 interface MiddleStatCardProps {
   label: string;
   value: string;
-  note: string;
+  /** A line under the figure, if any. */
+  note?: string;
   image: string;
   /** "light": white text. "cream": Priority/Private cream text. */
   tone?: "light" | "cream";
@@ -32,7 +33,7 @@ export function MiddleStatCard({ label, value, note, image, tone = "light" }: Mi
           <p className="w-full text-[32px] leading-10 font-bold">
             <CountUp value={value} />
           </p>
-          <p className="w-full text-sm leading-5 font-medium">{note}</p>
+          {note && <p className="w-full text-sm leading-5 font-medium">{note}</p>}
         </div>
         <ShareButton tone="cream" className="justify-center" />
       </div>

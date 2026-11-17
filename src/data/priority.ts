@@ -41,14 +41,13 @@ export const FINANCE_RETURNS_CARD = {
 const FINANCE_ANSWERS = ["🎢 Tàu lượn", "🚀 Tên lửa", "🐢 Chú rùa"];
 
 /** Figma "Tài chính an vững - 4": the longest saving streak, top to bottom. */
-const FINANCE_SAVING_ANSWERS = ["3 tháng", "9 tháng", "12 tháng"];
+const FINANCE_SAVING_ANSWERS = ["Dưới 6 tháng", "6-12 tháng", "Trên 12 tháng"];
 
-// Figma "Tài chính an vững - Priority thường" (section 533:20624). Prompts send themselves as the
-// bubble, except "Còn chuyện gì nữa?", which sends the fuller "Còn chuyện gì nữa thế?".
+// Figma "Tài chính an vững - Priority thường" (section 533:20624). Every prompt sends itself as the bubble.
 const FINANCE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[0],
-    userMessage: `Kể tôi nghe “${PRIORITY_TOPICS[0]}” đi`,
+    userMessage: `Kể tôi nghe chuyện “${PRIORITY_TOPICS[0]}” đi`,
     reply: [
       "“Một năm vun vén đủ đầy\nVững vàng tài chính, mai đây vươn mình.”",
       "Bắt đầu câu chuyện bằng một câu hỏi triệu đô:",
@@ -61,21 +60,32 @@ const FINANCE_THREAD: ThreadTurn[] = [
     },
   },
   {
-    // Only the turtle's follow-up is designed; the other answers play it too, with their own bubble
+    // Figma "Cases" (574:14963): each symbol gets its own bubble and reply; the card and the rest are shared
     trigger: ANY_ANSWER,
     userMessage: "Tôi nghĩ là {answer}",
+    // The bubble lowercases the pick mid-sentence: "Tôi nghĩ là 🐢 chú rùa"
+    answerBubbles: {
+      "🎢 Tàu lượn": "Tôi nghĩ là 🎢 tàu lượn",
+      "🚀 Tên lửa": "Tôi nghĩ là 🚀 tên lửa",
+      "🐢 Chú rùa": "Tôi nghĩ là 🐢 chú rùa",
+    },
+    answerReplies: {
+      "🎢 Tàu lượn": "Dù lên dù xuống, đích đến vẫn ở trên cao.",
+      "🚀 Tên lửa": "Tên lửa chính hiệu, tăng tốc ngoạn mục, hạ cánh an toàn.",
+      "🐢 Chú rùa": "Kiên trì đều bước, đúng gu người vững vàng.",
+    },
     reply: "Kiên trì đều bước, đúng gu người vững vàng.",
     card: "priorityGrowth",
     after: ["Tài chính an vững là nhờ Quý khách chăm chỉ nỗ lực mỗi ngày."],
     next: {
       kind: "prompt",
       question: "Xin vía phát tài, chuyện vui chưa dừng lại...",
-      prompt: "Còn chuyện gì nữa?",
+      prompt: "Còn chuyện gì nữa thế?",
       action: "Gửi",
     },
   },
   {
-    trigger: "Còn chuyện gì nữa?",
+    trigger: "Còn chuyện gì nữa thế?",
     userMessage: "Còn chuyện gì nữa thế?",
     reply: "Chúc mừng Quý khách năm Ngọ chinh phục thành tựu lớn.",
     card: "priorityNewAssets",
@@ -91,6 +101,8 @@ const FINANCE_THREAD: ThreadTurn[] = [
     // gets the real answer, in its own words
     trigger: ANY_ANSWER,
     userMessage: "Chắc là {answer}",
+    // Lowercased mid-sentence ("Chắc là 6-12 tháng" is Figma's)
+    answerBubbles: { "Dưới 6 tháng": "Chắc là dưới 6 tháng", "Trên 12 tháng": "Chắc là trên 12 tháng" },
     reply: "Gần 12 tháng bên bỉ, tích tiểu thành đại.",
     card: "prioritySavings",
     next: {
@@ -125,11 +137,11 @@ export const LOVE_FAMILY_CARD = {
   pills: ["1 nhóm gia đình", "3 quỹ nhóm", "4 gói bảo hiểm"],
 };
 
-/** Figma "Yêu thương trọn tâm - 05": U-Point given to Quỹ Chạm Yêu Thương, and the projects it joined. */
+/** Figma "Yêu thương trọn tâm - 05": U-Point given to Quỹ Chạm Yêu Thương through charities, and how many gifts. */
 export const LOVE_DONATION_CARD = {
   stats: [
-    { label: "Quyên góp", value: "1.2 Tr", unit: "Điểm U-Point" },
-    { label: "Đồng hành", value: "13", unit: "Dự án" },
+    { label: "Quyên góp", value: "1.2 Tr", unit: "Qua các tổ chức" },
+    { label: "Tổng cộng", value: "13", unit: "Giao dịch" },
   ],
 };
 
@@ -152,7 +164,7 @@ export const LOVE_BIRTHDAY_CARD = {
 const LOVE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[1],
-    userMessage: `Kể tôi nghe “${PRIORITY_TOPICS[1]}” đi`,
+    userMessage: `Kể tôi nghe chuyện “${PRIORITY_TOPICS[1]}” đi`,
     reply: [
       "Yêu thương trọn tâm, chở che âm thầm.",
       "Có những tình cảm không cần nói thành lời, chỉ cần nhìn và cảm nhận thôi.",
@@ -181,14 +193,14 @@ const LOVE_THREAD: ThreadTurn[] = [
       kind: "prompt",
       question: "2026, Quý khách có thấy 1 người đặc biệt?",
       boldQuestion: true,
-      prompt: "Người nào cơ?",
+      prompt: "Người nào đặc biệt thế nhỉ?",
       action: "Gửi",
     },
   },
   // Straight to the gift: tapping it uncovers the person card, then the turn carries on
   {
-    trigger: "Người nào cơ?",
-    userMessage: "Người nào cơ?",
+    trigger: "Người nào đặc biệt thế nhỉ?",
+    userMessage: "Người nào đặc biệt thế nhỉ?",
     card: "priorityGift",
     after: ["Người ấy chắc hẳn là ngoại lệ có một không hai."],
     next: {
@@ -199,10 +211,12 @@ const LOVE_THREAD: ThreadTurn[] = [
     },
   },
   {
-    // Only "Trên 7" is designed; the other guesses play it too, with their own bubble
+    // 7 wishes, so "4–7 chăng" is right; any other guess is nudged (Figma "Đoán sai", 575:15173).
+    // Same card and follow-up either way, each with the reader's own bubble.
     trigger: ANY_ANSWER,
     userMessage: "",
-    reply: "Chính xác quá rồi.",
+    reply: "Lục lại trí nhớ...",
+    answerReplies: { "4–7 chăng": "Chính xác quá rồi." },
     card: "priorityBirthday",
     next: {
       kind: "prompt",
@@ -223,7 +237,7 @@ const LOVE_THREAD: ThreadTurn[] = [
 /** Figma "Trải nghiệm xứng tầm - 03": the Priority perks used this year. */
 export const EXPERIENCE_PERKS_CARD = {
   label: "Sống đậm chất Priority cùng",
-  title: "3 đặc quyền\ncao cấp",
+  title: "2 đặc quyền\ncao cấp",
   pills: ["8 lượt chơi golf", "4 lượt phòng chờ"],
 };
 
@@ -244,7 +258,7 @@ export const EXPERIENCE_BRAND_CARD = {
 
 /** Figma "Trải nghiệm xứng tầm - 09": countries visited this year. */
 export const EXPERIENCE_COUNTRIES_CARD = {
-  label: "Những chuyến đi quý giá, vi vu qua",
+  label: "Những chuyến đi quý giá qua",
   title: "5 quốc gia",
   pills: ["Nhật Bản", "Hàn Quốc", "Pháp"],
 };
@@ -261,7 +275,7 @@ export const EXPERIENCE_REWARDS_CARD = {
 const EXPERIENCE_THREAD: ThreadTurn[] = [
   {
     trigger: PRIORITY_TOPICS[2],
-    userMessage: `Kể tôi nghe “${PRIORITY_TOPICS[2]}” đi`,
+    userMessage: `Kể tôi nghe chuyện “${PRIORITY_TOPICS[2]}” đi`,
     // Frames 1–2 still say "anh … cao"; every later frame says "Quý khách … đẳng cấp"
     reply: "Miêu tả trải nghiệm 2026 của Quý khách bằng một từ, Techcombank sẽ chọn từ “đẳng cấp”.",
     next: { kind: "prompt", prompt: "Vì sao thế?", action: "Gửi" },
@@ -280,10 +294,12 @@ const EXPERIENCE_THREAD: ThreadTurn[] = [
     },
   },
   {
-    // Figma plays "Siêu thị"; every pick gets the same reply and the real category, with its own bubble
+    // "Siêu thị" is right; any other pick is surprised, then every pick sees the real category,
+    // with its own bubble
     trigger: ANY_ANSWER,
     userMessage: "",
-    reply: "Hiểu mình tường tận, chọn gì cũng chuẩn.",
+    reply: "Đáp án lại có chút bất ngờ...",
+    answerReplies: { "Siêu thị": "Hiểu mình tường tận, chọn gì cũng chuẩn." },
     card: "priorityCategory",
     after: ["Chung thuỷ mà chịu chi hơn năm ngoái VND 131,000,000."],
     next: {
@@ -295,11 +311,13 @@ const EXPERIENCE_THREAD: ThreadTurn[] = [
     },
   },
   {
-    // Figma plays "Hermes"; every pick gets the real brand, with its own bubble
+    // "Hermes" is right; any other pick is reminded of it, then every pick sees the real brand,
+    // with its own bubble
     trigger: ANY_ANSWER,
     userMessage: "{answer} đó",
     answerBubbles: { "Nói tôi nghe đi": "Nói tôi nghe đi" },
-    reply: "Đúng gu người sành điệu lại biết chiều bản thân.",
+    reply: "Ơ, hình như quên mất chân ái Hermes rồi.",
+    answerReplies: { Hermes: "Đúng gu người sành điệu lại biết chiều bản thân." },
     card: "priorityBrand",
     next: {
       kind: "prompt",
