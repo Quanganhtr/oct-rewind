@@ -30,6 +30,12 @@ import { BrandsCard } from "./BrandsCard";
 import { CompareCard } from "./CompareCard";
 import { Confetti } from "./Confetti";
 import { DonationCard } from "./DonationCard";
+import { AssetsCard } from "./AssetsCard";
+import { IncomeCard } from "./IncomeCard";
+import { ReturnsCard } from "./ReturnsCard";
+import { RewardsCard } from "./RewardsCard";
+import { GoodsCard } from "./GoodsCard";
+import { SavingsCard } from "./SavingsCard";
 import { EmojiRain } from "./EmojiRain";
 import { FamilyCard } from "./FamilyCard";
 import { GiftCard } from "./GiftCard";
@@ -63,21 +69,10 @@ import {
 } from "./PrivateCards";
 import { SummaryCard } from "./SummaryCard";
 import { SupermarketCard } from "./SupermarketCard";
-import { GuestsCard } from "./GuestsCard";
-import { FanCard } from "./FanCard";
-import { GrowthCard } from "./GrowthCard";
-import { AssetsCard } from "./AssetsCard";
-import { GoodsCard } from "./GoodsCard";
-import { IncomeCard } from "./IncomeCard";
-import { RewardsCard } from "./RewardsCard";
-import { SavingsCard } from "./SavingsCard";
-import { PeakDayCard } from "./PeakDayCard";
 import { MonthsCard } from "./MonthsCard";
-import { ConcertCard } from "./ConcertCard";
 import { TopPeopleCard } from "./TopPeopleCard";
 import { GreetingButton, GreetingCard } from "./GreetingCard";
 import { HomeIndicator } from "./HomeIndicator";
-import { SoundboxCard } from "./SoundboxCard";
 import { SpendingCard } from "./SpendingCard";
 import { useTier } from "./TierContext";
 import { TopicMenu } from "./TopicMenu";
@@ -198,7 +193,7 @@ export function ChatScreen({
   onClose,
 }: ChatScreenProps) {
   const reduceMotion = useReducedMotion();
-  const { threads, topicSet, topics, openWithPrompt, menuOrbLift = ORB_FINAL_LIFT } = useTier();
+  const { threads, topicSet, topics, openWithPrompt, menuOrbLift = ORB_FINAL_LIFT, greetingCard } = useTier();
   const newestLine = lines[lines.length - 1];
   const opensOnMenu = startAt === "menu";
   const [showMenu, setShowMenu] = useState(opensOnMenu);
@@ -610,18 +605,13 @@ export function ChatScreen({
                       {beat.card === "birthday" && <BirthdayCard />}
                       {beat.card === "family" && <FamilyCard />}
                       {beat.card === "donation" && <DonationCard />}
-                      {beat.card === "soundbox" && <SoundboxCard />}
-                      {beat.card === "guests" && <GuestsCard />}
-                      {beat.card === "fan" && <FanCard />}
-                      {beat.card === "peakDay" && <PeakDayCard />}
-                      {beat.card === "growth" && <GrowthCard />}
                       {beat.card === "assets" && <AssetsCard />}
                       {beat.card === "income" && <IncomeCard />}
+                      {beat.card === "returns" && <ReturnsCard />}
                       {beat.card === "rewards" && <RewardsCard />}
                       {beat.card === "goods" && <GoodsCard />}
                       {beat.card === "savings" && <SavingsCard />}
                       {beat.card === "months" && <MonthsCard />}
-                      {beat.card === "concert" && <ConcertCard />}
                       {beat.card === "summary" && <SummaryCard />}
                       {beat.card === "priorityGrowth" && <PriorityGrowthCard />}
                       {beat.card === "priorityNewAssets" && <PriorityNewAssetsCard />}
@@ -730,7 +720,8 @@ export function ChatScreen({
             animate={{ opacity: 1 }}
             transition={greetingChrome}
           >
-            <TopNavigation tone="dark" onClose={onClose} />
+            {/* …the header keeps its dark icons and text over pale art (the base tier's summary) */}
+            <TopNavigation tone={greetingCard?.darkHeader ? "light" : "dark"} onClose={onClose} />
           </motion.div>
         )}
       </div>

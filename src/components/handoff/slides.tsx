@@ -427,7 +427,7 @@ export const SLIDES: DeckSlide[] = [
         title="Start greeting types in after the 2026 lands"
         lead={
           <>
-            “Quang ơi, / cùng trò chuyện đôi lời” uses the same word-by-word typing as the chat (full rule in Part 2).
+            “Tran Anh Minh ơi, / cùng trò chuyện đôi lời” uses the same word-by-word typing as the chat (full rule in Part 2).
             It waits for the settle to finish (<V>{sec(SETTLE_DURATION)}</V>).
           </>
         }
@@ -442,9 +442,9 @@ export const SLIDES: DeckSlide[] = [
                 One new word every <V>{sec(WORD_INTERVAL)}</V>
               </>,
             ],
-            ["Line 2", <>Continues the word count with no pause, so “Quang” starts right after “nhé”</>],
+            ["Line 2", <>Continues the word count with no pause, so “Tran Anh Minh” starts right after “nhé”</>],
             ["Dimming", <>None: the greeting stays at 100%</>],
-            ["Name", <>“Quang” is the user’s name, filled in from data</>],
+            ["Name", <>“Tran Anh Minh” is the user’s name, filled in from data</>],
           ]}
         />
       </Slide>
@@ -614,7 +614,7 @@ export const SLIDES: DeckSlide[] = [
                 <V>{LINE_OPACITY[2] * 100}%</V>.
               </>,
               <>
-                The last line (“Kỷ niệm 2026 này, mình kể Quang nghe nhé…”) <b>never dims</b>.
+                The last line (“Kỷ niệm 2026 này, Tek Tek kể bạn nghe nhé…”) <b>never dims</b>.
               </>,
               <>
                 Lines: 24/32 Medium black, 16px apart, starting <V>{TOP_INSET}px</V> from the top (98px bar + 16).
@@ -998,7 +998,7 @@ export const SLIDES: DeckSlide[] = [
               <>Tapping “Gửi” sends the prompt text as the user’s bubble and starts the next turn as usual.</>,
               <>
                 After a topic’s last card, the sheet lists the topics not yet visited (“Kể mình nghe tiếp”), in any
-                order. Once all four are done, it offers the summary instead.
+                order. Once all three are done, it offers the summary instead.
               </>,
             ]}
           />
@@ -1151,7 +1151,7 @@ export const SLIDES: DeckSlide[] = [
           title="After the last topic, the sheet suggests the summary"
           lead={
             <>
-              Once all four topics are done, the sheet doesn’t offer more topics. It types <b>“{prompt}”</b> into
+              Once all three topics are done, the sheet doesn’t offer more topics. It types <b>“{prompt}”</b> into
               itself, with the “Gửi” button.
             </>
           }

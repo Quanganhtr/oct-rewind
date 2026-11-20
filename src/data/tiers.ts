@@ -1,9 +1,13 @@
 import {
   INTRO_LINES,
+  STANDARD_SUMMARY_CARD,
   STANDARD_TOPIC_SET,
   START_GREETING,
   type ThreadTurn,
   TOPIC_THREADS,
+  TOPIC_LOVE,
+  TOPIC_MONEY,
+  TOPIC_SPENDING,
   TOPICS,
   TOPICS_PROMPT,
   type TopicSet,
@@ -85,6 +89,12 @@ export interface Tier {
     /** Size overrides for the greeting lines and the wish (Private's 24px both by default). */
     linesClass?: string;
     wishClass?: string;
+    /** Figures listed under the wish, right-aligned (the base tier's year summary). */
+    stats?: { label: string; value: string }[];
+    /** A "Chia sẻ ngay" at the foot (the base tier's summary has one; the New Year cards don't). */
+    share?: boolean;
+    /** The art is light under the header: keep the shared header's dark icons and text over it. */
+    darkHeader?: boolean;
   };
 }
 
@@ -92,8 +102,9 @@ export type TierId = "standard" | "priority" | "private";
 
 const STANDARD: Tier = {
   assetDir: "/rewind",
-  eyebrow: "Nhìn lại",
-  eyebrowClass: "font-light",
+  // Figma "Loading" (section 592:5335)
+  eyebrow: "Câu chuyện kết năm",
+  eyebrowClass: "font-medium",
   yearMark: {
     loading: "/rewind/year-2026-cream.svg",
     start: "/rewind/year-2026-dark.svg",
@@ -105,15 +116,15 @@ const STANDARD: Tier = {
   introLines: INTRO_LINES,
   topicsPrompt: TOPICS_PROMPT,
   topics: TOPICS,
-  /** Figma Step 4 topic icons: bag, wallet, chat-heart, briefcase. */
+  /** Figma Step 4 topic icons: bag, wallet, chat-heart. */
   topicIcons: {
-    [TOPICS[0]]: "/rewind/topic-spending.svg",
-    [TOPICS[1]]: "/rewind/topic-money.svg",
-    [TOPICS[2]]: "/rewind/topic-love.svg",
-    [TOPICS[3]]: "/rewind/topic-livelihood.svg",
+    [TOPIC_SPENDING]: "/rewind/topic-spending.svg",
+    [TOPIC_MONEY]: "/rewind/topic-money.svg",
+    [TOPIC_LOVE]: "/rewind/topic-love.svg",
   },
   threads: TOPIC_THREADS,
   topicSet: STANDARD_TOPIC_SET,
+  greetingCard: STANDARD_SUMMARY_CARD,
   sendButtonClass: "px-6 py-4",
   handoff: true,
 };

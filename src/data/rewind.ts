@@ -1,29 +1,36 @@
-export const USER_NAME = "Quang";
+/** Figma "Opening" (section 592:5335): the same sample customer as Priority and Private. */
+export const FULL_NAME = "Tran Anh Minh";
 
 /** Figma "Start": greeting under the 2026 mark. */
-export const START_GREETING = [`${USER_NAME} ơi,`, "cùng trò chuyện đôi lời"];
+export const START_GREETING = [`${FULL_NAME} ơi,`, "cùng trò chuyện đôi lời"];
 
-/** Tech Tech's intro lines (Figma "Step 1–3"); step n shows the first n + 1 lines. */
+/**
+ * Tek Tek's intro lines (Figma "Step 1–3"); step n shows the first n + 1 lines. (Figma also has a
+ * case for readers with no tenure on record: "Cảm ơn bạn vì năm qua đi đâu cũng mang mình theo.")
+ */
 export const INTRO_LINES = [
-  "Ơ, tới rùi hỏ.\nTech Tech đợi nãy giờ 👀",
-  `Cảm ơn ${USER_NAME} vì 2026 đi đâu cũng mang mình theo.`,
-  `Kỷ niệm 2026 này, mình kể ${USER_NAME} nghe nhé. Thích chuyện gì trước nào?`,
+  "Ơ, tới rùi hỏ. Tek Tek đợi nãy giờ 👀",
+  "Cảm ơn bạn vì 1,524 ngày đi đâu cũng mang mình theo.",
+  "Kỷ niệm 2026 này, Tek Tek kể bạn nghe nhé. Thích chuyện gì trước nào?",
 ];
 
 /** Opacity by line age: newest, previous, older. */
 export const LINE_OPACITY = [1, 0.3, 0.1];
 
-/** Figma "Step 4": topics offered once the intro finishes. */
+/** Figma "Step 4": topics offered once the intro finishes ("Chuyện sinh nhai" is dropped). */
 export const TOPICS_PROMPT = "Kể mình nghe";
-export const TOPICS = ["Chuyện tiêu xài", "Chuyện tiền tài", "Chuyện thương ai", "Chuyện sinh nhai"];
+export const TOPIC_SPENDING = "Chuyện tiêu xài";
+export const TOPIC_MONEY = "Chuyện tiền tài";
+export const TOPIC_LOVE = "Chuyện thương ai";
+export const TOPICS = [TOPIC_SPENDING, TOPIC_MONEY, TOPIC_LOVE];
 
 /** Figma "Step 5": the spending thread, opened by the first topic. */
 export const SPENDING = {
-  topic: TOPICS[0],
+  topic: TOPIC_SPENDING,
   userMessage: "Kể mình nghe “Chuyện tiêu xài” đi",
   reply: "Rồi, chuyện tiêu xài. Có vài đoạn hơi giật mình đấy, chuẩn bị tinh thần nha.",
   card: {
-    label: `Năm nay ${USER_NAME} chi hết`,
+    label: "Năm nay bạn chi hết",
     amount: "VND 45,678,000",
     average: { before: "Trung bình ", value: "3.8", unit: " củ khoai", after: " mỗi tháng" },
   },
@@ -34,7 +41,7 @@ export const SPENDING = {
 /** Figma "Step 7": the category card shown after the first quiz answer. */
 export const FASHION_CARD = {
   title: "Thời trang",
-  caption: [`${USER_NAME} đầu tư hẳn`, "VND 15,456,050"],
+  caption: ["Bạn đầu tư hẳn", "VND 15,456,050"],
 };
 
 /** Figma "Step 8": year-over-year spending card. */
@@ -46,9 +53,9 @@ export const COMPARE_CARD = {
 
 /** Figma "Step 9": places visited this year. */
 export const BRANDS_CARD = {
-  label: `${USER_NAME} ghé`,
-  title: "12 brand khác nhau",
-  top: ["Yêu nhất Zara", "18 lần ghé", "VND 43,400,000"],
+  label: "Bạn ghé",
+  title: "30 sốp khác nhau",
+  top: ["Yêu nhất Zara", "18 lần ghé", "Chi VND 43,400,000"],
 };
 
 /** Figma "Chuyện tiêu xài" (node 333:5631): the splurge month vs the thrifty one. */
@@ -56,14 +63,6 @@ export const MONTHS_CARD = {
   rows: [
     { label: "Tháng 3 phá gia", value: "VND 34,000,000" },
     { label: "Tháng 6 nền nã", value: "VND 2,300,000" },
-  ],
-};
-
-/** Figma "Chuyện tiêu xài" (node 333:5642): concert tickets. */
-export const CONCERT_CARD = {
-  stats: [
-    { value: "12.5 Tr", label: "Tiền mua vé" },
-    { value: "2 lần", label: "Cháy hết mình" },
   ],
 };
 
@@ -83,12 +82,12 @@ export const LOVE_CARD = {
   teaser: "Người ấy là ai?",
   action: "Coi nào",
   name: "Do Mai Linh",
-  lines: [`Người ${USER_NAME} ưu ái nhất`, "Chuyển tiền 124 lần", "Trong 120 ngày"],
+  lines: ["Người bạn ưu ái nhất", "Chuyển tiền 124 lần", "Trong 120 ngày"],
 };
 
 /** Figma "Chuyện thương ai - 5": the three names that keep turning up on the reader's statement. */
 export const TOP_PEOPLE_CARD = {
-  label: `Gặp gỡ hội chuyển tiền của ${USER_NAME}`,
+  label: "Gặp gỡ hội chuyển tiền của bạn",
   title: "Top 3 “cốt iu”",
   names: ["Mai Tai Phen", "Johny Dang", "Ho Ngoc Ha"],
 };
@@ -96,13 +95,13 @@ export const TOP_PEOPLE_CARD = {
 /** Figma "Chuyện thương ai - 6": birthday wishes the reader received through Techcombank. */
 export const BIRTHDAY_CARD = {
   title: "7 lời chúc\nsinh nhật",
-  subtitle: `${USER_NAME} nhận riêng qua\nTechcombank thôi`,
+  subtitle: "Bạn nhận riêng qua\nTechcombank thôi",
 };
 
 /** Figma "Chuyện thương ai - 7": what the reader looks after in their own name. */
 export const FAMILY_CARD = {
   label: "Năm 2026,",
-  title: `${USER_NAME} vun vén`,
+  title: "Bạn vun vén",
   pills: ["1 nhóm gia đình", "3 quỹ nhóm", "4 gói bảo hiểm"],
 };
 
@@ -114,50 +113,7 @@ export const DONATION_CARD = {
   ],
 };
 
-/** Figma "Chuyện sinh nhai": the reader's shops, first one first. */
-const SHOPS = ["Cà phơ Hồ Điệp", "Pinochio", "Bún riêu Ba Bát"];
-
-/** Figma "Chuyện sinh nhai - 1": how often the shop's speaker rang, and what it brought in. */
-export const SOUNDBOX_CARD = {
-  label: "Loa bán hàng ting ting",
-  value: "8,420 lần",
-  note: "mang về VND 546,000,000",
-};
-
-/** Figma "Chuyện sinh nhai - 3": how many customers came, and how many came back. */
-export const GUESTS_CARD = {
-  stats: [
-    { value: "1,400\nkhách", label: "Tổng cộng" },
-    { value: "400\nfan ruột", label: "Quay lại trên 2 lần" },
-  ],
-};
-
-/** Figma "Chuyện sinh nhai - 5": the regular who came back most. */
-export const FAN_CARD = {
-  rows: [
-    { label: `Top 1 fan ruột sốp ${USER_NAME}`, value: "Nguyen Van An" },
-    { label: "Ghé chơi", value: "89 lần" },
-    { label: "Tất tay", value: "VND 23,600,000" },
-  ],
-};
-
-/** Figma "Chuyện sinh nhai - 7": the shop's best day. */
-export const PEAK_DAY_CARD = {
-  rows: [
-    { label: "Ngày doanh thu gấp 3 bình thường", value: "14 Tháng 2", fixed: true },
-    { label: "312 lượt thanh toán", value: "VND 18,430,000" },
-  ],
-};
-
-/** Figma "Chuyện sinh nhai - 9": revenue against last year. */
-export const GROWTH_CARD = {
-  label: "So với 2025,\ndoanh thu tăng",
-  value: "48%",
-  rank: "Top 12%",
-  rankNote: "hộ cùng ngành",
-};
-
-/** Figma "Chuyện tiền tài - 2": total assets against last year. */
+/** Figma "Chuyện tiền tài - 2" (section 592:5796): total assets against last year. */
 export const ASSETS_CARD = {
   label: "Tổng tài sản 2026",
   value: "86 Tr",
@@ -167,11 +123,18 @@ export const ASSETS_CARD = {
 
 /** Figma "Chuyện tiền tài - 4": the reader's best month for income. */
 export const INCOME_CARD = {
-  label: `Tháng 9 bùng nổ, ${USER_NAME} thu về`,
+  label: "Tháng 9 bùng nổ, thu về",
   value: "VND 34,000,000",
 };
 
-/** Figma "Chuyện tiền tài - 6": U-Point earned and cashback received. */
+/** Figma "Chuyện tiền tài - 16": what Sinh lời tự động earned, and its best month. */
+export const RETURNS_CARD = {
+  label: "256 ngày, Sinh lời mang tới",
+  value: "VND 1,200,520",
+  note: "Tháng 7 lợi suất kịch nóc 8,9%",
+};
+
+/** Figma "Chuyện tiền tài - 8": U-Point earned and cashback received. */
 export const REWARDS_CARD = {
   stats: [
     { value: "3.2 Tr", label: "Điểm U-Point" },
@@ -179,16 +142,16 @@ export const REWARDS_CARD = {
   ],
 };
 
-/** Figma "Chuyện tiền tài - 8": the big things bought this year. */
+/** Figma "Chuyện tiền tài - 10": the big things bought this year. */
 export const GOODS_CARD = {
-  label: "4 mùa nắng mưa",
-  title: `${USER_NAME} đã tậu được`,
+  label: "Năm Ngọ vững vó",
+  title: "Mừng bạn tậu thêm",
   pills: ["Nhà mới", "Xe mới"],
 };
 
-/** Figma "Chuyện tiền tài - 10": what the reader saved, across how many goals. */
+/** Figma "Chuyện tiền tài - 12": what the reader saved, across how many goals. */
 export const SAVINGS_CARD = {
-  label: `2026, ${USER_NAME} gửi tiết kiệm`,
+  label: "2026, bạn gửi tiết kiệm",
   value: "VND 234,000,000",
   note: "Cùng 5 mục tiêu tích luỹ",
 };
@@ -207,7 +170,7 @@ export const linesOf = (lines?: Lines): string[] => (lines === undefined ? [] : 
 
 /**
  * One exchange in a topic: the reader's message, Tech Tech's reply (optional) and card (optional),
- * then what comes next in the bottom sheet — each kind can first type a line (`question`) in the chat:
+ * then what comes next in the bottom sheet — each kind can first type a line ("question") in the chat:
  *  • answers  — answer options
  *  • prompt   — the next question sits in the sheet with a send button (sending it starts the next turn)
  *  • continue — the topic is over: the topics not yet visited, or (once all are done) the summary prompt
@@ -225,18 +188,13 @@ export type CardKind =
   | "birthday"
   | "family"
   | "donation"
-  | "soundbox"
-  | "guests"
-  | "fan"
-  | "peakDay"
-  | "growth"
   | "assets"
   | "income"
+  | "returns"
   | "rewards"
   | "goods"
   | "savings"
   | "months"
-  | "concert"
   | "summary"
   // Priority tier, "Tài chính an vững"
   | "priorityGrowth"
@@ -271,30 +229,30 @@ export type ThreadTurn = {
    */
   userMessage: string;
   /**
-   * An ANY_ANSWER turn's bubble for particular answers, used as-is instead of `userMessage` (an
+   * An ANY_ANSWER turn's bubble for particular answers, used as-is instead of "userMessage" (an
    * opt-out like "Nói tôi nghe đi" shouldn't become "Nói tôi nghe đi đó").
    */
   answerBubbles?: Record<string, string>;
-  /** An ANY_ANSWER turn's reply for particular answers, in place of `reply` (Priority's 🐢 / 🚀 / 🎢). */
+  /** An ANY_ANSWER turn's reply for particular answers, in place of "reply" (Priority's 🐢 / 🚀 / 🎢). */
   answerReplies?: Record<string, Lines>;
   reply?: Lines;
   /** A gift ("gift") waits for the reader to open it before the turn carries on. */
   card?: CardKind;
-  /** More beats after the card, before `next`: line(s) to type, another card, or a small faded footnote. */
+  /** More beats after the card, before "next": line(s) to type, another card, or a small faded footnote. */
   after?: (Lines | { card: CardKind } | { note: string })[];
   /** Emoji that rains down the screen as the reply starts typing. */
   reaction?: string;
   next:
     | { kind: "answers"; question: Lines; boldQuestion?: boolean; answers: string[] }
     | { kind: "prompt"; question?: Lines; boldQuestion?: boolean; prompt: string; action: string; typed?: boolean }
-    /** `ask` is added to the closing line only while there are topics left to offer. */
+    /** "ask" is added to the closing line only while there are topics left to offer. */
     | { kind: "continue"; question?: Lines; ask?: string }
     /** One wide button that opens the tier's full-screen greeting card (Private's ending). */
     | { kind: "greeting"; question?: Lines; action: string }
     | { kind: "end" };
 };
 
-/** What the sheet shows once a turn's `continue` is worked out. */
+/** What the sheet shows once a turn's "continue" is worked out. */
 export type SheetNext =
   | Exclude<ThreadTurn["next"], { kind: "continue" }>
   | { kind: "topics"; question?: Lines; prompt: string; topics: string[] };
@@ -302,7 +260,7 @@ export type SheetNext =
 /** Cards the reader has to tap open before the turn goes on. */
 export const GATED_CARDS: ReadonlySet<CardKind | undefined> = new Set(["gift", "priorityGift"]);
 
-/** A turn `trigger` that any of the previous turn's answers starts (for answers whose follow-ups aren't designed). */
+/** A turn "trigger" that any of the previous turn's answers starts (for answers whose follow-ups aren't designed). */
 export const ANY_ANSWER = "*";
 
 /** Heading of the topic list offered after a topic ends. */
@@ -310,9 +268,12 @@ export const MORE_TOPICS_PROMPT = "Kể mình nghe tiếp";
 /** Typed into the sheet once every topic has been visited; sending it plays the summary. */
 export const SUMMARY_PROMPT = "Tổng kết lại cho mình nha";
 
+/** "Chuyện tiền tài" quiz picks, top to bottom. */
+const MONEY_ANSWERS = ["🚀 Phóng ngang tên lửa", "🐢 Chậm như rùa bò", "🎢 Tàu lượn siêu tốc"];
+
 /** Each topic's own conversation, started from any topic list, in any order. */
 export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
-  [TOPICS[0]]: [
+  [TOPIC_SPENDING]: [
     {
       trigger: SPENDING.topic,
       userMessage: SPENDING.userMessage,
@@ -320,11 +281,13 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
       card: "spending",
       next: { kind: "answers", question: SPENDING.question, boldQuestion: true, answers: SPENDING.answers },
     },
-    // Figma "Chuyện tiêu xài" (section 371:2744)
+    // Figma "Chuyện tiêu xài" (section 371:2744) designs "Cao thủ chắt chiu"; the other two picks play
+    // the same turn, their own name in the bubble and the reply
     {
-      trigger: SPENDING.answers[0],
-      userMessage: "Cao thủ chắt chiu?",
-      reply: "Cao thủ chắt chiu này cái nết cũng cũng á.",
+      trigger: ANY_ANSWER,
+      userMessage: "{answer}?",
+      reply: `${SPENDING.answers[0]} này cái nết cũng cũng á.`,
+      answerReplies: Object.fromEntries(SPENDING.answers.map((answer) => [answer, `${answer} này cái nết cũng cũng á.`])),
       card: "fashion",
       next: {
         kind: "prompt",
@@ -336,11 +299,11 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     {
       trigger: "Nhớ mình ghé bao nhiêu sốp không?",
       userMessage: "Nhớ mình ghé bao nhiêu sốp không?",
-      reply: `Tất nhiên rồi. Đọc ${USER_NAME} như đọc 1 cuốn sách.`,
+      reply: "Tất nhiên rồi. Đọc bạn như đọc 1 cuốn sách.",
       card: "brands",
       next: {
         kind: "prompt",
-        question: `Ít khi nào thấy tủ lạnh nhà ${USER_NAME} trống 😆`,
+        question: "Zara giờ phải gọi bạn bằng điện thoại 😆",
         prompt: "Sai sai mà lại đung đúng",
         action: "Gửi",
       },
@@ -348,95 +311,95 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     {
       trigger: "Sai sai mà lại đung đúng",
       userMessage: "Sai sai mà lại đung đúng",
-      reply: `2026 có 4 mùa, còn ${USER_NAME} chỉ có mùa chi đậm và mùa chi li thôiii.`,
+      reply: "2026 có 4 mùa, còn bạn chỉ có mùa chi đậm và mùa chi li thôiii.",
       card: "months",
-      next: {
-        kind: "prompt",
-        question: `Tháng 6 ${USER_NAME} chỉ chi 15% thu nhập. Tự hỏi lòng thắt lưng buộc bụng là vì ai 🥹`,
-        prompt: "Vi ai do?",
-        action: "Gửi",
-      },
-    },
-    {
-      trigger: "Vi ai do?",
-      userMessage: "Vi ai do?",
-      // "Quang Gai Con" is a pun in the copy, kept as written
-      reply: "Vì ai đồ... Quang Gai Con, RIZER, V.I.P hay con dân nhà ai đấyy?",
-      card: "concert",
+      // The concert card is gone: the topic closes on the wish straight after
       next: {
         kind: "continue",
         question: [
-          "Nhiễu điều phủ lấy giá gương, người trong 1 nước phải đu ai đồ ✨",
-          `Thôi thì 2027 Tek Tek chúc ${USER_NAME}:\n“Chi tiêu thong thả mỗi ngày\nCuối năm nhìn lại, ví dày hơn xưa”`,
+          "Tháng 6 bạn chỉ chi 15% thu nhập. Tự hỏi lòng thắt lưng buộc bụng là vì ai 🥹",
+          "Thôi thì 2027 Tek Tek chúc bạn:\n“Chi tiêu thong thả mỗi ngày\nCuối năm nhìn lại, ví dày hơn xưa”",
         ],
       },
     },
   ],
-  // Figma "Chuyện tiền tài" (section 379:9371)
-  [TOPICS[1]]: [
+  // Figma "Chuyện tiền tài" (section 592:5796)
+  [TOPIC_MONEY]: [
     {
-      trigger: TOPICS[1],
-      userMessage: "Kể mình nghe “Chuyện tiền tài” đi",
-      reply: "Chuyện tiền bạc hơi nhạy cảm, nên mình nói nhỏ thôi nha 🤫",
+      trigger: TOPIC_MONEY,
+      userMessage: "Kể mình nghe tiếp “Chuyện tiền tài”",
+      reply: "Chuyện tiền bạc hơi nhạy cảm, nên Tek Tek nói nhỏ thôi nha 🤫",
       next: {
         kind: "answers",
-        question: `Câu hỏi trước nè. Với ${USER_NAME}, năm tài chính 2026 gói gọn trong biểu tượng nào?`,
+        question: "Câu hỏi trước nè. Với bạn, năm tài chính 2026 gói gọn trong biểu tượng nào?",
         boldQuestion: true,
-        answers: ["🚀 Phóng ngang tên lửa", "🐢 Chậm như rùa bò", "🎢 Tàu lượn siêu tốc"],
+        answers: MONEY_ANSWERS,
       },
     },
-    // Figma only designs the turtle: its reply wouldn't fit the other two
     {
-      trigger: "🐢 Chậm như rùa bò",
-      userMessage: "🐢 Chậm như rùa bò",
+      // Each pick has its own comeback (Figma "Case" 592:5855), then the same card
+      trigger: ANY_ANSWER,
+      userMessage: "",
       reply: "Rùa gì mà rùa, rùa gắn động cơ phản lực à 😂",
+      answerReplies: {
+        [MONEY_ANSWERS[0]]: "Phóng thật chứ đùa, tên lửa chính hiệu luôn 😎",
+        [MONEY_ANSWERS[2]]: "Lên xuống thì có, mà cuối cùng vẫn đi lên nha 😆",
+      },
       card: "assets",
       next: { kind: "prompt", prompt: "Thật không đó...", action: "Gửi" },
     },
     {
       trigger: "Thật không đó...",
       userMessage: "Thật không đó...",
-      reply: `Đã biết dối ai bao giờ đâu. ${USER_NAME} như này mình phải xin vía cực mạnh rồi.`,
+      reply: "Đã biết dối ai bao giờ đâu. Bạn như này Tek Tek phải xin vía cực mạnh rồi.",
       card: "income",
       next: {
         kind: "prompt",
-        question: `Ai gặp ${USER_NAME} Tháng 9 chắc cũng thấy ${USER_NAME} cười tươi hơn thường ngày 😆`,
-        prompt: "Hehe",
+        question: "Ai gặp bạn Tháng 9 chắc cũng thấy bạn cười tươi hơn thường ngày 😆",
+        prompt: "Hẹ hẹ hẹ",
         action: "Gửi",
       },
     },
     {
-      trigger: "Hehe",
-      userMessage: "Hehe",
-      reply: `Thật ra không nhất thiết phải khoe đâu. Ví dụ chuyện Techcombank là kim chủ giấu mặt của ${USER_NAME} ấy.`,
+      trigger: "Hẹ hẹ hẹ",
+      userMessage: "Hẹ hẹ hẹ",
+      reply: "Có Sinh lời tự động cạnh bên, tiền nhàn rỗi thay bạn “đi làm” mỗi ngày.",
+      card: "returns",
+      next: { kind: "prompt", prompt: "Oki, mình biết rồi", action: "Gửi" },
+    },
+    {
+      trigger: "Oki, mình biết rồi",
+      userMessage: "Oki, mình biết rồi",
+      reply: "Thật ra không nhất thiết phải khoe đâu. Ví dụ chuyện Techcombank là kim chủ giấu mặt của bạn ấy.",
       card: "rewards",
       next: {
         kind: "prompt",
-        question: `Thêm 234 voucher giúp ${USER_NAME} tiết kiệm VND 1,234,000.\n\nTất cả vì nụ cười của ${USER_NAME} đó 💕`,
-        prompt: "Cảm ơn kim chủ nhé",
+        // Figma "User có sử dụng voucher"; a reader with no vouchers gets only the last line
+        question: "Thêm 234 voucher, giúp bạn tiết kiệm VND 1,234,000.\n\nTất cả vì nụ cười của bạn đó 💕",
+        prompt: "Vậy luôn? Cảm ơn kim chủ nhé 😆",
         action: "Gửi",
       },
     },
     {
-      trigger: "Cảm ơn kim chủ nhé",
-      userMessage: "Cảm ơn kim chủ nhé",
-      reply: `Nói vậy thôi, 12 tháng thời gian ${USER_NAME} không ngừng phấn đấu.`,
+      trigger: "Vậy luôn? Cảm ơn kim chủ nhé 😆",
+      userMessage: "Vậy luôn? Cảm ơn kim chủ nhé 😆",
+      reply: "Nói vậy thôi, 12 tháng thời gian bạn không ngừng phấn đấu.",
       card: "goods",
       next: {
         kind: "prompt",
-        question: `Kiên trì, bền bỉ và mạnh mẽ là ${USER_NAME} mà Tek Tek biết 😊`,
-        prompt: "Vì saooo?",
+        question: "Kiên trì, bền bỉ và mạnh mẽ là bạn mà Tek Tek biết 😊",
+        prompt: "Là saooo?",
         action: "Gửi",
       },
     },
     {
-      trigger: "Vì saooo?",
-      userMessage: "Vì saooo?",
-      reply: `Vì ${USER_NAME} luôn chăm chỉ nuôi dưỡng những dự định và ước mơ.`,
+      trigger: "Là saooo?",
+      userMessage: "Là saooo?",
+      reply: "Là vì bạn luôn chăm chỉ nuôi dưỡng những dự định và ước mơ.",
       card: "savings",
       next: {
         kind: "prompt",
-        question: `Cứ thế thôiii. Tek Tek tin ${USER_NAME} sẽ thăng hạng Priority trong năm tới.`,
+        question: "Cứ thế thôiii. Tek Tek tin bạn sẽ thăng hạng Priority trong năm tới.",
         prompt: "Chờ mình nha 😎",
         action: "Gửi",
       },
@@ -449,20 +412,20 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     },
   ],
   // Figma "Chuyện thương ai" (section 373:4680)
-  [TOPICS[2]]: [
+  [TOPIC_LOVE]: [
     {
-      trigger: TOPICS[2],
+      trigger: TOPIC_LOVE,
       userMessage: "Kể mình nghe “Chuyện thương ai” đi",
       reply: [
-        `Yêu ai chẳng nói lê thê,\nVì ${USER_NAME} đã có sao kê giãi bày.`,
-        `Tặng ${USER_NAME} câu thơ vì cách ${USER_NAME} yêu thương thật thi vị 😆`,
+        "Yêu ai chẳng nói lê thê,\nVì bạn đã có sao kê giãi bày.",
+        "Tặng bạn câu thơ vì cách bạn yêu thương thật thi vị 😆",
       ],
       next: { kind: "prompt", prompt: "Kể đi nàooo", action: "Gửi" },
     },
     {
       trigger: "Kể đi nàooo",
       userMessage: "Kể đi nàooo",
-      reply: `${USER_NAME} đó, không nói thương nhưng đâu đâu cũng là thương.`,
+      reply: "Bạn đó, không nói thương nhưng đâu đâu cũng là thương.",
       card: "family",
       next: {
         kind: "prompt",
@@ -474,13 +437,13 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     {
       trigger: "Yêu thương 🥹",
       userMessage: "Yêu thương 🥹",
-      reply: `Nhắc tới yêu thương... Chạm Yêu Thương cảm ơn ${USER_NAME} thật nhiều.`,
+      reply: "Nhắc tới yêu thương... Chạm Yêu Thương cảm ơn bạn thật nhiều.",
       card: "donation",
       next: {
         kind: "prompt",
         question: [
-          `Rung động lắm khi biết ${USER_NAME} luôn chọn cách cho đi.`,
-          `2026 ${USER_NAME} có nhớ 1 người đặc biệt?`,
+          "Rung động lắm khi biết bạn luôn chọn cách cho đi.",
+          "2026 bạn có nhớ 1 người đặc biệt?",
         ],
         prompt: "Người nào cơ?",
         action: "Gửi",
@@ -493,7 +456,7 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
       card: "gift",
       next: {
         kind: "prompt",
-        question: `Chắc là ngoại lệ của ${USER_NAME} rồi, mình không hỏi thêm đâu 🤭`,
+        question: "Chắc là ngoại lệ của bạn rồi, mình không hỏi thêm đâu 🤭",
         prompt: "Tào lao khôngg",
         action: "Gửi",
       },
@@ -501,11 +464,11 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     {
       trigger: "Tào lao khôngg",
       userMessage: "Tào lao khôngg",
-      reply: `😂 Đâu chỉ 1 người. Năm nay ${USER_NAME} có bộ sưu tập hội chuyển tiền chân ái.`,
+      reply: "😂 Đâu chỉ 1 người. Năm nay bạn có bộ sưu tập hội chuyển tiền chân ái.",
       card: "topPeople",
       next: {
         kind: "answers",
-        question: `Keo sơn cỡ đó. Đoán thử bao nhiêu người gửi ${USER_NAME} lời chúc sinh nhật qua Techcombank?`,
+        question: "Keo sơn cỡ đó. Đoán thử bao nhiêu người gửi bạn lời chúc sinh nhật qua Techcombank?",
         boldQuestion: true,
         answers: ["1–3 thôi", "4–7 chăng", "Trên 7", "Ai mà nhớ..."],
       },
@@ -514,11 +477,11 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     {
       trigger: ANY_ANSWER,
       userMessage: "",
-      reply: `Sao nhớ hay vậyyy. Mấy ai được như ${USER_NAME}.`,
+      reply: "Sao nhớ hay vậyyy. Mấy ai được như bạn.",
       card: "birthday",
       next: {
         kind: "prompt",
-        question: `Cảm giác được nhớ tới là món quà ngừi thân iu dành tặng ${USER_NAME} đó.`,
+        question: "Cảm giác được nhớ tới là món quà ngừi thân iu dành tặng bạn đó.",
         prompt: "🥹🥹🥹",
         action: "Gửi",
       },
@@ -526,89 +489,11 @@ export const TOPIC_THREADS: Record<string, ThreadTurn[]> = {
     {
       trigger: "🥹🥹🥹",
       userMessage: "🥹🥹🥹",
-      reply: `Hy vọng 2027 của ${USER_NAME} sẽ có thêm thật nhiều yêu thương, nhiều như cách ${USER_NAME} yêu thương và quan tâm tới mọi người.`,
+      reply: "Hy vọng 2027 của bạn sẽ có thêm thật nhiều yêu thương, nhiều như cách bạn yêu thương và quan tâm tới mọi người.",
       next: { kind: "continue" },
     },
   ],
-  // Figma "Chuyện sinh nhai" (section 375:6982)
-  [TOPICS[3]]: [
-    {
-      trigger: TOPICS[3],
-      userMessage: "Kể mình nghe “Chuyện sinh nhai” đi",
-      reply: [
-        `Mới hồi nào ${SHOPS[0]} mà giờ đã thêm ${SHOPS.slice(1).join(", ")}.`,
-        `Tính ra loa bán hàng Techcombank đã bên ${USER_NAME} 234 ngày rùii.`,
-      ],
-      card: "soundbox",
-      after: [`2027, loa nhỏ nguyện ý bên ${USER_NAME} trọn đườngg 💕`],
-      next: {
-        kind: "answers",
-        question: `${USER_NAME} có nhớ năm nay bao nhiêu khách ghé hàng?`,
-        boldQuestion: true,
-        answers: ["Dưới 500", "500 - 2,000", "Trên 2,000", "Thôi nói mình nghe đi"],
-      },
-    },
-    // Every guess gets the real numbers
-    {
-      trigger: ANY_ANSWER,
-      userMessage: "",
-      reply: "Khiêm tốn quáa, khách biết là dỗi đó nhaa.",
-      card: "guests",
-      next: {
-        kind: "prompt",
-        question: [
-          "Người ghé một lần, người ghé rồi lại ghé.",
-          `Trong số fan ruột sốp ${USER_NAME}, có một người mình vẫn luôn ghi nhớ.`,
-        ],
-        prompt: "Ai thế?",
-        action: "Gửi",
-      },
-    },
-    // Straight to the card
-    {
-      trigger: "Ai thế?",
-      userMessage: "Ai thế?",
-      card: "fan",
-      after: ["Cỡ này chắc thành người quen rồi 🥹"],
-      next: {
-        kind: "prompt",
-        question: `${USER_NAME} để ý không, ngày có doanh thu cao nhất là ngày nào?`,
-        boldQuestion: true,
-        prompt: "Ngày nào thế?",
-        action: "Gửi",
-      },
-    },
-    {
-      trigger: "Ngày nào thế?",
-      userMessage: "Ngày nào thế?",
-      card: "peakDay",
-      after: ["Ngày nào cũng được như hôm ấy thì vui nhỉ."],
-      next: {
-        kind: "answers",
-        question: `Một năm hối hả, doanh thu sốp ${USER_NAME} 2026 có thể nói là...`,
-        boldQuestion: true,
-        answers: ["Xuôi chèo mát mái", "Chép vượt vũ môn", "Lùi 1 bước, tiến 3 bước"],
-      },
-    },
-    {
-      trigger: ANY_ANSWER,
-      userMessage: "",
-      reply: "Biết mình biết ta, trăm đơn trăm chốt 😎",
-      card: "growth",
-      next: {
-        kind: "prompt",
-        question: `Một năm đi lên cùng ${SHOPS.map((shop) => `@${shop}`).join(", ")} 🎉`,
-        prompt: "😅😅😅",
-        action: "Gửi",
-      },
-    },
-    {
-      trigger: "😅😅😅",
-      userMessage: "😅😅😅",
-      reply: `Sổ 2026 chốt xong. Tek Tek chúc ${USER_NAME} năm 2027 buôn may bán đắt, chốt đơn thoăn thoắt, ting ting suốt ngày nhé.`,
-      next: { kind: "continue" },
-    },
-  ],
+
 };
 
 /** Figma "Step 14": played once all four topics are done. */
@@ -634,11 +519,34 @@ export interface TopicSet {
   ending?: { lines: string[]; action: string };
 }
 
-/** The base tier's topics, closing on the summary. */
+/** Figma "Ending" (section 592:5897, frame "End"): the closing lines once every topic is told. */
+export const STANDARD_ENDING = {
+  lines: ["Thêm 1 năm tài chính đi qua...", "Con số nào đại diện cho bạn năm 2026? Nghe thầy Tek Tek phán nè 😎"],
+  action: "Phán đi thầy",
+};
+
+/** Figma "Ending" frame "Dashboard" (592:5898): the reader's year in one full-screen card. */
+export const STANDARD_SUMMARY_CARD = {
+  lines: [`2026, ${FULL_NAME} là`],
+  wish: "Cao thủ chắt chiu",
+  image: "/rewind/ending/summary-full.png",
+  linesClass: "text-left",
+  wishClass: "text-left text-[40px] leading-12",
+  stats: [
+    { label: "Tổng chi Thời trang", value: "VND 15,456,050" },
+    { label: "U-Point tích được", value: "3,200,000" },
+    { label: "Khách sộp nhà", value: "Zara" },
+  ],
+  share: true,
+  // The art is pale at the top: the header stays black over it
+  darkHeader: true,
+};
+
+/** The base tier's topics, closing on the year summary card ("Phán đi thầy"). */
 export const STANDARD_TOPIC_SET: TopicSet = {
   topics: TOPICS,
   moreTopicsPrompt: MORE_TOPICS_PROMPT,
-  summary: SUMMARY_TURN,
+  ending: STANDARD_ENDING,
 };
 
 /** Works out a turn's sheet: a topic that ends offers the topics left, or the summary once none are. */
